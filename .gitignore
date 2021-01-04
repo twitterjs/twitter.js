@@ -1,0 +1,5 @@
+node_modules/
+.vscode
+
+# docs should be ignored while we are in early dev
+docs/
