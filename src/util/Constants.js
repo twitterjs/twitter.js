@@ -5,6 +5,8 @@ export const baseEndpoint = 'https://api.twitter.com/2/';
 
 export const tweetById = `${baseEndpoint}tweets/`;
 
+export const tweetsByIds = `${baseEndpoint}tweets`;
+
 export const userById = `${baseEndpoint}users/`;
 
 export const userByUsername = `${baseEndpoint}users/by/username/`;

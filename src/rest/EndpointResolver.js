@@ -13,6 +13,7 @@ import {
   userByUsername,
   usersByIds,
   usersByUsernames,
+  tweetsByIds,
 } from '../util/Constants.js';
 
 /**
@@ -22,6 +23,17 @@ import {
  */
 export function getTweetByIdEndpoint(id) {
   const endpoint = `${tweetById}${id}?tweet.fields=${tweetFields}&expansions=${expansionsForTweet}&user.fields=${userFields}&media.fields=${mediaFields}&place.fields=${placeFields}&poll.fields=${pollFields}`;
+  return endpoint;
+}
+
+/**
+ * Resolves the endpoint for fetching upto 100 tweets using their IDs
+ * @param {Array<Snowflake>} ids An array of IDs of the tweets to fetch
+ * @returns {string} The endpoint url for fetching upto 100 tweets using their IDs
+ */
+export function getTweetsByIdsEndpoint(ids) {
+  const idsArray = ids.join();
+  const endpoint = `${tweetsByIds}?ids=${idsArray}&tweet.fields=${tweetFields}&expansions=${expansionsForTweet}&user.fields=${userFields}&media.fields=${mediaFields}&place.fields=${placeFields}&poll.fields=${pollFields}`;
   return endpoint;
 }
 
