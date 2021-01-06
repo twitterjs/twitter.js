@@ -7,6 +7,7 @@ import {
   getUserByUsernameEndpoint,
   getUsersByIdsEndpoint,
   getUsersByUsernames,
+  getTweetsByIdsEndpoint,
 } from './EndpointResolver.js';
 import { getHeaderObject } from './HeaderResolver.js';
 import { HTTPverbs } from '../util/Constants.js';
@@ -32,6 +33,19 @@ class RESTManager {
    */
   async fetchTweetById(id) {
     const endpoint = getTweetByIdEndpoint(id);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const res = await fetch(endpoint, header);
+    const data = await res.json();
+    return data;
+  }
+
+  /**
+   * Fetches upto 100 tweets from Twitter using their IDs
+   * @param {Array<Snowflake>} ids IDs of the tweets
+   * @returns {Promise<Object>} An object containing the tweets data
+   */
+  async fetchTweetsByIds(ids) {
+    const endpoint = getTweetsByIdsEndpoint(ids);
     const header = getHeaderObject(HTTPverbs.GET, this.client.token);
     const res = await fetch(endpoint, header);
     const data = await res.json();
