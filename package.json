@@ -1,6 +1,6 @@
 {
   "name": "twitter.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A nodejs wrapper for Twitter API v2",
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
