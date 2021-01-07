@@ -21,7 +21,7 @@ class User extends BaseStructure {
 
     /**
      * The time the user was created at
-     * @type {string}
+     * @type {Date}
      */
     this.createdAt = data.created_at;
 
@@ -63,7 +63,7 @@ class User extends BaseStructure {
 
     /**
      * The pinned tweet ID of the user
-     * @type {?string}
+     * @type {?Snowflake}
      */
     this.pinnedTweetID = data.pinned_tweet_id ? data.pinned_tweet_id : null;
 
