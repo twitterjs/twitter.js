@@ -45,9 +45,9 @@ class User extends BaseStructure {
 
     /**
      * The location of the user
-     * @type {string}
+     * @type {?string}
      */
-    this.location = data.location;
+    this.location = data.location ? data.location : null;
 
     /**
      * The name of the user
