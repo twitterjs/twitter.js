@@ -15,14 +15,18 @@ export function userBuilder(client, userData) {
     const usersCollection = new Collection();
     userData.forEach(element => {
       const user = new User(client, element.data);
-      user.pinnedTweet = new Tweet(client, element.includes.tweets[0]);
+      if (element.includes?.tweets) {
+        user.pinnedTweet = new Tweet(client, element.includes.tweets[0]);
+      }
       user.publicMetrics = new UserPublicMetrics(element.data.public_metrics);
       usersCollection.set(user.id, user);
     });
     return usersCollection;
   } else {
     const user = new User(client, userData.data);
-    user.pinnedTweet = new Tweet(client, userData.includes.tweets[0]);
+    if (userData.includes?.tweets) {
+      user.pinnedTweet = new Tweet(client, userData.includes.tweets[0]);
+    }
     user.publicMetrics = new UserPublicMetrics(userData.data.public_metrics);
     return user;
   }
