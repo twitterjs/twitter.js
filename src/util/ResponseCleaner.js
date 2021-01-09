@@ -11,7 +11,7 @@ export function cleanFetchManyUsersResponse(response) {
       userData.data = data;
       userDataCollection.set(data.id, userData);
     });
-    element.includes.tweets.forEach(tweet => {
+    element?.includes?.tweets.forEach(tweet => {
       const userData = userDataCollection.get(tweet.author_id);
       userData.includes.tweets.push(tweet);
       userDataCollection.set(tweet.author_id, userData);
