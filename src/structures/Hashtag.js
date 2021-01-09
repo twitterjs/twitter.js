@@ -16,12 +16,12 @@ class Hashtag {
 
     /**
      * The point at which the hashtag ends
-     * @param {number}
+     * @type {number}
      */
     this.end = data.end;
 
     /**
-     * The text of the hastag
+     * The text of the hashtag
      * @type {string}
      */
     this.tag = data.tag;
