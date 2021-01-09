@@ -33,7 +33,7 @@ class User extends BaseStructure {
 
     /**
      * Entities in the description of the user
-     * @type {?object}
+     * @type {?Entity}
      */
     this.entities = null;
 
