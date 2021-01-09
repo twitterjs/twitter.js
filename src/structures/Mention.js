@@ -21,10 +21,10 @@ class Mention {
     this.end = data.end;
 
     /**
-     * The text of the mention
+     * The username of the mentioned user
      * @type {string}
      */
-    this.tag = data.tag;
+    this.username = data.username;
   }
 }
 
