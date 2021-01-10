@@ -15,24 +15,23 @@ export function userBuilder(client, userData) {
   if (userData instanceof Collection) {
     const usersCollection = new Collection();
     userData.forEach(element => {
-      const user = new User(client, element.data);
-      if (element.includes?.tweets[0]) {
-        user.pinnedTweet = new Tweet(client, element.includes.tweets[0]);
-      }
-      user.publicMetrics = new UserPublicMetrics(element.data.public_metrics);
-      user.entities = new Entity(element.data.entities);
-      usersCollection.set(user.id, user);
+      usersCollection.set(element.data.id, _patchUser(client, element));
     });
     return usersCollection;
   } else {
-    const user = new User(client, userData.data);
-    if (userData.includes?.tweets) {
-      user.pinnedTweet = new Tweet(client, userData.includes.tweets[0]);
-    }
-    user.publicMetrics = new UserPublicMetrics(userData.data.public_metrics);
-    user.entities = new Entity(userData.data.entities);
-    return user;
+    return _patchUser(client, userData);
   }
+}
+
+function _patchUser(client, element) {
+  const user = new User(client, element.data);
+  const pinnedTweetData = element?.includes?.tweets[0];
+  if (pinnedTweetData) user.pinnedTweet = new Tweet(client, pinnedTweetData);
+  const userPublicMetricsData = element?.data?.public_metrics;
+  if (userPublicMetricsData) user.publicMetrics = new UserPublicMetrics(userPublicMetricsData);
+  const userEntityData = element?.data?.entities;
+  if (userEntityData) user.entities = new Entity(userEntityData);
+  return user;
 }
 
 /**
