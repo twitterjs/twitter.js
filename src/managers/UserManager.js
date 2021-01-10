@@ -109,8 +109,8 @@ class UserManager extends BaseManager {
         const usersResponse = [];
         if (userIdsArray.length) usersResponse.push(await this._fetchMany(userIdsArray, queryTypes.ID));
         if (userNamesArray.length) usersResponse.push(await this._fetchMany(userNamesArray, queryTypes.USERNAME));
-        const userData = cleanFetchManyUsersResponse(usersResponse);
-        const usersCollection = userBuilder(this.client, userData);
+        const usersData = cleanFetchManyUsersResponse(usersResponse);
+        const usersCollection = userBuilder(this.client, usersData);
         return usersCollection;
       } else {
         const userID = this.resolveID(options.user);
