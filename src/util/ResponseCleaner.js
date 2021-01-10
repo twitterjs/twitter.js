@@ -19,3 +19,18 @@ export function cleanFetchManyUsersResponse(response) {
   });
   return userDataCollection;
 }
+
+export function cleanFetchManyTweetsResponse(response) {
+  const tweetDataCollection = new Collection();
+  response.data.forEach(data => {
+    const tweetData = { data: null, includes: { media: [], users: [] } };
+    tweetData.data = data;
+    tweetDataCollection.set(data.id, tweetData);
+  });
+  response?.includes?.users.forEach(user => {
+    const tweetData = tweetDataCollection.get(user.pinned_tweet_id);
+    tweetData.includes.users.push(user);
+    tweetDataCollection.set(user.pinned_tweet_id, tweetData);
+  });
+  return tweetDataCollection;
+}
