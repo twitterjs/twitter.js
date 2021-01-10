@@ -5,6 +5,7 @@ import { Events } from '../util/Constants.js';
 import RESTManager from '../rest/RESTManager.js';
 import { Messages } from '../errors/ErrorMessages.js';
 import UserManager from '../managers/UserManager.js';
+import TweetManager from '../managers/TweetManager.js';
 
 /**
  * This class is the core of the library and represents the bot itself
@@ -43,6 +44,12 @@ class Client extends BaseClient {
      * @type {UserManager}
      */
     this.users = new UserManager(this);
+
+    /**
+     * The tweet manager of this client
+     * @type {TweetManager}
+     */
+    this.tweets = new TweetManager(this);
   }
 
   /**
