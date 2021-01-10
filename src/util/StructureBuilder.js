@@ -34,3 +34,31 @@ export function userBuilder(client, userData) {
     return user;
   }
 }
+
+/**
+ * Builds a Tweet structure
+ * @param {Client} client
+ * @param {Object|Collection} tweetData
+ */
+export function tweetBuilder(client, tweetData) {
+  if (tweetData instanceof Collection) {
+    const tweetCollection = new Collection();
+    tweetData.forEach(element => {
+      tweetCollection.set(element.data.id, _patchTweet(client, element));
+    });
+    return tweetCollection;
+  } else {
+    return _patchTweet(client, tweetData);
+  }
+}
+
+function _patchTweet(client, element) {
+  const tweet = new Tweet(client, element.data);
+  const authorData = element?.includes?.users[0];
+  if (authorData) tweet.author = new User(client, authorData);
+  const authorPublicMetricsData = authorData?.public_metrics;
+  if (authorPublicMetricsData) tweet.author.publicMetrics = new UserPublicMetrics(authorPublicMetricsData);
+  const authorEntityData = authorData?.entities;
+  if (authorEntityData) tweet.author.entities = new Entity(authorEntityData);
+  return tweet;
+}
