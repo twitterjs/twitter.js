@@ -2,6 +2,9 @@
 
 import BaseManager from './BaseManager.js';
 import Tweet from '../structures/Tweet.js';
+import { tweetBuilder } from '../util/StructureBuilder.js';
+import { cleanFetchManyTweetsResponse } from '../util/ResponseCleaner.js';
+import { Messages } from '../errors/ErrorMessages.js';
 
 /**
  * Holds API methods for tweets and stores their cache
@@ -66,19 +69,33 @@ class TweetManager extends BaseManager {
    *  .catch(console.error);
    */
   async fetch(options) {
+    if (!options) throw new Error(Messages.TWEET_ID_INVALID);
     const tweetID = this.resolveID(options);
-    if (tweetID) return this._fetchSingle(options);
-    if (options.tweet) {
+    if (tweetID) {
+      const tweetData = await this._fetchSingle(options);
+      const tweet = tweetBuilder(this.client, tweetData);
+      return tweet;
+    }
+    if (options?.tweet) {
       if (Array.isArray(options.tweet)) {
         const tweetIds = [];
         options.tweet.forEach(tweetResolvable => {
           const tweetID = this.resolveID(tweetResolvable);
           if (tweetID) tweetIds.push(tweetID);
         });
-        if (tweetIds.length) return this._fetchMany(tweetIds);
+        if (tweetIds.length) {
+          const tweetsResponse = await this._fetchMany(tweetIds);
+          const tweetsData = cleanFetchManyTweetsResponse(tweetsResponse);
+          const tweetsCollection = tweetBuilder(this.client, tweetsData);
+          return tweetsCollection;
+        }
       } else {
         const tweetID = this.resolveID(options.tweet);
-        if (tweetID) return this._fetchSingle(tweetID);
+        if (tweetID) {
+          const tweetData = await this._fetchSingle(options);
+          const tweet = tweetBuilder(this.client, tweetData);
+          return tweet;
+        }
       }
     }
   }
