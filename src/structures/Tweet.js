@@ -21,7 +21,7 @@ class Tweet extends BaseStructure {
 
     /**
      * The id of the tweet
-     * @type {string}
+     * @type {Snowflake}
      */
     this.id = data.id;
 
