@@ -27,7 +27,7 @@ class User extends BaseStructure {
 
     /**
      * The description of the user
-     * @type {string}
+     * @type {?string}
      */
     this.description = data.description ? data.description : null;
 
@@ -39,7 +39,7 @@ class User extends BaseStructure {
 
     /**
      * The ID of the user
-     * @type {string}
+     * @type {Snowflake}
      */
     this.id = data.id;
 
@@ -81,7 +81,7 @@ class User extends BaseStructure {
 
     /**
      * The public metrics of the user
-     * @type {?Object}
+     * @type {?UserPublicMetrics}
      */
     this.publicMetrics = null;
 
