@@ -68,14 +68,14 @@ export class Tweet extends BaseStructure {
 }
 
 export class User extends BaseStructure {
-  constructor(client: Client);
+  constructor(client: Client, data: object);
   public readonly createdAt: Date;
-  public description: string;
+  public description: string | null;
   public entities: object | null;
   public id: Snowflake;
-  public location: string;
+  public location: string | null;
   public name: string;
-  public pinnedTweet: object | null;
+  public pinnedTweet: Tweet | null;
   public pinnedTweetID: Snowflake | null;
   public profileImageURL: string;
   public protected: boolean;
