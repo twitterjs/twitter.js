@@ -45,6 +45,28 @@ export class RESTManager {
   public fetchUsersByUsernames(usernames: Array<string>): Promise<object>;
 }
 
+export class Tweet extends BaseStructure {
+  constructor(client: Client, data: object);
+  public id: Snowflake;
+  public text: string;
+  public attachments: object | null;
+  public author: User | null;
+  public authorID: Snowflake;
+  public contextAnnotations: object | null;
+  public conversationID: Snowflake | null;
+  public createdAt: Date;
+  public entites: object | null;
+  public geo: object | null;
+  public replyTo: Snowflake | null;
+  public language: string;
+  public possiblySensitive: boolean | null;
+  public publicMetrics: object | null;
+  public referencedTweets: object | null;
+  public canReply: string;
+  public source: string;
+  public withheld: object | null;
+}
+
 export class User extends BaseStructure {
   constructor(client: Client);
   public readonly createdAt: Date;
