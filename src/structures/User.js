@@ -1,6 +1,8 @@
 'use strict';
 
 import BaseStructure from './BaseStructure.js';
+import Entity from './Entity.js';
+import UserPublicMetrics from './UserPublicMetrics.js';
 
 /**
  * A user on Twitter
@@ -35,7 +37,7 @@ class User extends BaseStructure {
      * Entities in the description of the user
      * @type {?Entity}
      */
-    this.entities = null;
+    this.entities = data?.entities ? this._patchEntities(data.entities) : null;
 
     /**
      * The ID of the user
@@ -83,7 +85,7 @@ class User extends BaseStructure {
      * The public metrics of the user
      * @type {?UserPublicMetrics}
      */
-    this.publicMetrics = null;
+    this.publicMetrics = data?.public_metrics ? this._patchPublicMetrics(data.public_metrics) : null;
 
     /**
      * The URL specified in the user's profile, if present.
@@ -108,6 +110,26 @@ class User extends BaseStructure {
      * @type {?Object}
      */
     this.withheld = null;
+  }
+
+  /**
+   * Adds data to the publicMetrics property of the user
+   * @param {Object} publicMetrics
+   * @private
+   * @returns {UserPublicMetrics}
+   */
+  _patchPublicMetrics(publicMetrics) {
+    return new UserPublicMetrics(publicMetrics);
+  }
+
+  /**
+   * Adds data to the entities property of the user
+   * @param {Object} entities
+   * @private
+   * @returns {Entity}
+   */
+  _patchEntities(entities) {
+    return new Entity(entities);
   }
 }
 

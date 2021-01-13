@@ -28,10 +28,6 @@ function _patchUser(client, element) {
   const user = new User(client, element.data);
   const pinnedTweetData = element?.includes?.tweets[0];
   if (pinnedTweetData) user.pinnedTweet = new Tweet(client, pinnedTweetData);
-  const userPublicMetricsData = element?.data?.public_metrics;
-  if (userPublicMetricsData) user.publicMetrics = new UserPublicMetrics(userPublicMetricsData);
-  const userEntityData = element?.data?.entities;
-  if (userEntityData) user.entities = new Entity(userEntityData);
   return user;
 }
 
