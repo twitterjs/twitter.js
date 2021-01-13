@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseStructure from './BaseStructure.js';
+import TweetPublicMetrics from './TweetPublicMetrics.js';
 
 /**
  * A tweet on Twitter
@@ -96,7 +97,7 @@ class Tweet extends BaseStructure {
     /**
      * The public metrics of the tweet
      */
-    this.publicMetrics = null;
+    this.publicMetrics = data?.public_metrics ? this._patchPublicMetrics(data.public_metrics) : null;
 
     /**
      * Tweets this tweet refers to
@@ -119,6 +120,10 @@ class Tweet extends BaseStructure {
      * The withholding details for the tweet if it is withheld
      */
     this.withheld = null;
+  }
+
+  _patchPublicMetrics(publicMetrics) {
+    return new TweetPublicMetrics(publicMetrics);
   }
 }
 
