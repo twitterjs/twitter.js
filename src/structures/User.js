@@ -1,7 +1,7 @@
 'use strict';
 
 import BaseStructure from './BaseStructure.js';
-import Entity from './Entity.js';
+import UserEntity from './UserEntity.js';
 import UserPublicMetrics from './UserPublicMetrics.js';
 
 /**
@@ -126,10 +126,10 @@ class User extends BaseStructure {
    * Adds data to the entities property of the user
    * @param {Object} entities
    * @private
-   * @returns {Entity}
+   * @returns {UserEntity}
    */
   _patchEntities(entities) {
-    return new Entity(entities);
+    return new UserEntity(entities);
   }
 }
 
