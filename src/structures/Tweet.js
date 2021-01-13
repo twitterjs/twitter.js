@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseStructure from './BaseStructure.js';
+import TweetEntity from './TweetEntity.js';
 import TweetPublicMetrics from './TweetPublicMetrics.js';
 
 /**
@@ -69,7 +70,7 @@ class Tweet extends BaseStructure {
     /**
      * The entities parsed out of the tweet's text
      */
-    this.entities = null;
+    this.entities = data?.entities ? this._patchEntities(data.entities) : null;
 
     /**
      * Location tagged by the user in the tweet
@@ -124,6 +125,16 @@ class Tweet extends BaseStructure {
 
   _patchPublicMetrics(publicMetrics) {
     return new TweetPublicMetrics(publicMetrics);
+  }
+
+  /**
+   * Adds data to the entities property
+   * @param {Object} entities
+   * @private
+   * @returns {TweetEntity}
+   */
+  _patchEntities(entities) {
+    return new TweetEntity(entities);
   }
 }
 
