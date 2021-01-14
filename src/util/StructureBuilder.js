@@ -3,8 +3,6 @@
 import User from '../structures/User.js';
 import Collection from './Collection.js';
 import Tweet from '../structures/Tweet.js';
-import UserPublicMetrics from '../structures/UserPublicMetrics.js';
-import Entity from '../structures/Entity.js';
 import Attachment from '../structures/Attachment.js';
 
 /**
@@ -52,10 +50,6 @@ function _patchTweet(client, element) {
   const tweet = new Tweet(client, element.data);
   const authorData = element?.includes?.users[0];
   if (authorData) tweet.author = new User(client, authorData);
-  const authorPublicMetricsData = authorData?.public_metrics;
-  if (authorPublicMetricsData) tweet.author.publicMetrics = new UserPublicMetrics(authorPublicMetricsData);
-  const authorEntityData = authorData?.entities;
-  if (authorEntityData) tweet.author.entities = new Entity(authorEntityData);
   const attachmentsData = element?.includes;
   if (attachmentsData) tweet.attachments = new Attachment(attachmentsData);
   return tweet;
