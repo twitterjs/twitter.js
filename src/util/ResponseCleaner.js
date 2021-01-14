@@ -28,9 +28,11 @@ export function cleanFetchManyTweetsResponse(response) {
     tweetDataCollection.set(data.id, tweetData);
   });
   response?.includes?.users.forEach(user => {
-    const tweetData = tweetDataCollection.get(user.pinned_tweet_id);
-    tweetData.includes.users.push(user);
-    tweetDataCollection.set(user.pinned_tweet_id, tweetData);
+    const tweetData = tweetDataCollection.find(tweetData => tweetData.data.author_id === user.id);
+    if (tweetData) {
+      tweetData.includes.users.push(user);
+      tweetDataCollection.set(tweetData.data.id, tweetData);
+    }
   });
   return tweetDataCollection;
 }
