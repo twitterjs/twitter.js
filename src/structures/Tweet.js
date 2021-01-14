@@ -1,5 +1,6 @@
 'use strict';
 
+import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
 import TweetEntity from './TweetEntity.js';
 import TweetPublicMetrics from './TweetPublicMetrics.js';
@@ -37,6 +38,11 @@ class Tweet extends BaseStructure {
      * The attachments in the tweet
      */
     this.attachments = null;
+
+    /**
+     * Keys of the attachments in the tweet
+     */
+    this.attachmentKeys = data?.attachments ? new AttachmentKey(data.attachments) : null;
 
     /**
      * The author of the tweet
