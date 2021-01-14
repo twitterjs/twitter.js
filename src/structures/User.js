@@ -35,7 +35,7 @@ class User extends BaseStructure {
 
     /**
      * Entities in the description of the user
-     * @type {?Entity}
+     * @type {?UserEntity}
      */
     this.entities = data?.entities ? this._patchEntities(data.entities) : null;
 
