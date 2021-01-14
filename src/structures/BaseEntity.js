@@ -7,7 +7,7 @@ import Cashtag from './Cashtag.js';
 /**
  * Base class for tweet and use entity classes
  */
-class Entity {
+class BaseEntity {
   /**
    * @param {Object} data
    */
@@ -74,4 +74,4 @@ class Entity {
   }
 }
 
-export default Entity;
+export default BaseEntity;
