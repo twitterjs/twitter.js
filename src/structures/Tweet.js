@@ -2,6 +2,7 @@
 
 import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
+import ContextAnnotation from './ContextAnnotation.js';
 import TweetEntity from './TweetEntity.js';
 import TweetPublicMetrics from './TweetPublicMetrics.js';
 
@@ -58,8 +59,11 @@ class Tweet extends BaseStructure {
 
     /**
      * Context annotations for the tweet
+     * @type {ContextAnnotation}
      */
-    this.contextAnnotations = null;
+    this.contextAnnotations = data?.context_annotations
+      ? this._patchContextAnnotations(data.context_annotations)
+      : null;
 
     /**
      * Id of the original tweet of the conversation
@@ -141,6 +145,20 @@ class Tweet extends BaseStructure {
    */
   _patchEntities(entities) {
     return new TweetEntity(entities);
+  }
+
+  /**
+   * Adds data to the contextAnnotations
+   * @param {Array<Object>} contextAnnotations
+   * @private
+   * @returns {Array<ContextAnnotation>}
+   */
+  _patchContextAnnotations(contextAnnotations) {
+    const contextAnnotationsArray = [];
+    contextAnnotations.forEach(contextAnnotation => {
+      contextAnnotationsArray.push(new ContextAnnotation(contextAnnotation));
+    });
+    return contextAnnotationsArray;
   }
 }
 
