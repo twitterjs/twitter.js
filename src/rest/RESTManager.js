@@ -33,7 +33,7 @@ class RESTManager {
    */
   async fetchTweetById(id) {
     const endpoint = getTweetByIdEndpoint(id);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
@@ -46,7 +46,7 @@ class RESTManager {
    */
   async fetchTweetsByIds(ids) {
     const endpoint = getTweetsByIdsEndpoint(ids);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
@@ -59,7 +59,7 @@ class RESTManager {
    */
   async fetchUserById(id) {
     const endpoint = getUserByIdEndpoint(id);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
@@ -72,7 +72,7 @@ class RESTManager {
    */
   async fetchUserByUsername(username) {
     const endpoint = getUserByUsernameEndpoint(username);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
@@ -85,7 +85,7 @@ class RESTManager {
    */
   async fetchUsersByIds(ids) {
     const endpoint = getUsersByIdsEndpoint(ids);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
@@ -98,7 +98,7 @@ class RESTManager {
    */
   async fetchUsersByUsernames(usernames) {
     const endpoint = getUsersByUsernames(usernames);
-    const header = getHeaderObject(HTTPverbs.GET, this.client.token);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = res.json();
     return data;
