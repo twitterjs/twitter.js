@@ -25,10 +25,10 @@ export class Client extends BaseClient {
   private rest: RESTManager;
   private _triggerClientReady(): void;
 
-  public token: string | null;
+  public token: token | null;
   public readyAt: Date | null;
   public users: UserManager;
-  public login(token?: string): string;
+  public login(token?: token): token;
 }
 
 export class Collection<K, V> extends BaseCollection<K, V> {
@@ -105,4 +105,12 @@ interface FetchUserOption {
 interface FetchUsersOption {
   user?: UserResolvable | Array<UserResolvable>;
   skipCacheCheck?: boolean;
+}
+
+interface token {
+  consumerKey: string,
+  consumerSecret: string,
+  accessToken: string,
+  accessTokenSecret: string,
+  bearerToken: string
 }

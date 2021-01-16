@@ -16,15 +16,11 @@ class Client extends BaseClient {
     super();
 
     Object.defineProperty(this, 'token', { writable: true });
-    if (!this.token && 'TWITTER_TOKEN' in process.env) {
-      /**
-       * Bearer token for the bot. Defaults to `TWITTER_TOKEN` if it is present in the env variables, else sets it to null
-       * @type {?string}
-       */
-      this.token = process.env.TWITTER_TOKEN;
-    } else {
-      this.token = null;
-    }
+    /**
+     * The credentials of the bot
+     * @type {?Object}
+     */
+    this.token = null;
 
     /**
      * Time at which the client was marked as `READY`
@@ -53,14 +49,24 @@ class Client extends BaseClient {
   }
 
   /**
-   * Sets the Bearer Token as a property of the client for later use. Emits the `ready` event on success
-   * @param {string} [token=this.token] Bearer token of the bot
+   * An object containing bot credentials
+   * @typedef {object} token
+   * @property {string} consumerKey
+   * @property {string} consumerSecret
+   * @property {string} accessToken
+   * @property {string} accessTokenSecret
+   * @property {string} bearerToken
+   */
+
+  /**
+   * Sets the Token as a property of the client for later use. Emits the `ready` event on success
+   * @param {string} token Bearer token of the bot
    * @returns {string} The token that was provided
    * @example
    * client.login('Your-Bearer-Token');
    */
-  login(token = this.token) {
-    if (!token || typeof token !== 'string') {
+  login(token) {
+    if (!token) {
       throw new Error(Messages.TOKEN_INVALID);
     }
     this.token = token;
