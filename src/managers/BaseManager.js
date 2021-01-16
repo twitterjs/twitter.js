@@ -1,7 +1,6 @@
 'use strict';
 
 import Collection from '../util/Collection.js';
-import SnowflakeUtil from '../util/SnowflakeUtil.js';
 
 /**
  * Base class for all managers
@@ -52,11 +51,11 @@ class BaseManager {
   /**
    * Resolves a data entry to its respective Structure ID
    * @param {string|Object} structureResolvable The id or instance of the structure held by this Manager
-   * @returns {?Snowflake} An ID of the Structure held by this Manager
+   * @returns {?string} An ID of the Structure held by this Manager
    */
   resolveID(structureResolvable) {
     if (structureResolvable instanceof this.structureType) return structureResolvable.id;
-    if (SnowflakeUtil.isID(structureResolvable)) return structureResolvable;
+    if (typeof structureResolvable === 'string' && /^\d{1,}$/.test(structureResolvable)) return structureResolvable;
     return null;
   }
 }

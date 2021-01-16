@@ -41,7 +41,7 @@ class User extends BaseStructure {
 
     /**
      * The ID of the user
-     * @type {Snowflake}
+     * @type {string}
      */
     this.id = data.id;
 
@@ -65,7 +65,7 @@ class User extends BaseStructure {
 
     /**
      * The pinned tweet ID of the user
-     * @type {?Snowflake}
+     * @type {?string}
      */
     this.pinnedTweetID = data.pinned_tweet_id ? data.pinned_tweet_id : null;
 

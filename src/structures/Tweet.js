@@ -25,7 +25,7 @@ class Tweet extends BaseStructure {
 
     /**
      * The id of the tweet
-     * @type {Snowflake}
+     * @type {string}
      */
     this.id = data.id;
 
@@ -53,7 +53,7 @@ class Tweet extends BaseStructure {
 
     /**
      * The id of the author of the tweet
-     * @type {Snowflake}
+     * @type {string}
      */
     this.authorID = data.author_id;
 
@@ -67,7 +67,7 @@ class Tweet extends BaseStructure {
 
     /**
      * Id of the original tweet of the conversation
-     * @type {?Snowflake}
+     * @type {?string}
      */
     this.conversationID = data.conversation_id ? data.conversation_id : null;
 
@@ -89,7 +89,7 @@ class Tweet extends BaseStructure {
 
     /**
      * Original tweet's author ID, if the tweet is a reply
-     * @type {?Snowflake}
+     * @type {?string}
      */
     this.replyTo = data.in_reply_to_user_id ? data.in_reply_to_user_id : null;
 

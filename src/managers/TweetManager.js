@@ -19,7 +19,7 @@ class TweetManager extends BaseManager {
 
     /**
      * The cache of this Manager
-     * @type {Collection<Snowflake, Tweet>}
+     * @type {Collection<string, Tweet>}
      * @name TweetManager#cache
      */
 
@@ -27,7 +27,7 @@ class TweetManager extends BaseManager {
      * Data tht resolves to a Tweet object. This can be:
      * * A Tweet object
      * * A tweet ID
-     * @typedef {Tweet|Snowflake} TweetResolvable
+     * @typedef {Tweet|string} TweetResolvable
      */
   }
 
@@ -40,7 +40,7 @@ class TweetManager extends BaseManager {
   /**
    * Resolves a TweetResolvable to a Tweet object
    * @param {TweetResolvable} tweetResolvable An id or instance of a Tweet object
-   * @returns {?Snowflake}
+   * @returns {?string}
    */
 
   /**
@@ -61,7 +61,7 @@ class TweetManager extends BaseManager {
   /**
    * Fetches tweet(s) from Twitter
    * @param {TweetResolvable|FetchTweetOptions|FetchTweetsOption} [options] Options to fetch tweet(s)
-   * @returns {Promise<Tweet>|Promise<Collection<Snowflake, Tweet>>}
+   * @returns {Promise<Tweet>|Promise<Collection<string, Tweet>>}
    * @example
    * // Fetch a single tweet using ID
    * client.tweets.fetch('12345567890')
@@ -102,7 +102,7 @@ class TweetManager extends BaseManager {
 
   /**
    * Fetches a single tweet from Twitter
-   * @param {Snowflake} query The ID of the tweet to fetch
+   * @param {string} query The ID of the tweet to fetch
    * @private
    */
   async _fetchSingle(query) {
@@ -111,7 +111,7 @@ class TweetManager extends BaseManager {
 
   /**
    * Fetches upto 100 tweets from twitter
-   * @param {Array<Snowflake>} query An array of IDs of tweets to fetch
+   * @param {Array<string>} query An array of IDs of tweets to fetch
    * @private
    */
   async _fetchMany(query) {
