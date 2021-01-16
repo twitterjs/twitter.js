@@ -141,7 +141,7 @@ class UserManager extends BaseManager {
 
   /**
    * Fetches users from Twitter
-   * @param {Array<string|string>} query An array of IDs or usernames of the users to fetch
+   * @param {Array<string>} query An array of IDs or usernames of the users to fetch
    * @param {string} queryType Specifies whether the query is an array of IDs or usernames
    * @private
    */
