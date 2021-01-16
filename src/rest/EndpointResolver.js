@@ -18,7 +18,7 @@ import {
 
 /**
  * Resolves the endpoint for fetching a tweet using its ID
- * @param {Snowflake} id The ID of the tweet
+ * @param {string} id The ID of the tweet
  * @returns {string} The endpoint url for fetching a single tweet using its ID
  */
 export function getTweetByIdEndpoint(id) {
@@ -28,7 +28,7 @@ export function getTweetByIdEndpoint(id) {
 
 /**
  * Resolves the endpoint for fetching upto 100 tweets using their IDs
- * @param {Array<Snowflake>} ids An array of IDs of the tweets to fetch
+ * @param {Array<string>} ids An array of IDs of the tweets to fetch
  * @returns {string} The endpoint url for fetching upto 100 tweets using their IDs
  */
 export function getTweetsByIdsEndpoint(ids) {
@@ -39,7 +39,7 @@ export function getTweetsByIdsEndpoint(ids) {
 
 /**
  * Resolves the endpoint for fetching a user using its ID
- * @param {Snowflake} id The ID of the user
+ * @param {string} id The ID of the user
  * @returns {string} The endpoint url for fetching a single user using its ID
  */
 export function getUserByIdEndpoint(id) {
@@ -59,7 +59,7 @@ export function getUserByUsernameEndpoint(username) {
 
 /**
  * Resolves the endpoint for fetching users using their IDs
- * @param {Array<Snowflake>} ids An array of IDs of the users to fetch
+ * @param {Array<string>} ids An array of IDs of the users to fetch
  * @returns {string} The endpoint url for fetching users using their IDs
  */
 export function getUsersByIdsEndpoint(ids) {

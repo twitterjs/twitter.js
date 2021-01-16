@@ -37,27 +37,27 @@ export class Collection<K, V> extends BaseCollection<K, V> {
 export class RESTManager {
   constructor(client: Client);
   public client: Client;
-  public fetchTweetById(id: Snowflake): Promise<object>;
-  public fetchTweetsById(id: Array<Snowflake>): Promise<object>;
-  public fetchUserById(id: Snowflake): Promise<object>;
+  public fetchTweetById(id: string): Promise<object>;
+  public fetchTweetsById(id: Array<string>): Promise<object>;
+  public fetchUserById(id: string): Promise<object>;
   public fetchUserByUsername(username: string): Promise<object>;
-  public fetchUsersByIds(ids: Array<Snowflake>): Promise<object>;
+  public fetchUsersByIds(ids: Array<string>): Promise<object>;
   public fetchUsersByUsernames(usernames: Array<string>): Promise<object>;
 }
 
 export class Tweet extends BaseStructure {
   constructor(client: Client, data: object);
-  public id: Snowflake;
+  public id: string;
   public text: string;
   public attachments: object | null;
   public author: User | null;
-  public authorID: Snowflake;
+  public authorID: string;
   public contextAnnotations: object | null;
-  public conversationID: Snowflake | null;
+  public conversationID: string | null;
   public createdAt: Date;
   public entites: object | null;
   public geo: object | null;
-  public replyTo: Snowflake | null;
+  public replyTo: string | null;
   public language: string;
   public possiblySensitive: boolean | null;
   public publicMetrics: object | null;
@@ -72,11 +72,11 @@ export class User extends BaseStructure {
   public readonly createdAt: Date;
   public description: string | null;
   public entities: object | null;
-  public id: Snowflake;
+  public id: string;
   public location: string | null;
   public name: string;
   public pinnedTweet: Tweet | null;
-  public pinnedTweetID: Snowflake | null;
+  public pinnedTweetID: string | null;
   public profileImageURL: string;
   public protected: boolean;
   public publicMetrics: object | null;
@@ -86,15 +86,13 @@ export class User extends BaseStructure {
   public withheld: object | null;
 }
 
-export class UserManager extends BaseManager<Snowflake, User, UserResolvable> {
+export class UserManager extends BaseManager<string, User, UserResolvable> {
   constructor(client: Client);
   public fetch(options: UserResolvable | FetchUserOption | (FetchUsersOption & { user: UserResolvable })): Promise<User>;
-  public fetch(options?: FetchUsersOption): Promise<Collection<Snowflake, User>>;
+  public fetch(options?: FetchUsersOption): Promise<Collection<string, User>>;
 }
 
-type Snowflake = string;
-
-type UserResolvable = User | Snowflake | string;
+type UserResolvable = User | string;
 
 interface FetchUserOption {
   user: UserResolvable;

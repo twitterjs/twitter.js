@@ -19,7 +19,7 @@ class UserManager extends BaseManager {
   }
   /**
    * The cache of this manager
-   * @type {Collection<Snowflake, User>}
+   * @type {Collection<string, User>}
    * @name UserManager#cache
    */
 
@@ -28,7 +28,7 @@ class UserManager extends BaseManager {
    * * A User object
    * * A user ID
    * * A username
-   * @typedef {User|Snowflake|string} UserResolvable
+   * @typedef {User|string} UserResolvable
    */
 
   /**
@@ -48,7 +48,7 @@ class UserManager extends BaseManager {
   /**
    * Resolves a UserResolvable to a user ID
    * @param {UserResolvable} userResolvable The id, username, or instance of a User object
-   * @returns {?Snowflake}
+   * @returns {?string}
    */
   resolveID(userResolvable) {
     const userID = super.resolveID(userResolvable);
@@ -75,7 +75,7 @@ class UserManager extends BaseManager {
   /**
    * Fetches user(s) from Twitter
    * @param {UserResolvable|FetchUserOptions|FetchUsersOptions} [options] Options to fetch user(s)
-   * @returns {Promise<User>|Promise<Collection<Snowflake, User>>}
+   * @returns {Promise<User>|Promise<Collection<string, User>>}
    * @example
    * // Fetch a user using ID
    * client.users.fetch('1234567890')
@@ -130,7 +130,7 @@ class UserManager extends BaseManager {
 
   /**
    * Fetches a single user from Twitter
-   * @param {Snowflake|string} query Either an ID or the username of the user to fetch
+   * @param {string} query Either an ID or the username of the user to fetch
    * @param {string} queryType Specifies whether the query is an id or username
    * @private
    */
@@ -141,7 +141,7 @@ class UserManager extends BaseManager {
 
   /**
    * Fetches users from Twitter
-   * @param {Array<Snowflake|string>} query An array of IDs or usernames of the users to fetch
+   * @param {Array<string|string>} query An array of IDs or usernames of the users to fetch
    * @param {string} queryType Specifies whether the query is an array of IDs or usernames
    * @private
    */

@@ -28,7 +28,7 @@ class RESTManager {
 
   /**
    * Fetches a tweet from Twitter using its ID
-   * @param {Snowflake} id ID of the tweet
+   * @param {string} id ID of the tweet
    * @returns {Promise<Object>} An object containing the tweet data
    */
   async fetchTweetById(id) {
@@ -41,7 +41,7 @@ class RESTManager {
 
   /**
    * Fetches upto 100 tweets from Twitter using their IDs
-   * @param {Array<Snowflake>} ids IDs of the tweets
+   * @param {Array<string>} ids IDs of the tweets
    * @returns {Promise<Object>} An object containing the tweets data
    */
   async fetchTweetsByIds(ids) {
@@ -54,7 +54,7 @@ class RESTManager {
 
   /**
    * Fetches a user from Twitter using its ID
-   * @param {Snowflake} id ID of the user
+   * @param {string} id ID of the user
    * @returns {Promise<Object>} An object containing the user data
    */
   async fetchUserById(id) {
@@ -80,7 +80,7 @@ class RESTManager {
 
   /**
    * Fetches users from Twitter using their IDs
-   * @param {Array<Snowflake>} ids An array of IDs of the users to fetch
+   * @param {Array<string>} ids An array of IDs of the users to fetch
    * @returns {Promise<Object>} An object containing the users data;
    */
   async fetchUsersByIds(ids) {
