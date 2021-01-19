@@ -8,8 +8,9 @@ import {
   getUsersByIdsEndpoint,
   getUsersByUsernames,
   getTweetsByIdsEndpoint,
+  getHideUnhideReplyEndpoint,
 } from './EndpointResolver.js';
-import { getHeaderObject } from './HeaderResolver.js';
+import { getHeaderObject, getUserContextHeaderObject } from './HeaderResolver.js';
 import { HTTPverbs } from '../util/Constants.js';
 
 /**
@@ -101,6 +102,20 @@ class RESTManager {
     const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = res.json();
+    return data;
+  }
+
+  /**
+   * Hides or unhides a tweet that is a reply to one of the user's tweet
+   * @param {string} id The ID of the tweet to hide or unhide
+   * @param {boolean} hideOrUnhide True if the reply is to be hiddenn, else false
+   * @returns {Promise<object>}
+   */
+  async hideUnhideReply(id, hideOrUnhide) {
+    const endpoint = getHideUnhideReplyEndpoint(id);
+    const header = getUserContextHeaderObject(HTTPverbs.PUT, this.client.token, endpoint, hideOrUnhide);
+    const res = await fetch(endpoint, header);
+    const data = await res.json();
     return data;
   }
 }
