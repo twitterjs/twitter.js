@@ -6,7 +6,7 @@ import {
   getUserByIdEndpoint,
   getUserByUsernameEndpoint,
   getUsersByIdsEndpoint,
-  getUsersByUsernames,
+  getUsersByUsernamesEndpoint,
   getTweetsByIdsEndpoint,
   getHideUnhideReplyEndpoint,
 } from './EndpointResolver.js';
@@ -98,7 +98,7 @@ class RESTManager {
    * @returns {Promise<Object>} An object containing the users data
    */
   async fetchUsersByUsernames(usernames) {
-    const endpoint = getUsersByUsernames(usernames);
+    const endpoint = getUsersByUsernamesEndpoint(usernames);
     const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = res.json();
