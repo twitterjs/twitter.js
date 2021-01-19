@@ -91,7 +91,7 @@ class Tweet extends BaseStructure {
      * Original tweet's author ID, if the tweet is a reply
      * @type {?string}
      */
-    this.replyTo = data.in_reply_to_user_id ? data.in_reply_to_user_id : null;
+    this.inReplyToUserID = data.in_reply_to_user_id ? data.in_reply_to_user_id : null;
 
     /**
      * The language of the tweet
@@ -119,7 +119,7 @@ class Tweet extends BaseStructure {
      * Shows who can reply to the tweet
      * @type {string}
      */
-    this.canReply = data.reply_settings;
+    this.replySettings = data.reply_settings;
 
     /**
      * The platform used to post the tweet
