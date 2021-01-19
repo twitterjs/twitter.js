@@ -42,6 +42,7 @@ export const Events = {
 // HTTPverbs or Request Methods
 export const HTTPverbs = {
   GET: 'GET',
+  PUT: 'PUT',
 };
 
 // query
