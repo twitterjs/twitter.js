@@ -78,3 +78,13 @@ export function getUsersByUsernames(usernames) {
   const endpoint = `${usersByUsernames}?usernames=${usernamesArray}&user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}`;
   return endpoint;
 }
+
+/**
+ * Resolves the endpoint for hiding or unhiding a reply
+ * @param {string} id The ID of the reply tweet to hide or unhide
+ * @returns {string} The endpoint url to hide or unhide a reply
+ */
+export function getHideUnhideReplyEndpoint(id) {
+  const endpoint = `${tweetById}${id}/hidden`;
+  return endpoint;
+}
