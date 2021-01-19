@@ -133,6 +133,26 @@ class Tweet extends BaseStructure {
     this.withheld = null;
   }
 
+  /**
+   * Hides a reply to the tweet
+   * @param {string} id The ID of the reply that is to be hidden
+   * @returns {Promise<boolean>} True if the reply is hidden otherwise false
+   */
+  async hideReply(id) {
+    const res = await this.client.rest.hideUnhideReply(id, true);
+    return res?.data?.hidden;
+  }
+
+  /**
+   * Unhides a reply to the tweet
+   * @param {string} id The ID of the reply that is to be unhidden
+   * @returns {Promise<boolean>} True if the reply is hidden otherwise false
+   */
+  async unhideReply(id) {
+    const res = await this.client.rest.hideUnhideReply(id, false);
+    return res?.data?.hidden;
+  }
+
   _patchPublicMetrics(publicMetrics) {
     return new TweetPublicMetrics(publicMetrics);
   }
