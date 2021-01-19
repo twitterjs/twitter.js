@@ -16,7 +16,7 @@ class AttachmentKey {
 
     /**
      * An array of IDs for polls present in the tweet
-     * @type {?Array<string}
+     * @type {?Array<string>}
      */
     this.pollIds = null;
   }
