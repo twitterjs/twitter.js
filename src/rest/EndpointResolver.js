@@ -73,7 +73,7 @@ export function getUsersByIdsEndpoint(ids) {
  * @param {Array<string>} usernames An array of usernames of the users to fetch
  * @returns {string} The endpoint url for fetching users using their usernames
  */
-export function getUsersByUsernames(usernames) {
+export function getUsersByUsernamesEndpoint(usernames) {
   let usernamesArray = usernames.join();
   const endpoint = `${usersByUsernames}?usernames=${usernamesArray}&user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}`;
   return endpoint;
