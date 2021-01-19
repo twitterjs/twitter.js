@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "oauth-1.0a": "^2.2.6"
   },
   "type": "module"
 }
