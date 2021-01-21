@@ -9,6 +9,7 @@ import {
   getUsersByUsernamesEndpoint,
   getTweetsByIdsEndpoint,
   getHideUnhideReplyEndpoint,
+  getUserFollowingEndpoint,
 } from './EndpointResolver.js';
 import { getHeaderObject, getUserContextHeaderObject } from './HeaderResolver.js';
 import { HTTPverbs } from '../util/Constants.js';
@@ -114,6 +115,19 @@ class RESTManager {
   async hideUnhideReply(id, hideOrUnhide) {
     const endpoint = getHideUnhideReplyEndpoint(id);
     const header = getUserContextHeaderObject(HTTPverbs.PUT, this.client.token, endpoint, hideOrUnhide);
+    const res = await fetch(endpoint, header);
+    const data = await res.json();
+    return data;
+  }
+
+  /**
+   * Fetches users followed by the user
+   * @param {string} id The ID of the user whose following are to be fetched
+   * @returns {Promise<object>}
+   */
+  async fetchUserFollowing(id) {
+    const endpoint = getUserFollowingEndpoint(id);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
     return data;
