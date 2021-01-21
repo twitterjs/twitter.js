@@ -36,3 +36,18 @@ export function cleanFetchManyTweetsResponse(response) {
   });
   return tweetDataCollection;
 }
+
+export function cleanFetchFollowingResponse(response) {
+  const userDataCollection = new Collection();
+  response.data.forEach(data => {
+    const userData = { data: null, includes: { tweets: [] } };
+    userData.data = data;
+    userDataCollection.set(data.id, userData);
+  });
+  response?.includes?.tweets.forEach(tweet => {
+    const userData = userDataCollection.get(tweet.author_id);
+    userData.includes.tweets.push(tweet);
+    userDataCollection.set(tweet.author_id, userData);
+  });
+  return userDataCollection;
+}
