@@ -88,3 +88,13 @@ export function getHideUnhideReplyEndpoint(id) {
   const endpoint = `${tweetById}${id}/hidden`;
   return endpoint;
 }
+
+/**
+ * Resolves the endpoint for user following
+ * @param {string} id The ID of the user whose following are to be fetched
+ * @returns {string} The endpoint url for fetching user following
+ */
+export function getUserFollowingEndpoint(id) {
+  const endpoint = `${userById}${id}/following?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}`;
+  return endpoint;
+}
