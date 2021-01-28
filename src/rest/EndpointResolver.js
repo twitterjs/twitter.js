@@ -102,3 +102,17 @@ export function getUserFollowingEndpoint(id, paginationToken = null, maxResults 
   }
   return `${userById}${id}/following?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}&&max_results=${maxResults}`;
 }
+
+/**
+ * Resolves the endpoint for user followers
+ * @param {string} id The ID of the user whose followers are to be fetched
+ * @param {?string} [paginationToken = null] The token to move API response pages back and forth
+ * @param {number} [maxResults = 1000] The maximum number of users per page
+ * @returns  {string} The endpoint url for detching the user followers
+ */
+export function getUserFollowersEndpoint(id, paginationToken = null, maxResults = 1000) {
+  if (paginationToken) {
+    return `${userById}${id}/followers?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}&&max_results=${maxResults}&&pagination_token=${paginationToken}`;
+  }
+  return `${userById}${id}/followers?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}&&max_results=${maxResults}`;
+}

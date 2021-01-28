@@ -10,6 +10,7 @@ import {
   getTweetsByIdsEndpoint,
   getHideUnhideReplyEndpoint,
   getUserFollowingEndpoint,
+  getUserFollowersEndpoint,
 } from './EndpointResolver.js';
 import { getHeaderObject, getUserContextHeaderObject } from './HeaderResolver.js';
 import { HTTPverbs } from '../util/Constants.js';
@@ -146,6 +147,36 @@ class RESTManager {
    */
   async _fetch(id, paginationToken = null, perPage) {
     const endpoint = getUserFollowingEndpoint(id, paginationToken, perPage);
+    const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
+    const res = await fetch(endpoint, header);
+    const data = await res.json();
+    return data;
+  }
+
+  /**
+   * Fetches followers of the user
+   * @param {string} id The ID of the user whose followers are to be fetched
+   * @returns {Promise<Collection<string, object>>}
+   */
+  async fetchUserFollowers(id, perPage) {
+    let usersFollowersCollection = new Collection();
+    let data = await this._fetchUserFollowers(id, null, perPage);
+    let nextToken = data?.meta?.next_token ? data.meta.next_token : null;
+    usersFollowersCollection = usersFollowersCollection.concat(cleanFetchFollowingResponse(data));
+    while (nextToken) {
+      data = await this._fetchUserFollowers(id, nextToken, perPage);
+      nextToken = data?.meta?.next_token ? data.meta.next_token : null;
+      usersFollowersCollection = usersFollowersCollection.concat(cleanFetchFollowingResponse(data));
+    }
+    return usersFollowersCollection;
+  }
+
+  /**
+   * Helper function for fetchUserFollowers
+   * @private
+   */
+  async _fetchUserFollowers(id, paginationToken = null, perPage) {
+    const endpoint = getUserFollowersEndpoint(id, paginationToken, perPage);
     const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();
