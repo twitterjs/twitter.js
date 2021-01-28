@@ -1,7 +1,7 @@
 {
   "name": "twitter.js",
-  "version": "0.0.7",
-  "description": "A JavaScript wrapper library for Twitter API v2",
+  "version": "0.0.8",
+  "description": "An object-oriented JavaScript library for interacting with the Twitter API v2",
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
   "scripts": {
