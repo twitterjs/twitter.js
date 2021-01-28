@@ -11,8 +11,9 @@ const token = {
 const client = new Client();
 
 client.on('ready', async () => {
-  const u = await client.users.fetch({ user: ['i_Shibi', 'TwitterDev'] });
-  console.log(u);
+  const me = await client.users.fetch('i_Shibi');
+  const f = await me.fetchFollowing();
+  console.log(f);
 });
 
 client.login(token);

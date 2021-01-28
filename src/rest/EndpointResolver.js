@@ -92,9 +92,13 @@ export function getHideUnhideReplyEndpoint(id) {
 /**
  * Resolves the endpoint for user following
  * @param {string} id The ID of the user whose following are to be fetched
+ * @param {?string} [paginationToken=null] The token to move API response pages back and forth
+ * @param {number} [maxResults=1000] The maximum number of users per page
  * @returns {string} The endpoint url for fetching user following
  */
-export function getUserFollowingEndpoint(id) {
-  const endpoint = `${userById}${id}/following?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}`;
-  return endpoint;
+export function getUserFollowingEndpoint(id, paginationToken = null, maxResults = 1000) {
+  if (paginationToken) {
+    return `${userById}${id}/following?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}&&max_results=${maxResults}&&pagination_token=${paginationToken}`;
+  }
+  return `${userById}${id}/following?user.fields=${userFields}&expansions=${expansionsForUser}&tweet.fields=${tweetFields}&&max_results=${maxResults}`;
 }
