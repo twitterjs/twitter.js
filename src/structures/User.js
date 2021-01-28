@@ -142,6 +142,16 @@ class User extends BaseStructure {
     const followingCollection = userBuilder(this.client, followingData);
     return followingCollection;
   }
+
+  /**
+   * Fetches followers of the user
+   * @returns {Promise<Collection<string, User>>}
+   */
+  async fetchFollowers() {
+    const followersData = await this.client.rest.fetchUserFollowers(this.id);
+    const followersCollection = userBuilder(this.client, followersData);
+    return followersCollection;
+  }
 }
 
 export default User;
