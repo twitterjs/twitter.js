@@ -13,6 +13,8 @@ import {
 } from './EndpointResolver.js';
 import { getHeaderObject, getUserContextHeaderObject } from './HeaderResolver.js';
 import { HTTPverbs } from '../util/Constants.js';
+import { cleanFetchFollowingResponse } from '../util/ResponseCleaner.js';
+import Collection from '../util/Collection.js';
 
 /**
  * This class holds the methods for REST API calls for every endpoints of Twitter API v2
@@ -123,10 +125,27 @@ class RESTManager {
   /**
    * Fetches users followed by the user
    * @param {string} id The ID of the user whose following are to be fetched
-   * @returns {Promise<object>}
+   * @returns {Promise<Collection<string, object>>}
    */
-  async fetchUserFollowing(id) {
-    const endpoint = getUserFollowingEndpoint(id);
+  async fetchUserFollowing(id, perPage) {
+    let userFollowingCollection = new Collection();
+    let data = await this._fetch(id, null, perPage);
+    let nextToken = data?.meta?.next_token ? data.meta.next_token : null;
+    userFollowingCollection = userFollowingCollection.concat(cleanFetchFollowingResponse(data));
+    while (nextToken) {
+      data = await this._fetch(id, nextToken, perPage);
+      nextToken = data?.meta?.next_token ? data.meta.next_token : null;
+      userFollowingCollection = userFollowingCollection.concat(cleanFetchFollowingResponse(data));
+    }
+    return userFollowingCollection;
+  }
+
+  /**
+   * Helper function for fetchUserFollowing
+   * @private
+   */
+  async _fetch(id, paginationToken = null, perPage) {
+    const endpoint = getUserFollowingEndpoint(id, paginationToken, perPage);
     const header = getHeaderObject(HTTPverbs.GET, this.client.token.bearerToken);
     const res = await fetch(endpoint, header);
     const data = await res.json();

@@ -1,6 +1,5 @@
 'use strict';
 
-import { cleanFetchFollowingResponse } from '../util/ResponseCleaner.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import BaseStructure from './BaseStructure.js';
 import UserEntity from './UserEntity.js';
@@ -139,8 +138,7 @@ class User extends BaseStructure {
    * @returns {Promise<Collection<string, User>>}
    */
   async fetchFollowing() {
-    const followingResponse = await this.client.rest.fetchUserFollowing(this.id);
-    const followingData = cleanFetchFollowingResponse(followingResponse);
+    const followingData = await this.client.rest.fetchUserFollowing(this.id);
     const followingCollection = userBuilder(this.client, followingData);
     return followingCollection;
   }
