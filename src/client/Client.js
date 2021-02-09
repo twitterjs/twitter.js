@@ -2,7 +2,6 @@
 
 import BaseClient from './BaseClient.js';
 import { Events } from '../util/Constants.js';
-import RESTManager from '../rest/RESTManager.js';
 import { Messages } from '../errors/ErrorMessages.js';
 import UserManager from '../managers/UserManager.js';
 import TweetManager from '../managers/TweetManager.js';
@@ -18,7 +17,7 @@ class Client extends BaseClient {
     Object.defineProperty(this, 'token', { writable: true });
     /**
      * The credentials of the bot
-     * @type {?Object}
+     * @type {?ClientCredentials}
      */
     this.token = null;
 
@@ -27,13 +26,6 @@ class Client extends BaseClient {
      * @type {?Date}
      */
     this.readyAt = null;
-
-    /**
-     * The REST manager of this client
-     * @type {RESTManager}
-     * @private
-     */
-    this.rest = new RESTManager(this);
 
     /**
      * The user manager of this client
@@ -49,8 +41,8 @@ class Client extends BaseClient {
   }
 
   /**
-   * An object containing bot credentials
-   * @typedef {object} token
+   * An object containing credentials for the client
+   * @typedef {Object} ClientCredentials
    * @property {string} consumerKey
    * @property {string} consumerSecret
    * @property {string} accessToken
@@ -59,17 +51,17 @@ class Client extends BaseClient {
    */
 
   /**
-   * Sets the Token as a property of the client for later use. Emits the `ready` event on success
-   * @param {string} token Bearer token of the bot
-   * @returns {string} The token that was provided
+   * Sets the credentials as a property of the client for later use. Emits the `ready` event on success
+   * @param {ClientCredentials} credentials Credentials for the client
+   * @returns {ClientCredentials} Credentials object that was provided
    * @example
-   * client.login('Your-Bearer-Token');
+   * client.login('Your-Credentials');
    */
-  login(token) {
-    if (!token) {
+  login(credentials) {
+    if (!credentials) {
       throw new Error(Messages.TOKEN_INVALID);
     }
-    this.token = token;
+    this.token = credentials;
     this._triggerClientReady();
     return this.token;
   }
