@@ -2,9 +2,10 @@
 
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
-import { queryTypes } from '../util/Constants.js';
+import { queryParameters, queryTypes } from '../util/Constants.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyUsersResponse } from '../util/ResponseCleaner.js';
+import APIOptions from '../structures/APIOptions.js';
 
 /**
  * Manages the API methods for users and stores their cache
@@ -135,8 +136,14 @@ class UserManager extends BaseManager {
    * @private
    */
   async _fetchSingle(query, queryType) {
-    if (queryType === queryTypes.ID) return await this.client.rest.fetchUserById(query);
-    if (queryType === queryTypes.USERNAME) return await this.client.rest.fetchUserByUsername(query);
+    const queryParams = {
+      'user.fields': queryParameters.userFields,
+      'tweet.fields': queryParameters.tweetFields,
+      expansions: queryParameters.expansions.user,
+    };
+    const options = new APIOptions(queryParams, null, false);
+    if (queryType === queryTypes.ID) return await this.client.api.users(query).get(options);
+    if (queryType === queryTypes.USERNAME) return await this.client.api.users.by.username(query).get(options);
   }
 
   /**
@@ -146,8 +153,15 @@ class UserManager extends BaseManager {
    * @private
    */
   async _fetchMany(query, queryType) {
-    if (queryType === queryTypes.ID) return await this.client.rest.fetchUsersByIds(query);
-    if (queryType === queryTypes.USERNAME) return await this.client.rest.fetchUsersByUsernames(query);
+    const queryParams = {
+      'user.fields': queryParameters.userFields,
+      'tweet.fields': queryParameters.tweetFields,
+      expansions: queryParameters.expansions.user,
+    };
+    queryType === queryTypes.ID ? (queryParams['ids'] = query) : (queryParams['usernames'] = query);
+    const options = new APIOptions(queryParams, null, false);
+    if (queryType === queryTypes.ID) return await this.client.api.users.get(options);
+    if (queryType === queryTypes.USERNAME) return await this.client.api.users.by.get(options);
   }
 }
 

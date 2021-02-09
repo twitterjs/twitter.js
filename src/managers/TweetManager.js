@@ -5,6 +5,8 @@ import Tweet from '../structures/Tweet.js';
 import { tweetBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyTweetsResponse } from '../util/ResponseCleaner.js';
 import { Messages } from '../errors/ErrorMessages.js';
+import { queryParameters } from '../util/Constants.js';
+import APIOptions from '../structures/APIOptions.js';
 
 /**
  * Holds API methods for tweets and stores their cache
@@ -106,7 +108,16 @@ class TweetManager extends BaseManager {
    * @private
    */
   async _fetchSingle(query) {
-    return this.client.rest.fetchTweetById(query);
+    const queryParams = {
+      expansions: queryParameters.expansions.tweet,
+      'media.fields': queryParameters.mediaFields,
+      'place.fields': queryParameters.placeFields,
+      'poll.fields': queryParameters.pollFields,
+      'tweet.fields': queryParameters.tweetFields,
+      'user.fields': queryParameters.userFields,
+    };
+    const options = new APIOptions(queryParams, null, false);
+    return this.client.api.tweets(query).get(options);
   }
 
   /**
@@ -115,7 +126,17 @@ class TweetManager extends BaseManager {
    * @private
    */
   async _fetchMany(query) {
-    return this.client.rest.fetchTweetsByIds(query);
+    const queryParams = {
+      expansions: queryParameters.expansions.tweet,
+      ids: query,
+      'media.fields': queryParameters.mediaFields,
+      'place.fields': queryParameters.placeFields,
+      'poll.fields': queryParameters.pollFields,
+      'tweet.fields': queryParameters.tweetFields,
+      'user.fields': queryParameters.userFields,
+    };
+    const options = new APIOptions(queryParams, null, false);
+    return this.client.api.tweets.get(options);
   }
 }
 

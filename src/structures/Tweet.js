@@ -1,5 +1,6 @@
 'use strict';
 
+import APIOptions from './APIOptions.js';
 import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
 import ContextAnnotation from './ContextAnnotation.js';
@@ -139,7 +140,8 @@ class Tweet extends BaseStructure {
    * @returns {Promise<boolean>} True if the reply is hidden otherwise false
    */
   async hideReply(id) {
-    const res = await this.client.rest.hideUnhideReply(id, true);
+    const options = new APIOptions(null, { hidden: true }, true);
+    const res = await this.client.api.tweets(id).hidden.put(options);
     return res?.data?.hidden;
   }
 
@@ -149,7 +151,8 @@ class Tweet extends BaseStructure {
    * @returns {Promise<boolean>} True if the reply is hidden otherwise false
    */
   async unhideReply(id) {
-    const res = await this.client.rest.hideUnhideReply(id, false);
+    const options = new APIOptions(null, { hidden: false }, true);
+    const res = await this.client.api.tweets(id).hidden.put(options);
     return res?.data?.hidden;
   }
 

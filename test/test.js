@@ -11,9 +11,9 @@ const token = {
 const client = new Client();
 
 client.on('ready', async () => {
-  const me = await client.users.fetch('i_Shibi');
-  const f = await me.fetchFollowing();
-  console.log(f);
+  const tweet = await client.tweets.fetch('1351284149588398081');
+  console.log(tweet);
+  tweet.unhideReply('1351284615734956032').then(b => console.log(b));
 });
 
 client.login(token);

@@ -4,6 +4,7 @@ import BaseCollection from '@discordjs/collection';
 // Class Types
 export class BaseClient extends EventEmitter {
   constructor();
+  private rest: RESTManager;
 }
 
 export class BaseManager<K, structureType, R> {
@@ -22,13 +23,12 @@ export class BaseStructure {
 
 export class Client extends BaseClient {
   constructor();
-  private rest: RESTManager;
   private _triggerClientReady(): void;
 
-  public token: token | null;
+  public token: ClientCredentials | null;
   public readyAt: Date | null;
   public users: UserManager;
-  public login(token?: token): token;
+  public login(credentials?: ClientCredentials): ClientCredentials;
 }
 
 export class Collection<K, V> extends BaseCollection<K, V> {
@@ -36,13 +36,6 @@ export class Collection<K, V> extends BaseCollection<K, V> {
 
 export class RESTManager {
   constructor(client: Client);
-  public client: Client;
-  public fetchTweetById(id: string): Promise<object>;
-  public fetchTweetsById(id: Array<string>): Promise<object>;
-  public fetchUserById(id: string): Promise<object>;
-  public fetchUserByUsername(username: string): Promise<object>;
-  public fetchUsersByIds(ids: Array<string>): Promise<object>;
-  public fetchUsersByUsernames(usernames: Array<string>): Promise<object>;
 }
 
 export class Tweet extends BaseStructure {
@@ -105,7 +98,7 @@ interface FetchUsersOption {
   skipCacheCheck?: boolean;
 }
 
-interface token {
+interface ClientCredentials {
   consumerKey: string,
   consumerSecret: string,
   accessToken: string,
