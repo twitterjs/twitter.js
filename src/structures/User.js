@@ -1,7 +1,11 @@
 'use strict';
 
+import { queryParameters } from '../util/Constants.js';
+import { cleanFetchFollowingResponse } from '../util/ResponseCleaner.js';
 import { userBuilder } from '../util/StructureBuilder.js';
+import APIOptions from './APIOptions.js';
 import BaseStructure from './BaseStructure.js';
+import PaginatedResponse from './PaginatedResponse.js';
 import UserEntity from './UserEntity.js';
 import UserPublicMetrics from './UserPublicMetrics.js';
 
@@ -134,23 +138,59 @@ class User extends BaseStructure {
   }
 
   /**
-   * Fetches following of the user
-   * @returns {Promise<Collection<string, User>>}
+   * Options used to fetch following of a user
+   * @typedef {Object} FetchFollowingOptions
+   * @property {number} [maxResults=100] Number of users to fetch per page
+   * @property {string} [nextPageToken=null] Token for fetching the next page
+   * @property {string} [previousPageToken=null] Token for fetching the previous page
    */
-  async fetchFollowing() {
-    const followingData = await this.client.rest.fetchUserFollowing(this.id);
-    const followingCollection = userBuilder(this.client, followingData);
-    return followingCollection;
+
+  /**
+   * Fetches following of the user
+   * @param {FetchFollowingOptions} options Options to fetch user following
+   * @returns {Promise<PaginatedResponse>}
+   */
+  async fetchFollowing(options) {
+    const queryParams = {
+      expansions: queryParameters.expansions.user,
+      max_results: options?.maxResults ?? 100,
+      pagination_token: options?.nextPageToken ?? options?.previousPageToken ?? null,
+      'tweet.fields': queryParameters.tweetFields,
+      'user.fields': queryParameters.userFields,
+    };
+    const apiOptions = new APIOptions(queryParams, null, false);
+    const response = await this.client.api.users(this.id).following.get(apiOptions);
+    const cleanedResponse = cleanFetchFollowingResponse(response);
+    const followingCollection = userBuilder(this.client, cleanedResponse);
+    return new PaginatedResponse(followingCollection, response.meta);
   }
 
   /**
-   * Fetches followers of the user
-   * @returns {Promise<Collection<string, User>>}
+   * Options used to fetch followers of a user
+   * @typedef {Object} FetchFollowersOptions
+   * @property {number} [maxResults=100] Number of users to fetch per page
+   * @property {string} [nextPageToken=null] Token for fetching the next page
+   * @property {string} [previousPageToken=null] Token for fetching the previous page
    */
-  async fetchFollowers() {
-    const followersData = await this.client.rest.fetchUserFollowers(this.id);
-    const followersCollection = userBuilder(this.client, followersData);
-    return followersCollection;
+
+  /**
+   * Fetches followers of the user
+   * @param {FetchFollowersOptions} options Options to fetch user followers
+   * @returns {Promise<PaginatedResponse>}
+   */
+  async fetchFollowers(options) {
+    const queryParams = {
+      expansions: queryParameters.expansions.user,
+      max_results: options?.maxResults ?? 100,
+      pagination_token: options?.nextPageToken ?? options?.previousPageToken ?? null,
+      'tweet.fields': queryParameters.tweetFields,
+      'user.fields': queryParameters.userFields,
+    };
+    const apiOptions = new APIOptions(queryParams, null, false);
+    const response = await this.client.api.users(this.id).followers.get(apiOptions);
+    const cleanedResponse = cleanFetchFollowingResponse(response);
+    const followersCollection = userBuilder(this.client, cleanedResponse);
+    return new PaginatedResponse(followersCollection, response.meta);
   }
 }
 
