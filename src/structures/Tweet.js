@@ -1,10 +1,8 @@
 'use strict';
 
-import APIOptions from './APIOptions.js';
 import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
 import ContextAnnotation from './ContextAnnotation.js';
-import { ReplyState } from './GeneralResponses.js';
 import TweetEntity from './TweetEntity.js';
 import TweetPublicMetrics from './TweetPublicMetrics.js';
 
@@ -136,25 +134,19 @@ class Tweet extends BaseStructure {
   }
 
   /**
-   * Hides a reply to the tweet
-   * @param {string} id The ID of the reply that is to be hidden
-   * @returns {Promise<boolean>} True if the reply is hidden otherwise false
+   * Hides the tweet if it is a reply to a tweet made by the user
+   * @returns {Promise<ReplyState>}
    */
-  async hideReply(id) {
-    const apiOptions = new APIOptions(null, { hidden: true }, true);
-    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
-    return new ReplyState(response);
+  async hideReply() {
+    return this.client.tweets.hideReply(this.id);
   }
 
   /**
-   * Unhides a reply to the tweet
-   * @param {string} id The ID of the reply that is to be unhidden
-   * @returns {Promise<boolean>} True if the reply is hidden otherwise false
+   * Unhides the tweet if it is a reply to a tweet made by the user
+   * @returns {Promise<ReplyState>}
    */
-  async unhideReply(id) {
-    const apiOptions = new APIOptions(null, { hidden: false }, true);
-    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
-    return new ReplyState(response);
+  async unhideReply() {
+    return this.client.tweets.unhideReply(this.id);
   }
 
   _patchPublicMetrics(publicMetrics) {

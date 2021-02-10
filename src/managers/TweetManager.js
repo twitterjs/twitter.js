@@ -7,6 +7,7 @@ import { cleanFetchManyTweetsResponse } from '../util/ResponseCleaner.js';
 import { Messages } from '../errors/ErrorMessages.js';
 import { queryParameters } from '../util/Constants.js';
 import APIOptions from '../structures/APIOptions.js';
+import { ReplyState } from '../structures/GeneralResponses.js';
 
 /**
  * Holds API methods for tweets and stores their cache
@@ -137,6 +138,28 @@ class TweetManager extends BaseManager {
     };
     const options = new APIOptions(queryParams, null, false);
     return this.client.api.tweets.get(options);
+  }
+
+  /**
+   * Hides a reply to a tweet made by the user
+   * @param {string} id The ID of the reply that is to be hidden
+   * @returns {Promise<ReplyState>}
+   */
+  async hideReply(id) {
+    const apiOptions = new APIOptions(null, { hidden: true }, true);
+    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
+    return new ReplyState(response);
+  }
+
+  /**
+   * Unhides a reply to a tweet made by the user
+   * @param {string} id The ID of the reply that is to be unhidden
+   * @returns {Promise<ReplyState>}
+   */
+  async unhideReply(id) {
+    const apiOptions = new APIOptions(null, { hidden: false }, true);
+    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
+    return new ReplyState(response);
   }
 }
 
