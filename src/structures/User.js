@@ -192,6 +192,14 @@ class User extends BaseStructure {
     const followersCollection = userBuilder(this.client, cleanedResponse);
     return new PaginatedResponse(followersCollection, response.meta);
   }
+
+  /**
+   * Sends a follow request to the user
+   * @returns {FollowRequest}
+   */
+  async follow() {
+    return this.client.users.follow(this.id);
+  }
 }
 
 export default User;

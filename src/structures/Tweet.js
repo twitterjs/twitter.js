@@ -4,6 +4,7 @@ import APIOptions from './APIOptions.js';
 import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
 import ContextAnnotation from './ContextAnnotation.js';
+import { ReplyState } from './GeneralResponses.js';
 import TweetEntity from './TweetEntity.js';
 import TweetPublicMetrics from './TweetPublicMetrics.js';
 
@@ -140,9 +141,9 @@ class Tweet extends BaseStructure {
    * @returns {Promise<boolean>} True if the reply is hidden otherwise false
    */
   async hideReply(id) {
-    const options = new APIOptions(null, { hidden: true }, true);
-    const res = await this.client.api.tweets(id).hidden.put(options);
-    return res?.data?.hidden;
+    const apiOptions = new APIOptions(null, { hidden: true }, true);
+    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
+    return new ReplyState(response);
   }
 
   /**
@@ -151,9 +152,9 @@ class Tweet extends BaseStructure {
    * @returns {Promise<boolean>} True if the reply is hidden otherwise false
    */
   async unhideReply(id) {
-    const options = new APIOptions(null, { hidden: false }, true);
-    const res = await this.client.api.tweets(id).hidden.put(options);
-    return res?.data?.hidden;
+    const apiOptions = new APIOptions(null, { hidden: false }, true);
+    const response = await this.client.api.tweets(id).hidden.put(apiOptions);
+    return new ReplyState(response);
   }
 
   _patchPublicMetrics(publicMetrics) {

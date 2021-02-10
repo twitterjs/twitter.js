@@ -6,16 +6,14 @@ const token = {
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   bearerToken: process.env.BEARER_TOKEN,
+  username: 'i_Shibi',
 };
 
 const client = new Client();
 
 client.on('ready', async () => {
-  const user = await client.users.fetch('i_Shibi');
-  const data = await user.fetchFollowers({
-    maxResults: 1,
-  });
-  console.log(data);
+  const user = await client.users.fetch('First_Comrade');
+  user.follow().then(console.log);
 });
 
 client.login(token);
