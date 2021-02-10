@@ -28,6 +28,12 @@ class Client extends BaseClient {
     this.readyAt = null;
 
     /**
+     * User that the client is logged in as
+     * @type {?ClientUser}
+     */
+    this.user = null;
+
+    /**
      * The user manager of this client
      * @type {UserManager}
      */
@@ -48,6 +54,7 @@ class Client extends BaseClient {
    * @property {string} accessToken
    * @property {string} accessTokenSecret
    * @property {string} bearerToken
+   * @property {string} username
    */
 
   /**
@@ -57,11 +64,14 @@ class Client extends BaseClient {
    * @example
    * client.login('Your-Credentials');
    */
-  login(credentials) {
+  async login(credentials) {
     if (!credentials) {
       throw new Error(Messages.TOKEN_INVALID);
     }
     this.token = credentials;
+    const clientUserData = await this.users.fetch(this.token.username);
+    if (!clientUserData) throw new Error(Messages.TOKEN_INVALID);
+    this.user = clientUserData;
     this._triggerClientReady();
     return this.token;
   }

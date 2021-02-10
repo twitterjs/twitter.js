@@ -27,6 +27,7 @@ export class Client extends BaseClient {
 
   public token: ClientCredentials | null;
   public readyAt: Date | null;
+  public user: User | null;
   public users: UserManager;
   public login(credentials?: ClientCredentials): ClientCredentials;
 }
@@ -104,4 +105,5 @@ interface ClientCredentials {
   accessToken: string,
   accessTokenSecret: string,
   bearerToken: string
+  username: string
 }

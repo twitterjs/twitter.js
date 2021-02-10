@@ -6,6 +6,7 @@ import { queryParameters, queryTypes } from '../util/Constants.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyUsersResponse } from '../util/ResponseCleaner.js';
 import APIOptions from '../structures/APIOptions.js';
+import { FollowRequest } from '../structures/GeneralResponses.js';
 
 /**
  * Manages the API methods for users and stores their cache
@@ -162,6 +163,20 @@ class UserManager extends BaseManager {
     const options = new APIOptions(queryParams, null, false);
     if (queryType === queryTypes.ID) return await this.client.api.users.get(options);
     if (queryType === queryTypes.USERNAME) return await this.client.api.users.by.get(options);
+  }
+
+  /**
+   * Sends a request to follow a user
+   * @param {string} id ID of the user to follow
+   * @returns {Promise<FollowRequest>}
+   */
+  async follow(id) {
+    const body = {
+      target_user_id: id,
+    };
+    const apiOptions = new APIOptions(null, body, true);
+    const response = await this.client.api.users(this.client.user.id).following.post(apiOptions);
+    return new FollowRequest(response);
   }
 }
 
