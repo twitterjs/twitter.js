@@ -21,3 +21,7 @@ An object-oriented JavaScript library for interacting with the Twitter API v2
 	- [X] Lookup following of a user by ID
 	- [X] Lookup followers of a user by ID
 - [X] Hide replies
+- [X] Unhide replies
+- [ ] Manage follows
+  - [X] Allows a user ID to follow another user
+  - [ ] Allows a user ID to unfollow another user
