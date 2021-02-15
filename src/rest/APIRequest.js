@@ -31,7 +31,7 @@ class APIRequest {
       : this.rest.getAuth();
 
     let body;
-    if (this.method !== 'get') {
+    if (this.method !== 'get' && this.options.body) {
       body = JSON.stringify(this.options.body);
       headers['Content-Type'] = 'application/json';
     }
