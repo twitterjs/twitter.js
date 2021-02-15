@@ -33,3 +33,16 @@ export class ReplyState {
     this.hidden = response?.data?.hidden ?? null;
   }
 }
+
+/**
+ * Response sent when the user unfollows someone
+ */
+export class UnfollowRequest {
+  constructor(response) {
+    /**
+     * Whether the user following someone
+     * @type {?boolean}
+     */
+    this.following = response?.data.following ?? null;
+  }
+}

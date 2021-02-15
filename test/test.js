@@ -13,7 +13,7 @@ const client = new Client();
 
 client.on('ready', async () => {
   const user = await client.users.fetch('First_Comrade');
-  user.follow().then(console.log);
+  user.unfollow().then(console.log);
 });
 
 client.login(token);

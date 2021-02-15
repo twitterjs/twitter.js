@@ -200,6 +200,14 @@ class User extends BaseStructure {
   async follow() {
     return this.client.users.follow(this.id);
   }
+
+  /**
+   * Unfollows this user
+   * @returns {UnfollowRequest}
+   */
+  async unfollow() {
+    return this.client.users.unfollow(this.id);
+  }
 }
 
 export default User;

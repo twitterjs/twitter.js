@@ -6,7 +6,7 @@ import { queryParameters, queryTypes } from '../util/Constants.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyUsersResponse } from '../util/ResponseCleaner.js';
 import APIOptions from '../structures/APIOptions.js';
-import { FollowRequest } from '../structures/GeneralResponses.js';
+import { FollowRequest, UnfollowRequest } from '../structures/GeneralResponses.js';
 
 /**
  * Manages the API methods for users and stores their cache
@@ -177,6 +177,17 @@ class UserManager extends BaseManager {
     const apiOptions = new APIOptions(null, body, true);
     const response = await this.client.api.users(this.client.user.id).following.post(apiOptions);
     return new FollowRequest(response);
+  }
+
+  /**
+   * Unfollows a user
+   * @param {string} id ID of the user to unfollow
+   * @returns {Promise<UnfollowRequest>}
+   */
+  async unfollow(id) {
+    const apiOptions = new APIOptions(null, null, true);
+    const response = await this.client.api.users(this.client.user.id).following(id).delete(apiOptions);
+    return new UnfollowRequest(response);
   }
 }
 
