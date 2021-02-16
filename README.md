@@ -1,6 +1,6 @@
 # twitter.js (WIP)
 
-An object-oriented JavaScript library for interacting with the Twitter API v2
+An object-oriented JavaScript library for interacting with Twitter API v2
 
 ## API Coverage:
 
@@ -22,6 +22,6 @@ An object-oriented JavaScript library for interacting with the Twitter API v2
 	- [X] Lookup followers of a user by ID
 - [X] Hide replies
 - [X] Unhide replies
-- [ ] Manage follows
+- [X] Manage follows
   - [X] Allows a user ID to follow another user
-  - [ ] Allows a user ID to unfollow another user
+  - [X] Allows a user ID to unfollow another user
