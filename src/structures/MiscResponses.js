@@ -1,7 +1,5 @@
 'use strict';
 
-// holds classes to create objects for small responses returned by some endpoints
-
 /**
  * Response sent when the user follows someone
  */

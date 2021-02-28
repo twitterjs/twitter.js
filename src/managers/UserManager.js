@@ -6,7 +6,7 @@ import { queryParameters, queryTypes } from '../util/Constants.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyUsersResponse } from '../util/ResponseCleaner.js';
 import APIOptions from '../structures/APIOptions.js';
-import { FollowRequest, UnfollowRequest } from '../structures/GeneralResponses.js';
+import { FollowRequest, UnfollowRequest } from '../structures/MiscResponses.js';
 
 /**
  * Manages the API methods for users and stores their cache
