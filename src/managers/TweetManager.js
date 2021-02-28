@@ -7,7 +7,7 @@ import { cleanFetchManyTweetsResponse } from '../util/ResponseCleaner.js';
 import { Messages } from '../errors/ErrorMessages.js';
 import { queryParameters } from '../util/Constants.js';
 import APIOptions from '../structures/APIOptions.js';
-import { ReplyState } from '../structures/GeneralResponses.js';
+import { ReplyState } from '../structures/MiscResponses.js';
 
 /**
  * Holds API methods for tweets and stores their cache

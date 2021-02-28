@@ -9,6 +9,7 @@ import Attachment from '../structures/Attachment.js';
  * Builds a User structure
  * @param {Client} client
  * @param {Object|Collection} userData
+ * @private
  */
 export function userBuilder(client, userData) {
   if (userData instanceof Collection) {
@@ -33,6 +34,7 @@ function _patchUser(client, element) {
  * Builds a Tweet structure
  * @param {Client} client
  * @param {Object|Collection} tweetData
+ * @private
  */
 export function tweetBuilder(client, tweetData) {
   if (tweetData instanceof Collection) {
