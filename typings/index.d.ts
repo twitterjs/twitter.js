@@ -134,6 +134,8 @@ export class User extends BaseStructure {
   public username: string;
   public verified: boolean;
   public withheld: object | null;
+  public follow(): Promise<FollowRequest>;
+  public unfollow(): Promise<UnfollowRequest>;
 }
 
 export class UserManager extends BaseManager<string, User, UserResolvable> {
