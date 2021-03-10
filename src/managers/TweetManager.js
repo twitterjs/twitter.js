@@ -41,7 +41,7 @@ class TweetManager extends BaseManager {
    */
 
   /**
-   * Resolves a TweetResolvable to a Tweet object
+   * Resolves a TweetResolvable to a tweet ID
    * @param {TweetResolvable} tweetResolvable An id or instance of a Tweet object
    * @returns {?string}
    */
@@ -56,14 +56,14 @@ class TweetManager extends BaseManager {
 
   /**
    * Options used to fetch multiple tweets
-   * @typedef {Object} FetchTweetsOption
+   * @typedef {Object} FetchTweetsOptions
    * @property {TweetResolvable|TweetResolvable[]} tweet The tweet(s) to fetch
    * @property {boolean} [skipCacheCheck=false] Whether to skip the cache check and request the API directly
    */
 
   /**
    * Fetches tweet(s) from Twitter
-   * @param {TweetResolvable|FetchTweetOptions|FetchTweetsOption} [options] Options to fetch tweet(s)
+   * @param {TweetResolvable|FetchTweetOptions|FetchTweetsOptions} [options] Options to fetch tweet(s)
    * @returns {Promise<Tweet>|Promise<Collection<string, Tweet>>}
    * @example
    * // Fetch a single tweet using ID

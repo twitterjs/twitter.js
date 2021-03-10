@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import BaseCollection from '@discordjs/collection';
 
-// Class Types
 export class BaseClient extends EventEmitter {
   constructor();
   private rest: RESTManager;
@@ -32,7 +31,49 @@ export class Client extends BaseClient {
   public login(credentials?: ClientCredentials): ClientCredentials;
 }
 
+interface ClientCredentials {
+  consumerKey: string,
+  consumerSecret: string,
+  accessToken: string,
+  accessTokenSecret: string,
+  bearerToken: string
+  username: string
+}
+
 export class Collection<K, V> extends BaseCollection<K, V> {
+}
+
+interface FetchTweetOptions {
+  tweet: TweetResolvable;
+  cache?: boolean;
+  skipCacheCheck?: boolean;
+}
+
+interface FetchTweetsOptions {
+  tweet?: TweetResolvable | Array<TweetResolvable>;
+  skipCacheCheck?: boolean;
+}
+
+interface FetchUserOptions {
+  user: UserResolvable;
+  cache?: boolean;
+  skipCacheCheck?: boolean;
+}
+
+interface FetchUsersOptions {
+  user?: UserResolvable | Array<UserResolvable>;
+  skipCacheCheck?: boolean;
+}
+
+export class FollowRequest {
+  constructor(response: object);
+  public following: boolean | null;
+  public pendingFollow: boolean | null;
+}
+
+export class ReplyState {
+  constructor(response: object);
+  public hidden: boolean | null;
 }
 
 export class RESTManager {
@@ -61,6 +102,21 @@ export class Tweet extends BaseStructure {
   public withheld: object | null;
 }
 
+export class TweetManager extends BaseManager<string, Tweet, TweetResolvable> {
+  constructor(client: Client);
+  public fetch(options: TweetResolvable | FetchTweetOptions | (FetchTweetsOptions & { tweet: TweetResolvable })): Promise<Tweet>;
+  public fetch(options?: FetchTweetsOptions): Promise<Collection<string, Tweet>>;
+  public hideReply(id: string): Promise<ReplyState>;
+  public unhideReply(id: string): Promise<ReplyState>;
+}
+
+type TweetResolvable = Tweet | string;
+
+export class UnfollowRequest {
+  constructor(response: object);
+  public following: boolean | null;
+}
+
 export class User extends BaseStructure {
   constructor(client: Client, data: object);
   public readonly createdAt: Date;
@@ -82,28 +138,10 @@ export class User extends BaseStructure {
 
 export class UserManager extends BaseManager<string, User, UserResolvable> {
   constructor(client: Client);
-  public fetch(options: UserResolvable | FetchUserOption | (FetchUsersOption & { user: UserResolvable })): Promise<User>;
-  public fetch(options?: FetchUsersOption): Promise<Collection<string, User>>;
+  public fetch(options: UserResolvable | FetchUserOptions | (FetchUsersOptions & { user: UserResolvable })): Promise<User>;
+  public fetch(options?: FetchUsersOptions): Promise<Collection<string, User>>;
+  public follow(id: string): Promise<FollowRequest>;
+  public unfollow(id: string): Promise<UnfollowRequest>;
 }
 
 type UserResolvable = User | string;
-
-interface FetchUserOption {
-  user: UserResolvable;
-  cache?: boolean;
-  skipCacheCheck?: boolean;
-}
-
-interface FetchUsersOption {
-  user?: UserResolvable | Array<UserResolvable>;
-  skipCacheCheck?: boolean;
-}
-
-interface ClientCredentials {
-  consumerKey: string,
-  consumerSecret: string,
-  accessToken: string,
-  accessTokenSecret: string,
-  bearerToken: string
-  username: string
-}
