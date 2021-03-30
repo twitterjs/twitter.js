@@ -1,7 +1,8 @@
 {
   "source": {
     "include": [
-      "src"
+      "src",
+      "README.md"
     ],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
