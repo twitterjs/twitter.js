@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Holds meta information returned by paginated endpoints
  */

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents public metrics in a tweet
  */

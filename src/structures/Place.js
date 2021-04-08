@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents a place tagged in a tweet
  */

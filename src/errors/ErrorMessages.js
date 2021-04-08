@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Holds error messages for the library
  * @private

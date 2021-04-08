@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents a context annotation parsed by Twitter from the tweet text
  */

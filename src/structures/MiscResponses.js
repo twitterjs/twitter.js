@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Response sent when the user follows someone
  */

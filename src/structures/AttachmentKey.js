@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Holds keys for attachments in a tweet
  */

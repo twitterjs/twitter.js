@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Options for a client
  * @typedef {Object} ClientOptions

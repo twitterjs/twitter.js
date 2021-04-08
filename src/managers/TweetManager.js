@@ -1,5 +1,3 @@
-'use strict';
-
 import BaseManager from './BaseManager.js';
 import Tweet from '../structures/Tweet.js';
 import { tweetBuilder } from '../util/StructureBuilder.js';

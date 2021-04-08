@@ -1,5 +1,3 @@
-'use strict';
-
 import { EventEmitter } from 'events';
 import RESTManager from '../rest/RESTManager.js';
 import { DefaultClientOptions } from '../util/Constants.js';

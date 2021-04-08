@@ -1,5 +1,3 @@
-'use strict';
-
 import BaseCollection from '@discordjs/collection';
 
 /**

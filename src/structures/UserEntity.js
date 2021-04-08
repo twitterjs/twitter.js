@@ -1,5 +1,3 @@
-'use strict';
-
 import BaseEntity from './BaseEntity.js';
 import Url from './Url.js';
 

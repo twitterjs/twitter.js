@@ -1,5 +1,3 @@
-'use strict';
-
 // checks whether the key is present in the object
 const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents an option in a Poll object
  */

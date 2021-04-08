@@ -1,5 +1,3 @@
-'use strict';
-
 import User from '../structures/User.js';
 import Collection from './Collection.js';
 import Tweet from '../structures/Tweet.js';

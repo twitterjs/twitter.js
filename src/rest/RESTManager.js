@@ -1,8 +1,5 @@
-'use strict';
-
 import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
-
 import { buildRoute } from './APIRouter.js';
 import APIRequest from './APIRequest.js';
 

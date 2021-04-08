@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents the public metrics of a user
  */

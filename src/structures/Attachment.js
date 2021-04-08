@@ -1,5 +1,3 @@
-'use strict';
-
 import Media from './Media.js';
 import Poll from './Poll.js';
 

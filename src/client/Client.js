@@ -1,5 +1,3 @@
-'use strict';
-
 import BaseClient from './BaseClient.js';
 import { Events } from '../util/Constants.js';
 import { Messages } from '../errors/ErrorMessages.js';

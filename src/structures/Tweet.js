@@ -1,5 +1,3 @@
-'use strict';
-
 import AttachmentKey from './AttachmentKey.js';
 import BaseStructure from './BaseStructure.js';
 import ContextAnnotation from './ContextAnnotation.js';
