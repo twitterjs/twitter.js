@@ -1,5 +1,3 @@
-'use strict';
-
 const noop = () => {};
 const methods = ['get', 'post', 'delete', 'patch', 'put'];
 const reflectors = ['toString'];

@@ -1,5 +1,3 @@
-'use strict';
-
 import fetch from 'node-fetch';
 
 class APIRequest {

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Represents medias like image, video, and gif in a tweet
  */

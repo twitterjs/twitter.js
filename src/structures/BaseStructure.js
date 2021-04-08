@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Base class for all structures
  * @abstract

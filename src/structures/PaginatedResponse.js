@@ -1,5 +1,3 @@
-'use strict';
-
 import Meta from './Meta.js';
 
 /**

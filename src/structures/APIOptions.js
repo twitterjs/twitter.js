@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Holds options and data that is needed for generating an API request
  */

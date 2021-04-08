@@ -1,5 +1,3 @@
-'use strict';
-
 import Collection from '../util/Collection.js';
 
 /**

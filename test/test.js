@@ -6,7 +6,7 @@ const token = {
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   bearerToken: process.env.BEARER_TOKEN,
-  username: 'i_Shibi',
+  username: 'iShiibi',
 };
 
 const client = new Client();

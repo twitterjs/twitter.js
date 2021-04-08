@@ -1,5 +1,3 @@
-'use strict';
-
 import { queryParameters } from '../util/Constants.js';
 import { cleanFetchFollowingResponse } from '../util/ResponseCleaner.js';
 import { userBuilder } from '../util/StructureBuilder.js';

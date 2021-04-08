@@ -1,6 +1,4 @@
 // holds functions for cleaning HTTP Response that are too dirty to be used by the Structure Builder as it is
-'use strict';
-
 import Collection from './Collection.js';
 
 export function cleanFetchManyUsersResponse(response) {

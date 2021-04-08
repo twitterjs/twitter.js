@@ -1,5 +1,3 @@
-'use strict';
-
 import PollOption from './PollOption.js';
 
 /**

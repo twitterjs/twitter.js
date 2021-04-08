@@ -1,5 +1,3 @@
-'use strict';
-
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import { queryParameters, queryTypes } from '../util/Constants.js';

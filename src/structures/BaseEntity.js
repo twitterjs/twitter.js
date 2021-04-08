@@ -1,5 +1,3 @@
-'use strict';
-
 import Mention from './Mention.js';
 import Hashtag from './Hashtag.js';
 import Cashtag from './Cashtag.js';
