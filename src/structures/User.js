@@ -208,6 +208,22 @@ class User extends BaseStructure {
   async unfollow() {
     return this.client.users.unfollow(this.id);
   }
+
+  /**
+   * Blocks the user
+   * @returns {Promise<BlockResponse>}
+   */
+  async block() {
+    return this.client.users.block(this.id);
+  }
+
+  /**
+   * Unblocks the user
+   * @returns {Promise<UnblockResponse>}
+   */
+  async unblock() {
+    return this.client.users.unblock(this.id);
+  }
 }
 
 export default User;

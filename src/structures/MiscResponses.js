@@ -44,3 +44,27 @@ export class UnfollowRequest {
     this.following = response?.data.following ?? null;
   }
 }
+
+/**
+ * Response sent when the user blocks someone
+ */
+export class BlockResponse {
+  constructor(response) {
+    /**
+     * Whether the user blocking someone
+     */
+    this.blocking = response?.data.blocking ?? null;
+  }
+}
+
+/**
+ * Response sent when the user unblocks someone
+ */
+export class UnblockResponse {
+  constructor(response) {
+    /**
+     * Whether the user blocking someone
+     */
+    this.blocking = response?.data.blocking ?? null;
+  }
+}
