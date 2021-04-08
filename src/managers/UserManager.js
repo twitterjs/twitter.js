@@ -6,7 +6,7 @@ import { queryParameters, queryTypes } from '../util/Constants.js';
 import { userBuilder } from '../util/StructureBuilder.js';
 import { cleanFetchManyUsersResponse } from '../util/ResponseCleaner.js';
 import APIOptions from '../structures/APIOptions.js';
-import { FollowRequest, UnfollowRequest } from '../structures/MiscResponses.js';
+import { FollowRequest, UnfollowRequest, BlockResponse, UnblockResponse } from '../structures/MiscResponses.js';
 
 /**
  * Manages the API methods for users and stores their cache
@@ -188,6 +188,31 @@ class UserManager extends BaseManager {
     const apiOptions = new APIOptions(null, null, true);
     const response = await this.client.api.users(this.client.user.id).following(id).delete(apiOptions);
     return new UnfollowRequest(response);
+  }
+
+  /**
+   * Blocks a user
+   * @param {string} id The ID of the user to block
+   * @returns {Promise<BlockResponse>}
+   */
+  async block(id) {
+    const body = {
+      target_user_id: id,
+    };
+    const apiOptions = new APIOptions(null, body, true);
+    const response = await this.client.api.users(this.client.user.id).blocking.post(apiOptions);
+    return new BlockResponse(response);
+  }
+
+  /**
+   * Unblocks a user
+   * @param {string} id The ID of the user to unblock
+   * @returns {Promise<UnblockResponse>}
+   */
+  async unblock(id) {
+    const apiOptions = new APIOptions(null, null, true);
+    const response = await this.client.api.users(this.client.user.id).blocking(id).delete(apiOptions);
+    return new UnblockResponse(response);
   }
 }
 
