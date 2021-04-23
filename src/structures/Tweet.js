@@ -152,6 +152,22 @@ class Tweet extends BaseStructure {
   }
 
   /**
+   * Likes the tweet
+   * @returns {Promise<object>}
+   */
+  async like() {
+    return this.client.tweets.like(this.id);
+  }
+
+  /**
+   * Unlikes the tweet
+   * @returns {Promise<object>}
+   */
+  async unlike() {
+    return this.client.tweets.unlike(this.id);
+  }
+
+  /**
    * Adds data to the entities property
    * @param {Object} entities
    * @private
