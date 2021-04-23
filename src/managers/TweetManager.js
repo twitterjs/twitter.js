@@ -159,6 +159,28 @@ class TweetManager extends BaseManager {
     const response = await this.client.api.tweets(id).hidden.put(apiOptions);
     return new ReplyState(response);
   }
+
+  /**
+   * Likes a tweet
+   * @param {string} id The ID of the tweet to like
+   * @returns {Promise<object>}
+   */
+  async like(id) {
+    const apiOptions = new APIOptions(null, { tweet_id: id }, true);
+    const response = await this.client.api.users(this.client.user.id).likes.post(apiOptions);
+    return response;
+  }
+
+  /**
+   * Unlikes a tweet
+   * @param {string} id The ID of the tweet to unlike
+   * @returns {Promise<object>}
+   */
+  async unlike(id) {
+    const apiOptions = new APIOptions(null, null, true);
+    const response = await this.client.api.users(this.client.user.id).likes(id).delete(apiOptions);
+    return response;
+  }
 }
 
 export default TweetManager;
