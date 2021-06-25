@@ -31,7 +31,7 @@ export default class RESTManager {
   }
 
   get baseURL(): string {
-    return this.client.options.api.baseURL;
+    return this.client.options.api?.baseURL as string;
   }
 
   getBasicAuth(): string {

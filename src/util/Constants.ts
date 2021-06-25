@@ -11,4 +11,14 @@ export const DefaultClientOptions: ClientOptions = {
     version: 2,
     baseURL: 'https://api.twitter.com',
   },
+
+  queryParameters: {
+    userFields: [],
+    tweetFields: [],
+    mediaFields: [],
+    placeFields: [],
+    pollFields: [],
+    tweetExpansions: [],
+    userExpansions: [],
+  },
 };

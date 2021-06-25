@@ -16,13 +16,14 @@ export function mergeDefault(defaultObject: any, given: any): ClientOptions {
   }
   return given as ClientOptions;
 }
+/* eslint-enable */
 
 /**
  * Parses an API response and returns the body
  * @param res The response sent by the API
  * @returns The body of the response
  */
-export async function parseResponse(res: Response): Promise<any> {
+export async function parseResponse(res: Response): Promise<unknown | Buffer> {
   if (res.headers.get('content-type')?.startsWith('application/json')) return res.json();
   return res.buffer();
 }

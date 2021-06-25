@@ -31,7 +31,7 @@ export default class APIRequest {
   }
 
   async make(): Promise<any> {
-    const baseURL = `${this.client.options.api.baseURL}/${this.client.options.api.version}`;
+    const baseURL = `${this.client.options.api?.baseURL}/${this.client.options.api?.version}`;
     const url = baseURL + this.path;
 
     const headers: any = {};

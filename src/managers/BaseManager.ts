@@ -23,12 +23,12 @@ export default class BaseManager<R, T extends BaseStructure> {
   protected _holds: StructureConstructable<T>;
 
   constructor(client: Client, structureType: StructureConstructable<T>) {
-    Object.defineProperty(this, 'client', { value: client });
+    Object.defineProperty(this, 'client', { writable: true });
     this.client = client;
 
     this.cache = new Collection();
 
-    Object.defineProperty(this, 'structureType', { value: structureType });
+    Object.defineProperty(this, 'structureType', { writable: true });
     this._holds = structureType;
   }
 
