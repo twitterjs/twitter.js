@@ -2,10 +2,10 @@
   "name": "twitter.js",
   "version": "0.1.0",
   "description": "An object-oriented JavaScript library for interacting with Twitter API v2",
-  "main": "./src/index.js",
-  "types": "./typings/index.d.ts",
+  "main": "dist/index.js",
   "scripts": {
-    "doc": "jsdoc -c jsdoc.json",
+    "build": "tsc",
+    "docs": "typedoc",
     "test": "node test/test.js"
   },
   "repository": {
@@ -23,17 +23,29 @@
     "url": "https://github.com/twitterjs/twitter.js/issues"
   },
   "homepage": "https://github.com/twitterjs/twitter.js#readme",
-  "devDependencies": {
-    "eslint": "^7.16.0",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-prettier": "^3.3.0",
-    "jsdoc": "^3.6.6",
-    "prettier": "^2.2.1"
-  },
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
     "node-fetch": "^2.6.1",
     "oauth-1.0a": "^2.2.6"
   },
-  "type": "module"
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "@types/node-fetch": "^2.5.10",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.1",
+    "typedoc": "^0.21.1",
+    "typescript": "^4.3.4"
+  },
+  "type": "module",
+  "files": [
+    "/dist"
+  ],
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  }
 }

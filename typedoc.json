@@ -1,0 +1,12 @@
+{
+  "name": "tspotify",
+  "out": "docs",
+  "theme": "minimal",
+  "exclude": [
+    "node_modules/**",
+    "dist/**"
+  ],
+  "entryPoints": [
+    "src/index.ts"
+  ]
+}
