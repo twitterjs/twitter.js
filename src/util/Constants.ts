@@ -1,4 +1,4 @@
-import type { ClientOptions } from '../interfaces/index.js';
+import type { ClientOptions } from '../typings/index.js';
 
 /**
  * Default options with which the client gets initiated

@@ -1,4 +1,5 @@
-import type { ClientOptions } from '../interfaces/index.js';
+import type { Response } from 'node-fetch';
+import type { ClientOptions } from '../typings/index.js';
 
 const has = (obj: Record<string, unknown>, key: string) => Object.prototype.hasOwnProperty.call(obj, key);
 
@@ -14,4 +15,14 @@ export function mergeDefault(defaultObject: any, given: any): ClientOptions {
     }
   }
   return given as ClientOptions;
+}
+
+/**
+ * Parses an API response and returns the body
+ * @param res The response sent by the API
+ * @returns The body of the response
+ */
+export async function parseResponse(res: Response): Promise<any> {
+  if (res.headers.get('content-type')?.startsWith('application/json')) return res.json();
+  return res.buffer();
 }

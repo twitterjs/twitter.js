@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { mergeDefault } from '../util/Utility.js';
 import { DefaultClientOptions } from '../util/Constants.js';
-import type { ClientOptions } from '../interfaces/index.js';
+import type { ClientOptions } from '../typings/index.js';
 
 /**
  * The base class for client

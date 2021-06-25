@@ -6,7 +6,8 @@
     "outDir": "dist",
     "strict": true,
     "moduleResolution": "Node",
-    "watch": true
+    "watch": true,
+    "allowSyntheticDefaultImports": true
   },
   "compileOnSave": true,
   "include": [
