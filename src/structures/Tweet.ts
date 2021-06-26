@@ -1,8 +1,72 @@
-import BaseStructure from './BaseStructure.js';
+import SimplifiedUser from './SimplifiedUser.js';
+import SimplifiedTweet from './SimplifiedTweet.js';
+import Collection from '../util/Collection.js';
 import type Client from '../client/Client.js';
+import type {
+  APITweetObject,
+  APITweetReferencedTweetType,
+  APIUserObject,
+  GetSingleTweetByIdResponse,
+} from 'twitter-types';
 
-export default class Tweet extends BaseStructure {
-  constructor(client: Client, data: any) {
-    super(client, data.id);
+export default class Tweet extends SimplifiedTweet {
+  /**
+   * The author of the tweet
+   */
+  author: SimplifiedUser | null;
+
+  /**
+   * The users mentioned in the tweet
+   */
+  mentions: Collection<string, SimplifiedUser>;
+
+  /**
+   * The original tweet if this tweet is a reply
+   */
+  repliedTo: SimplifiedTweet | null;
+
+  /**
+   * The original tweet if this tweet is a quote
+   */
+  quoted: SimplifiedTweet | null;
+
+  constructor(client: Client, data: GetSingleTweetByIdResponse) {
+    super(client, data.data);
+
+    this.author = this._patchAuthor(data.includes?.users) ?? null;
+    this.mentions = this._patchMentions(data.includes?.users);
+    this.repliedTo = this._patchTweetReferences('replied_to', data.includes?.tweets) ?? null;
+    this.quoted = this._patchTweetReferences('quoted', data.includes?.tweets) ?? null;
+  }
+
+  _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
+    if (!users) return;
+    const rawAuthor = users.find(user => user.id === this.authorID);
+    if (!rawAuthor) return;
+    return new SimplifiedUser(this.client, rawAuthor);
+  }
+
+  _patchMentions(users?: Array<APIUserObject>): Collection<string, SimplifiedUser> {
+    const mentionedUsersCollection = new Collection<string, SimplifiedUser>();
+    const mentions = this.entities?.mentions;
+    if (!users || !mentions) return mentionedUsersCollection;
+    for (const mention of mentions) {
+      const rawMentionedUser = users.find(user => user.id === mention.id);
+      if (!rawMentionedUser) continue;
+      const mentionedUser = new SimplifiedUser(this.client, rawMentionedUser);
+      mentionedUsersCollection.set(mentionedUser.id, mentionedUser);
+    }
+    return mentionedUsersCollection;
+  }
+
+  _patchTweetReferences(
+    referenceType: APITweetReferencedTweetType,
+    tweets?: Array<APITweetObject>,
+  ): SimplifiedTweet | undefined {
+    const originalTweetID = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
+    if (!originalTweetID || !tweets) return;
+    const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetID);
+    if (!rawOriginalTweet) return;
+    return new SimplifiedTweet(this.client, rawOriginalTweet);
   }
 }
