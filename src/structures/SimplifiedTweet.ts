@@ -1,7 +1,7 @@
 import BaseStructure from './BaseStructure.js';
+import { TweetEntities } from './misc/TweetEntities.js';
 import type Client from '../client/Client.js';
 import type {
-  APITweetEntities,
   APITweetNonPublicMetrics,
   APITweetObject,
   APITweetOrganicMetrics,
@@ -49,7 +49,7 @@ export default class SimplifiedTweet extends BaseStructure {
   /**
    * The entities which have been parsed out of the text of the Tweet
    */
-  entities?: APITweetEntities;
+  entities: TweetEntities | null;
 
   /**
    * The details about the location tagged by the user in the Tweet, if they specified one
@@ -129,7 +129,7 @@ export default class SimplifiedTweet extends BaseStructure {
     this.contextAnnotations = data.context_annotations;
     this.conversationID = data.conversation_id;
     this.createdAt = data.created_at;
-    this.entities = data.entities;
+    this.entities = data.entities ? new TweetEntities(data.entities) : null;
     this.geo = data.geo;
     this.inReplyToUserID = data.in_reply_to_user_id;
     this.lang = data.lang;
