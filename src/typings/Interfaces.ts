@@ -1,4 +1,4 @@
-import type { RequestData } from '../structures/Misc.js';
+import type { RequestData } from '../structures/misc/Misc.js';
 import {
   MediaFields,
   PlaceFields,

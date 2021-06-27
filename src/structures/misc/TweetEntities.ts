@@ -1,5 +1,6 @@
 import type {
   APITweetAnnotationEntity,
+  APITweetBaseEntity,
   APITweetCashtagEntity,
   APITweetEntities,
   APITweetHashtagEntity,
@@ -77,7 +78,7 @@ export class TweetBaseEntity {
   start: number;
   end: number;
 
-  constructor(data: { start: number; end: number }) {
+  constructor(data: APITweetBaseEntity) {
     this.start = data.start;
     this.end = data.end;
   }

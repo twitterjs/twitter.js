@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import type Client from '../client/Client.js';
 import type RESTManager from './RESTManager.js';
-import type { RequestData } from '../structures/Misc.js';
+import type { RequestData } from '../structures/misc/Misc.js';
 import type { ExtendedRequestData } from '../typings/index.js';
 
 export default class APIRequest {

@@ -1,14 +1,14 @@
 import BaseStructure from './BaseStructure.js';
+import { TweetAttachments } from './misc/Misc.js';
 import { TweetEntities } from './misc/TweetEntities.js';
 import type Client from '../client/Client.js';
-import type {
-  APITweetNonPublicMetrics,
-  APITweetObject,
-  APITweetOrganicMetrics,
-  APITweetPublicMetrics,
-  APITweetReferencedTweet,
-  APITweetReplySettings,
-} from 'twitter-types';
+import type { APITweetObject, APITweetReferencedTweet, APITweetReplySettings } from 'twitter-types';
+import {
+  TweetNonPublicMetrics,
+  TweetOrganicMetrics,
+  TweetPromotedMetrics,
+  TweetPublicMetrics,
+} from './misc/TweetMetrics.js';
 
 export default class SimplifiedTweet extends BaseStructure {
   /**
@@ -24,7 +24,7 @@ export default class SimplifiedTweet extends BaseStructure {
   /**
    * The type of attachments (if any) present in the Tweet
    */
-  attachments?: any; // TODO
+  attachments: TweetAttachments | null;
 
   /**
    * The unique identifier of the User who posted the Tweet
@@ -71,13 +71,13 @@ export default class SimplifiedTweet extends BaseStructure {
    * Non-public engagement metrics for the Tweet at the time of the request.
    * Requires user context authentication
    */
-  nonPublicMetrics?: APITweetNonPublicMetrics;
+  nonPublicMetrics: TweetNonPublicMetrics | null;
 
   /**
    * Engagement metrics tracked in an organic context for the Tweet at the time of the request.
    * Requires user context authentication
    */
-  organicMetrics?: APITweetOrganicMetrics;
+  organicMetrics: TweetOrganicMetrics | null;
 
   /**
    * This field only surfaces when a Tweet contains a link. The meaning of the field doesn’t pertain
@@ -90,12 +90,12 @@ export default class SimplifiedTweet extends BaseStructure {
    * Engagement metrics tracked in a promoted context for the Tweet at the time of the request.
    * Requires user context authentication
    */
-  promotedMetrics?: any; // TODO
+  promotedMetrics: TweetPromotedMetrics | null;
 
   /**
    * Public engagement metrics for the Tweet at the time of the request
    */
-  publicMetrics?: APITweetPublicMetrics;
+  publicMetrics: TweetPublicMetrics | null;
 
   /**
    * A list of Tweets this Tweet refers to. It will also include the related Tweet referenced to by its parent
@@ -124,7 +124,7 @@ export default class SimplifiedTweet extends BaseStructure {
 
     this.id = data.id;
     this.text = data.text;
-    this.attachments = data.attachments;
+    this.attachments = data.attachments ? new TweetAttachments(data.attachments) : null;
     this.authorID = data.author_id;
     this.contextAnnotations = data.context_annotations;
     this.conversationID = data.conversation_id;
@@ -133,11 +133,11 @@ export default class SimplifiedTweet extends BaseStructure {
     this.geo = data.geo;
     this.inReplyToUserID = data.in_reply_to_user_id;
     this.lang = data.lang;
-    this.nonPublicMetrics = data.non_public_metrics;
-    this.organicMetrics = data.organic_metrics;
+    this.nonPublicMetrics = data.non_public_metrics ? new TweetNonPublicMetrics(data.non_public_metrics) : null;
+    this.organicMetrics = data.organic_metrics ? new TweetOrganicMetrics(data.organic_metrics) : null;
     this.possiblySensitive = data.possibly_sensitive;
-    this.promotedMetrics = data.promoted_metrics;
-    this.publicMetrics = data.public_metrics;
+    this.promotedMetrics = data.promoted_metrics ? new TweetPromotedMetrics(data.promoted_metrics) : null;
+    this.publicMetrics = data.public_metrics ? new TweetPublicMetrics(data.public_metrics) : null;
     this.referencedTweets = data.referenced_tweets;
     this.replySettings = data.reply_settings;
     this.source = data.source;

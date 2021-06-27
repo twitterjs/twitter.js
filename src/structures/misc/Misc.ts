@@ -1,3 +1,5 @@
+import { APITweetAttachments } from 'twitter-types';
+
 /**
  * The class for storing data required for generating an API request
  */
@@ -21,5 +23,15 @@ export class RequestData<Q, B> {
     this.query = query;
     this.body = body;
     this.requireUserContextAuth = requireUserContextAuth;
+  }
+}
+
+export class TweetAttachments {
+  mediaKeys: Array<string>;
+  pollIds: Array<string>;
+
+  constructor(data: APITweetAttachments) {
+    this.mediaKeys = data.media_keys ?? [];
+    this.pollIds = data.poll_ids ?? [];
   }
 }
