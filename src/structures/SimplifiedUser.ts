@@ -1,5 +1,6 @@
 import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
+import { UserEntities } from './misc/UserEntities.js';
 import type Client from '../client/Client.js';
 import type { APIUserObject } from 'twitter-types';
 
@@ -35,7 +36,7 @@ export default class SimplifiedUser extends BaseStructure {
   /**
    * Contains details about text that has a special meaning in the user's description
    */
-  entities?: any; // TODO
+  entities: UserEntities | null;
 
   /**
    * The location specified in the user's profile, if the user provided one. As this is a freeform value,
@@ -87,7 +88,7 @@ export default class SimplifiedUser extends BaseStructure {
     this.username = data.username;
     this.createdAt = data.created_at ?? null;
     this.description = data.description ?? null;
-    this.entities = data.entities;
+    this.entities = data.entities ? new UserEntities(data.entities) : null;
     this.location = data.location ?? null;
     this.pinnedTweetID = data.pinned_tweet_id ?? null;
     this.profileImageURL = data.profile_image_url ?? null;
