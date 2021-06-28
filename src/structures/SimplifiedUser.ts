@@ -1,4 +1,5 @@
 import BaseStructure from './BaseStructure.js';
+import { UserPublicMetrics } from './misc/Misc.js';
 import type Client from '../client/Client.js';
 import type { APIUserObject } from 'twitter-types';
 
@@ -24,12 +25,12 @@ export default class SimplifiedUser extends BaseStructure {
   /**
    * The UTC datetime that the user account was created on Twitter
    */
-  createdAt?: Date;
+  createdAt: Date | null;
 
   /**
    * The text of this user's profile description (also known as bio), if the user provided one
    */
-  description?: string;
+  description: string | null;
 
   /**
    * Contains details about text that has a special meaning in the user's description
@@ -41,37 +42,37 @@ export default class SimplifiedUser extends BaseStructure {
    * it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with
    * location queries
    */
-  location?: string;
+  location: string | null;
 
   /**
    * The unique identifier of this user's pinned Tweet
    */
-  pinnedTweetID?: string;
+  pinnedTweetID: string | null;
 
   /**
    * The URL to the profile image for this user, as shown on the user's profile
    */
-  profileImageURL?: string;
+  profileImageURL: string | null;
 
   /**
    * Indicates if this user has chosen to protect their Tweets (in other words, if this user's Tweets are private)
    */
-  protected?: boolean;
+  protected: boolean | null;
 
   /**
    * Contains details about activity for this user
    */
-  publicMetrics?: any; // TODO
+  publicMetrics: UserPublicMetrics | null;
 
   /**
    * The URL specified in the user's profile, if present
    */
-  url?: string;
+  url: string | null;
 
   /**
    * Indicates if this user is a verified Twitter User
    */
-  verified?: boolean;
+  verified: boolean | null;
 
   /**
    * Contains withholding details for withheld content, if applicable
@@ -84,16 +85,16 @@ export default class SimplifiedUser extends BaseStructure {
     this.id = data.id;
     this.name = data.name;
     this.username = data.username;
-    this.createdAt = data.created_at;
-    this.description = data.description;
+    this.createdAt = data.created_at ?? null;
+    this.description = data.description ?? null;
     this.entities = data.entities;
-    this.location = data.location;
-    this.pinnedTweetID = data.pinned_tweet_id;
-    this.profileImageURL = data.profile_image_url;
-    this.protected = data.protected;
-    this.publicMetrics = data.public_metrics;
-    this.url = data.url;
-    this.verified = data.verified;
+    this.location = data.location ?? null;
+    this.pinnedTweetID = data.pinned_tweet_id ?? null;
+    this.profileImageURL = data.profile_image_url ?? null;
+    this.protected = data.protected ?? null;
+    this.publicMetrics = data.public_metrics ? new UserPublicMetrics(data.public_metrics) : null;
+    this.url = data.url ?? null;
+    this.verified = data.verified ?? null;
     this.withheld = data.withheld;
   }
 }

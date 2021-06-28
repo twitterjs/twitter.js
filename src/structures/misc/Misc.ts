@@ -4,6 +4,7 @@ import type {
   APITweetGeoCoordinates,
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
+  APIUserPublicMetrics,
 } from 'twitter-types';
 
 /**
@@ -78,5 +79,19 @@ export class TweetGeoCoordinates {
   constructor(data: APITweetGeoCoordinates) {
     this.latitude = data.coordinates?.[0] ?? null;
     this.longitude = data.coordinates?.[1] ?? null;
+  }
+}
+
+export class UserPublicMetrics {
+  followersCount: number;
+  followingCount: number;
+  tweetCount: number;
+  listedCount: number;
+
+  constructor(data: APIUserPublicMetrics) {
+    this.followersCount = data.followers_count;
+    this.followingCount = data.following_count;
+    this.tweetCount = data.tweet_count;
+    this.listedCount = data.listed_count;
   }
 }
