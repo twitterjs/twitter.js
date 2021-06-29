@@ -1,8 +1,12 @@
+import Poll from './Poll.js';
+import Place from './Place.js';
+import Collection from '../util/Collection.js';
 import SimplifiedUser from './SimplifiedUser.js';
 import SimplifiedTweet from './SimplifiedTweet.js';
-import Collection from '../util/Collection.js';
 import type Client from '../client/Client.js';
 import type {
+  APIPlaceObject,
+  APIPollObject,
   APITweetObject,
   APITweetReferencedTweetType,
   APIUserObject,
@@ -30,6 +34,16 @@ export default class Tweet extends SimplifiedTweet {
    */
   quoted: SimplifiedTweet | null;
 
+  /**
+   * The polls in the tweet
+   */
+  polls: Collection<string, Poll>;
+
+  /**
+   * The places tagged in the tweet
+   */
+  places: Collection<string, Place>;
+
   constructor(client: Client, data: GetSingleTweetByIdResponse) {
     super(client, data.data);
 
@@ -37,6 +51,8 @@ export default class Tweet extends SimplifiedTweet {
     this.mentions = this._patchMentions(data.includes?.users);
     this.repliedTo = this._patchTweetReferences('replied_to', data.includes?.tweets) ?? null;
     this.quoted = this._patchTweetReferences('quoted', data.includes?.tweets) ?? null;
+    this.polls = this._patchPolls(data.includes?.polls);
+    this.places = this._patchPlaces(data.includes?.places);
   }
 
   _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
@@ -68,5 +84,25 @@ export default class Tweet extends SimplifiedTweet {
     const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetID);
     if (!rawOriginalTweet) return;
     return new SimplifiedTweet(this.client, rawOriginalTweet);
+  }
+
+  _patchPolls(rawPolls?: Array<APIPollObject>): Collection<string, Poll> {
+    const pollsCollection = new Collection<string, Poll>();
+    if (!rawPolls) return pollsCollection;
+    for (const rawPoll of rawPolls) {
+      const poll = new Poll(this.client, rawPoll);
+      pollsCollection.set(poll.id, poll);
+    }
+    return pollsCollection;
+  }
+
+  _patchPlaces(rawPlaces?: Array<APIPlaceObject>): Collection<string, Place> {
+    const placesCollection = new Collection<string, Place>();
+    if (!rawPlaces) return placesCollection;
+    for (const rawPlace of rawPlaces) {
+      const place = new Place(this.client, rawPlace);
+      placesCollection.set(place.id, place);
+    }
+    return placesCollection;
   }
 }

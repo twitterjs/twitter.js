@@ -34,6 +34,7 @@ export type UserFields =
   | 'profile_image_url'
   | 'protected'
   | 'public_metrics'
+  | 'url'
   | 'username'
   | 'verified'
   | 'withheld';

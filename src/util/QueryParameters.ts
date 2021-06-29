@@ -1,4 +1,4 @@
-import {
+import type {
   MediaFields,
   PlaceFields,
   PollFields,
@@ -19,6 +19,7 @@ export const userFields: Array<UserFields> = [
   'profile_image_url',
   'protected',
   'public_metrics',
+  'url',
   'username',
   'verified',
   'withheld',

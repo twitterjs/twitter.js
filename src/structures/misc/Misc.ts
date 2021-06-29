@@ -1,4 +1,7 @@
 import type {
+  APIPlaceGeo,
+  APIPlaceGeoBoundingBox,
+  APIPollOption,
   APITweetAttachments,
   APITweetGeo,
   APITweetGeoCoordinates,
@@ -93,5 +96,29 @@ export class UserPublicMetrics {
     this.followingCount = data.following_count;
     this.tweetCount = data.tweet_count;
     this.listedCount = data.listed_count;
+  }
+}
+
+export class PollOption {
+  position: number;
+  label: string;
+  votes: number;
+
+  constructor(data: APIPollOption) {
+    this.position = data.position;
+    this.label = data.label;
+    this.votes = data.votes;
+  }
+}
+
+export class PlaceGeo {
+  type: string;
+  bbox: APIPlaceGeoBoundingBox;
+  properties: Record<string, unknown>;
+
+  constructor(data: APIPlaceGeo) {
+    this.type = data.type;
+    this.bbox = data.bbox;
+    this.properties = data.properties;
   }
 }
