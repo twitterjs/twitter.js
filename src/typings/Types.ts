@@ -18,8 +18,10 @@ export type MediaFields =
   | 'media_key'
   | 'preview_image_url'
   | 'type'
+  | 'url'
   | 'width'
-  | 'public_metrics';
+  | 'public_metrics'
+  | 'organic_metrics';
 
 export type UserExpansions = 'pinned_tweet_id';
 

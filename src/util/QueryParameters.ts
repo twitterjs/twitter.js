@@ -51,9 +51,10 @@ export const mediaFields: Array<MediaFields> = [
   'media_key',
   'preview_image_url',
   'type',
-  //'url',
+  'url',
   'width',
   'public_metrics',
+  'organic_metrics',
 ];
 
 export const placeFields: Array<PlaceFields> = [

@@ -1,10 +1,12 @@
 import Poll from './Poll.js';
 import Place from './Place.js';
+import Media from './Media.js';
 import Collection from '../util/Collection.js';
 import SimplifiedUser from './SimplifiedUser.js';
 import SimplifiedTweet from './SimplifiedTweet.js';
 import type Client from '../client/Client.js';
 import type {
+  APIMediaObject,
   APIPlaceObject,
   APIPollObject,
   APITweetObject,
@@ -44,6 +46,11 @@ export default class Tweet extends SimplifiedTweet {
    */
   places: Collection<string, Place>;
 
+  /**
+   * The media contents in the tweet
+   */
+  media: Collection<string, Media>;
+
   constructor(client: Client, data: GetSingleTweetByIdResponse) {
     super(client, data.data);
 
@@ -53,6 +60,7 @@ export default class Tweet extends SimplifiedTweet {
     this.quoted = this._patchTweetReferences('quoted', data.includes?.tweets) ?? null;
     this.polls = this._patchPolls(data.includes?.polls);
     this.places = this._patchPlaces(data.includes?.places);
+    this.media = this._patchMedia(data.includes?.media);
   }
 
   _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
@@ -104,5 +112,15 @@ export default class Tweet extends SimplifiedTweet {
       placesCollection.set(place.id, place);
     }
     return placesCollection;
+  }
+
+  _patchMedia(rawMediaContents?: Array<APIMediaObject>): Collection<string, Media> {
+    const mediaCollection = new Collection<string, Media>();
+    if (!rawMediaContents) return mediaCollection;
+    for (const rawMediaContent of rawMediaContents) {
+      const mediaContent = new Media(this.client, rawMediaContent);
+      mediaCollection.set(mediaContent.id, mediaContent);
+    }
+    return mediaCollection;
   }
 }
