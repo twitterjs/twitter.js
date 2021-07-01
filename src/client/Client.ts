@@ -1,5 +1,6 @@
 import BaseClient from './BaseClient.js';
 import RESTManager from '../rest/RESTManager.js';
+import UserManager from '../managers/UserManager.js';
 import TweetManager from '../managers/TweetManager.js';
 import type { ClientCredentials, ClientOptions } from '../typings/index.js';
 
@@ -27,6 +28,11 @@ export default class Client extends BaseClient {
    */
   tweets: TweetManager;
 
+  /**
+   * The user manager of this client
+   */
+  users: UserManager;
+
   constructor(options?: ClientOptions) {
     super(options);
 
@@ -36,6 +42,7 @@ export default class Client extends BaseClient {
     this.readyAt = null;
     this.rest = new RESTManager(this);
     this.tweets = new TweetManager(this);
+    this.users = new UserManager(this);
   }
 
   get _api(): any {

@@ -1,4 +1,6 @@
+import type User from '../structures/User.js';
 import type Tweet from '../structures/Tweet.js';
+import type SimplifiedUser from '../structures/SimplifiedUser.js';
 
 export type PlaceFields =
   | 'contained_within'
@@ -40,6 +42,8 @@ export type UserFields =
   | 'username'
   | 'verified'
   | 'withheld';
+
+export type UserResolvable = User | SimplifiedUser | string;
 
 export type TweetExpansions =
   | 'attachments.poll_ids'
