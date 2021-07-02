@@ -29,10 +29,10 @@ export class RequestData<Q, B> {
    */
   requireUserContextAuth: boolean;
 
-  constructor(query: Q, body: B, requireUserContextAuth: boolean) {
+  constructor(query: Q, body: B, requireUserContextAuth?: boolean) {
     this.query = query;
     this.body = body;
-    this.requireUserContextAuth = requireUserContextAuth;
+    this.requireUserContextAuth = requireUserContextAuth ?? false;
   }
 }
 

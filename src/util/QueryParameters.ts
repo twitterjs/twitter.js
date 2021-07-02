@@ -1,14 +1,14 @@
 import type {
-  MediaFields,
-  PlaceFields,
-  PollFields,
-  TweetExpansions,
-  TweetFields,
-  UserExpansions,
-  UserFields,
+  MediaField,
+  PlaceField,
+  PollField,
+  TweetExpansion,
+  TweetField,
+  UserExpansion,
+  UserField,
 } from '../typings/index.js';
 
-export const userFields: Array<UserFields> = [
+export const userFields: Array<UserField> = [
   'created_at',
   'description',
   'entities',
@@ -25,7 +25,7 @@ export const userFields: Array<UserFields> = [
   'withheld',
 ];
 
-export const tweetFields: Array<TweetFields> = [
+export const tweetFields: Array<TweetField> = [
   'attachments',
   'author_id',
   'context_annotations',
@@ -45,7 +45,7 @@ export const tweetFields: Array<TweetFields> = [
   'withheld',
 ];
 
-export const mediaFields: Array<MediaFields> = [
+export const mediaFields: Array<MediaField> = [
   'duration_ms',
   'height',
   'media_key',
@@ -57,7 +57,7 @@ export const mediaFields: Array<MediaFields> = [
   'organic_metrics',
 ];
 
-export const placeFields: Array<PlaceFields> = [
+export const placeFields: Array<PlaceField> = [
   'contained_within',
   'country',
   'country_code',
@@ -68,9 +68,9 @@ export const placeFields: Array<PlaceFields> = [
   'place_type',
 ];
 
-export const pollFields: Array<PollFields> = ['duration_minutes', 'end_datetime', 'id', 'options', 'voting_status'];
+export const pollFields: Array<PollField> = ['duration_minutes', 'end_datetime', 'id', 'options', 'voting_status'];
 
-export const tweetExpansions: Array<TweetExpansions> = [
+export const tweetExpansions: Array<TweetExpansion> = [
   'attachments.poll_ids',
   'attachments.media_keys',
   'author_id',
@@ -81,4 +81,4 @@ export const tweetExpansions: Array<TweetExpansions> = [
   'referenced_tweets.id.author_id',
 ];
 
-export const userExpansions: Array<UserExpansions> = ['pinned_tweet_id'];
+export const userExpansions: Array<UserExpansion> = ['pinned_tweet_id'];

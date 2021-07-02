@@ -1,8 +1,11 @@
 import type User from '../structures/User.js';
 import type Tweet from '../structures/Tweet.js';
+import type Collection from '../util/Collection.js';
 import type SimplifiedUser from '../structures/SimplifiedUser.js';
+import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
+import type { FetchTweetOptions, FetchTweetsOptions } from './Interfaces.js';
 
-export type PlaceFields =
+export type PlaceField =
   | 'contained_within'
   | 'country'
   | 'country_code'
@@ -12,9 +15,9 @@ export type PlaceFields =
   | 'name'
   | 'place_type';
 
-export type PollFields = 'duration_minutes' | 'end_datetime' | 'id' | 'options' | 'voting_status';
+export type PollField = 'duration_minutes' | 'end_datetime' | 'id' | 'options' | 'voting_status';
 
-export type MediaFields =
+export type MediaField =
   | 'duration_ms'
   | 'height'
   | 'media_key'
@@ -25,9 +28,9 @@ export type MediaFields =
   | 'public_metrics'
   | 'organic_metrics';
 
-export type UserExpansions = 'pinned_tweet_id';
+export type UserExpansion = 'pinned_tweet_id';
 
-export type UserFields =
+export type UserField =
   | 'created_at'
   | 'description'
   | 'entities'
@@ -45,7 +48,7 @@ export type UserFields =
 
 export type UserResolvable = User | SimplifiedUser | string;
 
-export type TweetExpansions =
+export type TweetExpansion =
   | 'attachments.poll_ids'
   | 'attachments.media_keys'
   | 'author_id'
@@ -55,7 +58,7 @@ export type TweetExpansions =
   | 'referenced_tweets.id'
   | 'referenced_tweets.id.author_id';
 
-export type TweetFields =
+export type TweetField =
   | 'attachments'
   | 'author_id'
   | 'context_annotations'
@@ -74,4 +77,8 @@ export type TweetFields =
   | 'text'
   | 'withheld';
 
-export type TweetResolvable = string | Tweet;
+export type TweetManagerFetchResult<T extends FetchTweetOptions | FetchTweetsOptions> = T extends FetchTweetOptions
+  ? Tweet
+  : Collection<string, Tweet>;
+
+export type TweetResolvable = Tweet | SimplifiedTweet | string;
