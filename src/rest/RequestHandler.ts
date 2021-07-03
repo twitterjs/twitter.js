@@ -1,5 +1,6 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import { parseResponse } from '../util/Utility.js';
+import { ClientEvents } from '../util/Constants.js';
 import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
@@ -39,7 +40,29 @@ export default class RequestHandler {
 
     if (res && res.headers) {
       if (res.ok) {
-        return parseResponse(res);
+        const parsedResponse = await parseResponse(res);
+        if ('errors' in parsedResponse) {
+          /**
+           * Emitted when the raw data of a 200 OK API response contains error along with the requested data.
+           * Use this to debug what fields are missing and why
+           * @event Client#partialError
+           * @param {Object}
+           */
+          this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
+        }
+        return parsedResponse;
+      }
+
+      if (res.status >= 400 && res.status < 500) {
+        let errorObject;
+        try {
+          errorObject = await parseResponse(res);
+        } catch (error) {
+          console.log(error);
+          throw new Error(`${error}`);
+        }
+        console.log(errorObject);
+        throw new Error(`${errorObject}`);
       }
     }
   }

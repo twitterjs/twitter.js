@@ -4,12 +4,8 @@ import Collection from '../util/Collection.js';
 import { RequestData } from '../structures/misc/Misc.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
 import type Client from '../client/Client.js';
-import type {
-  FetchTweetOptions,
-  FetchTweetsOptions,
-  TweetManagerFetchResult,
-  TweetResolvable,
-} from '../typings/index.js';
+import type { TweetManagerFetchResult, TweetResolvable } from '../typings/Types.js';
+import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
   GetMultipleTweetsByIdsQuery,
   GetMultipleTweetsByIdsResponse,

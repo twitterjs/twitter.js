@@ -5,7 +5,7 @@ import { buildRoute } from './APIRouter.js';
 import Collection from '../util/Collection.js';
 import RequestHandler from './RequestHandler.js';
 import type Client from '../client/Client.js';
-import type { ExtendedRequestData } from '../typings/index.js';
+import type { ExtendedRequestData } from '../typings/Interfaces.js';
 
 /**
  * Manager class for the rest API

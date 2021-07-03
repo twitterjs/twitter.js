@@ -1,4 +1,4 @@
-import type { ErrorMessageBuilder, TwitterjsErrorConstructor } from '../typings/index.js';
+import type { ErrorMessageBuilder, TwitterjsErrorConstructor } from '../typings/Interfaces.js';
 
 const errorMessagesMap = new Map<string, string | ErrorMessageBuilder>();
 

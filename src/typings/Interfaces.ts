@@ -54,6 +54,11 @@ export interface ClientCredentials {
   username: string;
 }
 
+export interface ClientEventsMapping {
+  partialError: [partialError: Record<string, unknown>];
+  ready: [];
+}
+
 /**
  * The options with which the client gets initiated
  */
@@ -69,6 +74,7 @@ export interface ClientOptions {
   queryParameters?: QueryParameters;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorMessageBuilder = (...args: Array<any>) => string;
 
 export interface ExtendedRequestData<Q, B> extends RequestData<Q, B> {

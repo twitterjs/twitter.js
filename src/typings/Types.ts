@@ -3,7 +3,30 @@ import type Tweet from '../structures/Tweet.js';
 import type Collection from '../util/Collection.js';
 import type SimplifiedUser from '../structures/SimplifiedUser.js';
 import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
-import type { FetchTweetOptions, FetchTweetsOptions } from './Interfaces.js';
+import type { ClientEventsMapping, FetchTweetOptions, FetchTweetsOptions } from './Interfaces.js';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping ? ClientEventsMapping[K] : any[];
+
+export type ClientEventKeyType<K> = K extends keyof ClientEventsMapping
+  ? LiteralUnion<K>
+  : Exclude<K, keyof ClientEventsMapping>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ClientEventListenerType<K> = K extends keyof ClientEventsMapping ? ClientEventsMapping[K] : any[];
+
+export type LiteralUnion<K extends T, T = string> = K | (T & { zz_ignore_me?: never });
+
+export type MediaField =
+  | 'duration_ms'
+  | 'height'
+  | 'media_key'
+  | 'preview_image_url'
+  | 'type'
+  | 'url'
+  | 'width'
+  | 'public_metrics'
+  | 'organic_metrics';
 
 export type PlaceField =
   | 'contained_within'
@@ -16,17 +39,6 @@ export type PlaceField =
   | 'place_type';
 
 export type PollField = 'duration_minutes' | 'end_datetime' | 'id' | 'options' | 'voting_status';
-
-export type MediaField =
-  | 'duration_ms'
-  | 'height'
-  | 'media_key'
-  | 'preview_image_url'
-  | 'type'
-  | 'url'
-  | 'width'
-  | 'public_metrics'
-  | 'organic_metrics';
 
 export type UserExpansion = 'pinned_tweet_id';
 

@@ -1,4 +1,4 @@
-import type { ClientOptions } from '../typings/index.js';
+import type { ClientOptions } from '../typings/Interfaces.js';
 import {
   userFields,
   tweetFields,
@@ -8,6 +8,11 @@ import {
   tweetExpansions,
   userExpansions,
 } from './QueryParameters.js';
+
+export const ClientEvents = {
+  PARTIAL_ERROR: 'partialError',
+  READY: 'ready',
+};
 
 /**
  * Default options with which the client gets initiated

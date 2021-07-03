@@ -6,7 +6,7 @@ import type {
   TweetField,
   UserExpansion,
   UserField,
-} from '../typings/index.js';
+} from '../typings/Types.js';
 
 export const userFields: Array<UserField> = [
   'created_at',

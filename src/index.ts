@@ -14,7 +14,9 @@ import BaseStructure from './structures/BaseStructure.js';
 import SimplifiedTweet from './structures/SimplifiedTweet.js';
 import Tweet from './structures/Tweet.js';
 
-export * from './typings/index.js';
+// typings
+export * from './typings/Interfaces.js';
+export * from './typings/Types.js';
 
 import Collection from './util/Collection.js';
 export * from './util/Constants.js';
