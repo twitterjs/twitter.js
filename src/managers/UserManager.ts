@@ -43,10 +43,10 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
       return this._fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T>>;
     }
     if ('users' in options) {
-      if (!Array.isArray(options.users)) throw new CustomTypeError('FETCH_USERS_TYPE');
+      if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
       const userIDs = options.users.map(user => {
         const userID = this.resolveID(user);
-        if (!userID) throw new CustomError('FETCH_USERS_TYPE');
+        if (!userID) throw new CustomError('USER_RESOLVE_ID');
         return userID;
       });
       return this._fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T>>;
@@ -64,16 +64,17 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
   async fetchByUsername<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions>(
     options: T,
   ): Promise<UserManagerFetchByUsernameResult<T>> {
-    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'Object', true);
+    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('username' in options) {
       const { username } = options;
       if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
       return this._fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
     if ('usernames' in options) {
-      if (!Array.isArray(options.usernames)) throw new CustomTypeError('usernames should be an array');
+      if (!Array.isArray(options.usernames)) throw new CustomTypeError('INVALID_TYPE', 'usernames', 'array', true);
       const usernames = options.usernames.map(username => {
-        if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
+        if (typeof username !== 'string')
+          throw new CustomTypeError('INVALID_TYPE', 'username in the usernames array', 'string', false);
         return username;
       });
       return this._fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T>>;

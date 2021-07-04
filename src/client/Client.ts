@@ -62,11 +62,15 @@ export default class Client extends BaseClient {
    */
   async login(credentials: ClientCredentials): Promise<ClientCredentials> {
     if (typeof credentials !== 'object') {
-      throw new CustomTypeError('INVALID_TYPE', 'credentials', 'Object', true);
+      throw new CustomTypeError('INVALID_TYPE', 'credentials', 'object', true);
     }
     this.credentials = credentials;
     this.readyAt = new Date();
 
+    /**
+     * Emitted when the client becomes ready for use
+     * @event Client#ready
+     */
     this.emit(ClientEvents.READY);
     return this.credentials;
   }

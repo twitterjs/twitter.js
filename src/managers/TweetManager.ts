@@ -27,14 +27,14 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
    * @returns A {@link Tweet} or a {@link Collection} of them as a Promise
    */
   async fetch<T extends FetchTweetOptions | FetchTweetsOptions>(options: T): Promise<TweetManagerFetchResult<T>> {
-    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'Object', true);
+    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('tweet' in options) {
       const tweetID = this.resolveID(options.tweet);
       if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
       return this._fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
     }
     if ('tweets' in options) {
-      if (!Array.isArray(options.tweets)) throw new CustomTypeError('FETCH_TWEETS_TYPE');
+      if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
       const tweetIDs = options.tweets.map(tweet => {
         const tweetID = this.resolveID(tweet);
         if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
@@ -44,6 +44,8 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
+
+  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   private async _fetchSingleTweet(tweetID: string, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
