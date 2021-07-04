@@ -31,7 +31,7 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
     if ('tweet' in options) {
       const tweetID = this.resolveID(options.tweet);
       if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
-      return this._fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
+      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
     }
     if ('tweets' in options) {
       if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
@@ -40,14 +40,14 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
         if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
         return tweetID;
       });
-      return this._fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T>>;
+      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  private async _fetchSingleTweet(tweetID: string, options: FetchTweetOptions): Promise<Tweet> {
+  async #fetchSingleTweet(tweetID: string, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
       const cachedTweet = this.cache.get(tweetID);
       if (cachedTweet) return cachedTweet;
@@ -66,10 +66,7 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
 
-  private async _fetchMultipleTweets(
-    tweetIDs: Array<string>,
-    options: FetchTweetsOptions,
-  ): Promise<Collection<string, Tweet>> {
+  async #fetchMultipleTweets(tweetIDs: Array<string>, options: FetchTweetsOptions): Promise<Collection<string, Tweet>> {
     const fetchedTweetCollection = new Collection<string, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleTweetsByIdsQuery = {

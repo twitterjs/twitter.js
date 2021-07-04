@@ -75,7 +75,7 @@ export default class Client extends BaseClient {
     return this.credentials;
   }
 
-  public on<K extends keyof ClientEventsMapping | symbol>(
+  override on<K extends keyof ClientEventsMapping | symbol>(
     event: ClientEventKeyType<K>,
     listener: (...args: ClientEventListenerType<K>) => void,
   ): this {
@@ -84,7 +84,7 @@ export default class Client extends BaseClient {
     return this;
   }
 
-  public once<K extends keyof ClientEventsMapping | symbol>(
+  override once<K extends keyof ClientEventsMapping | symbol>(
     event: ClientEventKeyType<K>,
     listener: (...args: ClientEventListenerType<K>) => void,
   ): this {
@@ -93,7 +93,7 @@ export default class Client extends BaseClient {
     return this;
   }
 
-  public emit<K extends keyof ClientEventsMapping | symbol>(
+  override emit<K extends keyof ClientEventsMapping | symbol>(
     event: ClientEventKeyType<K>,
     ...args: ClientEventArgsType<K>
   ): boolean {

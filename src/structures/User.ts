@@ -12,10 +12,10 @@ export default class User extends SimplifiedUser {
   constructor(client: Client, data: GetSingleUserByIdResponse) {
     super(client, data.data);
 
-    this.pinnedTweet = this._patchPinnedTweet(data.includes?.tweets) ?? null;
+    this.pinnedTweet = this.#patchPinnedTweet(data.includes?.tweets) ?? null;
   }
 
-  private _patchPinnedTweet(tweets?: Array<APITweetObject>): SimplifiedTweet | undefined {
+  #patchPinnedTweet(tweets?: Array<APITweetObject>): SimplifiedTweet | undefined {
     if (!tweets) return;
     const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetID);
     if (!rawPinnedTweet) return;

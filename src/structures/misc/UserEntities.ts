@@ -25,13 +25,13 @@ export class UserDescriptionEntity {
   cashtags: Array<UserCashtagEntity>;
 
   constructor(data: APIUserEntitiesDescription) {
-    this.urls = this._patchUrls(data.urls);
-    this.hashtags = this._patchHashtags(data.hashtags);
-    this.mentions = this._patchMentions(data.mentions);
-    this.cashtags = this._patchCashtags(data.cashtags);
+    this.urls = this.#patchUrls(data.urls);
+    this.hashtags = this.#patchHashtags(data.hashtags);
+    this.mentions = this.#patchMentions(data.mentions);
+    this.cashtags = this.#patchCashtags(data.cashtags);
   }
 
-  private _patchCashtags(rawUserCashtags?: Array<APIUserCashtagEntity>): Array<UserCashtagEntity> {
+  #patchCashtags(rawUserCashtags?: Array<APIUserCashtagEntity>): Array<UserCashtagEntity> {
     const userCashtagsArray: Array<UserCashtagEntity> = [];
     if (!rawUserCashtags) return userCashtagsArray;
     for (const rawUserCashtag of rawUserCashtags) {
@@ -41,7 +41,7 @@ export class UserDescriptionEntity {
     return userCashtagsArray;
   }
 
-  private _patchHashtags(rawUserHashtags?: Array<APIUserHashtagEntity>): Array<UserHashtagEntity> {
+  #patchHashtags(rawUserHashtags?: Array<APIUserHashtagEntity>): Array<UserHashtagEntity> {
     const userHashtagsArray: Array<UserHashtagEntity> = [];
     if (!rawUserHashtags) return userHashtagsArray;
     for (const rawUserHashtag of rawUserHashtags) {
@@ -51,7 +51,7 @@ export class UserDescriptionEntity {
     return userHashtagsArray;
   }
 
-  private _patchMentions(rawUserMentions?: Array<APIUserMentionEntity>): Array<UserMentionEntity> {
+  #patchMentions(rawUserMentions?: Array<APIUserMentionEntity>): Array<UserMentionEntity> {
     const userMentionsArray: Array<UserMentionEntity> = [];
     if (!rawUserMentions) return userMentionsArray;
     for (const rawUserMention of rawUserMentions) {
@@ -61,7 +61,7 @@ export class UserDescriptionEntity {
     return userMentionsArray;
   }
 
-  private _patchUrls(rawUserUrls?: Array<APIUserURLEntity>): Array<UserURLEntity> {
+  #patchUrls(rawUserUrls?: Array<APIUserURLEntity>): Array<UserURLEntity> {
     const userUrlsArray: Array<UserURLEntity> = [];
     if (!rawUserUrls) return userUrlsArray;
     for (const rawUserUrl of rawUserUrls) {

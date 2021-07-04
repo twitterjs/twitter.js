@@ -6,7 +6,7 @@ import type { APIPlaceGeo, APIPlaceObject, APIPlaceType } from 'twitter-types';
 export default class Place extends BaseStructure {
   fullName: string;
 
-  id: string;
+  override id: string;
 
   containedWithin: Array<string>;
 

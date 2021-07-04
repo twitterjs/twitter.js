@@ -20,7 +20,7 @@ export default class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the requested Tweet
    */
-  id: string;
+  override id: string;
 
   /**
    * The actual `UTF-8` text of the Tweet
@@ -132,7 +132,7 @@ export default class SimplifiedTweet extends BaseStructure {
     this.text = data.text;
     this.attachments = data.attachments ? new TweetAttachments(data.attachments) : null;
     this.authorID = data.author_id ?? null;
-    this.contextAnnotations = this._patchTweetContextAnnotations(data.context_annotations);
+    this.contextAnnotations = this.#patchTweetContextAnnotations(data.context_annotations);
     this.conversationID = data.conversation_id ?? null;
     this.createdAt = data.created_at ?? null;
     this.entities = data.entities ? new TweetEntities(data.entities) : null;
@@ -144,7 +144,7 @@ export default class SimplifiedTweet extends BaseStructure {
     this.possiblySensitive = data.possibly_sensitive ?? null;
     this.promotedMetrics = data.promoted_metrics ? new TweetPromotedMetrics(data.promoted_metrics) : null;
     this.publicMetrics = data.public_metrics ? new TweetPublicMetrics(data.public_metrics) : null;
-    this.referencedTweets = this._patchReferencedTweets(data.referenced_tweets);
+    this.referencedTweets = this.#patchReferencedTweets(data.referenced_tweets);
     this.replySettings = data.reply_settings ?? null;
     this.source = data.source ?? null;
     this.withheld = data.withheld;
@@ -155,7 +155,7 @@ export default class SimplifiedTweet extends BaseStructure {
    * @param rawTweetReferences The raw data for tweet references
    * @returns An array of {@link TweetReference} objects
    */
-  private _patchReferencedTweets(rawTweetReferences?: Array<APITweetReferencedTweet>): Array<TweetReference> {
+  #patchReferencedTweets(rawTweetReferences?: Array<APITweetReferencedTweet>): Array<TweetReference> {
     const tweetReferencesArray: Array<TweetReference> = [];
     if (!rawTweetReferences) return tweetReferencesArray;
     for (const rawTweetReference of rawTweetReferences) {
@@ -165,7 +165,7 @@ export default class SimplifiedTweet extends BaseStructure {
     return tweetReferencesArray;
   }
 
-  private _patchTweetContextAnnotations(
+  #patchTweetContextAnnotations(
     rawContextAnnotations?: Array<APITweetContextAnnotation>,
   ): Array<TweetContextAnnotation> {
     const tweetContextAnnotationsArray: Array<TweetContextAnnotation> = [];

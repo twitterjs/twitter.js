@@ -54,23 +54,23 @@ export default class Tweet extends SimplifiedTweet {
   constructor(client: Client, data: GetSingleTweetByIdResponse) {
     super(client, data.data);
 
-    this.author = this._patchAuthor(data.includes?.users) ?? null;
-    this.mentions = this._patchMentions(data.includes?.users);
-    this.repliedTo = this._patchTweetReferences('replied_to', data.includes?.tweets) ?? null;
-    this.quoted = this._patchTweetReferences('quoted', data.includes?.tweets) ?? null;
-    this.polls = this._patchPolls(data.includes?.polls);
-    this.places = this._patchPlaces(data.includes?.places);
-    this.media = this._patchMedia(data.includes?.media);
+    this.author = this.#patchAuthor(data.includes?.users) ?? null;
+    this.mentions = this.#patchMentions(data.includes?.users);
+    this.repliedTo = this.#patchTweetReferences('replied_to', data.includes?.tweets) ?? null;
+    this.quoted = this.#patchTweetReferences('quoted', data.includes?.tweets) ?? null;
+    this.polls = this.#patchPolls(data.includes?.polls);
+    this.places = this.#patchPlaces(data.includes?.places);
+    this.media = this.#patchMedia(data.includes?.media);
   }
 
-  private _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
+  #patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
     if (!users) return;
     const rawAuthor = users.find(user => user.id === this.authorID);
     if (!rawAuthor) return;
     return new SimplifiedUser(this.client, rawAuthor);
   }
 
-  private _patchMentions(users?: Array<APIUserObject>): Collection<string, SimplifiedUser> {
+  #patchMentions(users?: Array<APIUserObject>): Collection<string, SimplifiedUser> {
     const mentionedUsersCollection = new Collection<string, SimplifiedUser>();
     const mentions = this.entities?.mentions;
     if (!users || !mentions) return mentionedUsersCollection;
@@ -83,7 +83,7 @@ export default class Tweet extends SimplifiedTweet {
     return mentionedUsersCollection;
   }
 
-  private _patchTweetReferences(
+  #patchTweetReferences(
     referenceType: APITweetReferencedTweetType,
     tweets?: Array<APITweetObject>,
   ): SimplifiedTweet | undefined {
@@ -94,7 +94,7 @@ export default class Tweet extends SimplifiedTweet {
     return new SimplifiedTweet(this.client, rawOriginalTweet);
   }
 
-  private _patchPolls(rawPolls?: Array<APIPollObject>): Collection<string, Poll> {
+  #patchPolls(rawPolls?: Array<APIPollObject>): Collection<string, Poll> {
     const pollsCollection = new Collection<string, Poll>();
     if (!rawPolls) return pollsCollection;
     for (const rawPoll of rawPolls) {
@@ -104,7 +104,7 @@ export default class Tweet extends SimplifiedTweet {
     return pollsCollection;
   }
 
-  private _patchPlaces(rawPlaces?: Array<APIPlaceObject>): Collection<string, Place> {
+  #patchPlaces(rawPlaces?: Array<APIPlaceObject>): Collection<string, Place> {
     const placesCollection = new Collection<string, Place>();
     if (!rawPlaces) return placesCollection;
     for (const rawPlace of rawPlaces) {
@@ -114,7 +114,7 @@ export default class Tweet extends SimplifiedTweet {
     return placesCollection;
   }
 
-  private _patchMedia(rawMediaContents?: Array<APIMediaObject>): Collection<string, Media> {
+  #patchMedia(rawMediaContents?: Array<APIMediaObject>): Collection<string, Media> {
     const mediaCollection = new Collection<string, Media>();
     if (!rawMediaContents) return mediaCollection;
     for (const rawMediaContent of rawMediaContents) {

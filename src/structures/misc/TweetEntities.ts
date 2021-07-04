@@ -16,14 +16,14 @@ export class TweetEntities {
   urls: Array<TweetURLEntity>;
 
   constructor(data: APITweetEntities) {
-    this.annotations = this._patchAnnotations(data.annotations);
-    this.cashtags = this._patchCashtags(data.cashtags);
-    this.hashtags = this._patchHashtags(data.hashtags);
-    this.mentions = this._patchMentions(data.mentions);
-    this.urls = this._patchUrls(data.urls);
+    this.annotations = this.#patchAnnotations(data.annotations);
+    this.cashtags = this.#patchCashtags(data.cashtags);
+    this.hashtags = this.#patchHashtags(data.hashtags);
+    this.mentions = this.#patchMentions(data.mentions);
+    this.urls = this.#patchUrls(data.urls);
   }
 
-  private _patchAnnotations(rawTweetAnnotations?: Array<APITweetAnnotationEntity>): Array<TweetAnnotationEntity> {
+  #patchAnnotations(rawTweetAnnotations?: Array<APITweetAnnotationEntity>): Array<TweetAnnotationEntity> {
     const tweetAnnotationsArray: Array<TweetAnnotationEntity> = [];
     if (!rawTweetAnnotations) return tweetAnnotationsArray;
     for (const rawTweetAnnotation of rawTweetAnnotations) {
@@ -33,7 +33,7 @@ export class TweetEntities {
     return tweetAnnotationsArray;
   }
 
-  private _patchCashtags(rawTweetCashtags?: Array<APITweetCashtagEntity>): Array<TweetCashtagEntity> {
+  #patchCashtags(rawTweetCashtags?: Array<APITweetCashtagEntity>): Array<TweetCashtagEntity> {
     const tweetCashtagsArray: Array<TweetCashtagEntity> = [];
     if (!rawTweetCashtags) return tweetCashtagsArray;
     for (const rawTweetCashtag of rawTweetCashtags) {
@@ -43,7 +43,7 @@ export class TweetEntities {
     return tweetCashtagsArray;
   }
 
-  private _patchHashtags(rawTweetHashtags?: Array<APITweetHashtagEntity>): Array<TweetHashtagEntity> {
+  #patchHashtags(rawTweetHashtags?: Array<APITweetHashtagEntity>): Array<TweetHashtagEntity> {
     const tweetHashtagsArray: Array<TweetHashtagEntity> = [];
     if (!rawTweetHashtags) return tweetHashtagsArray;
     for (const rawTweetHashtag of rawTweetHashtags) {
@@ -53,7 +53,7 @@ export class TweetEntities {
     return tweetHashtagsArray;
   }
 
-  private _patchMentions(rawTweetMentions?: Array<APITweetMentionEntity>): Array<TweetMentionEntity> {
+  #patchMentions(rawTweetMentions?: Array<APITweetMentionEntity>): Array<TweetMentionEntity> {
     const tweetMentionsArray: Array<TweetMentionEntity> = [];
     if (!rawTweetMentions) return tweetMentionsArray;
     for (const rawTweetMention of rawTweetMentions) {
@@ -63,7 +63,7 @@ export class TweetEntities {
     return tweetMentionsArray;
   }
 
-  private _patchUrls(rawTweetUrls?: Array<APITweetURLEntity>): Array<TweetURLEntity> {
+  #patchUrls(rawTweetUrls?: Array<APITweetURLEntity>): Array<TweetURLEntity> {
     const tweetUrlsArray: Array<TweetURLEntity> = [];
     if (!rawTweetUrls) return tweetUrlsArray;
     for (const rawTweetUrl of rawTweetUrls) {

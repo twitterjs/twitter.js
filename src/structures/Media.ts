@@ -9,7 +9,7 @@ import type Client from '../client/Client.js';
 import type { APIMediaObject, APIMediaType } from 'twitter-types';
 
 export default class Media extends BaseStructure {
-  id: string;
+  override id: string;
 
   type: APIMediaType;
 

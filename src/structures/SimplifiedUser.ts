@@ -8,7 +8,7 @@ export default class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of the user
    */
-  id: string;
+  override id: string;
 
   /**
    * The name of the user, as they’ve defined it on their profile. Not necessarily a person’s name.

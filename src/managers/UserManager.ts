@@ -40,7 +40,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     if ('user' in options) {
       const userID = this.resolveID(options.user);
       if (!userID) throw new CustomError('USER_RESOLVE_ID');
-      return this._fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T>>;
+      return this.#fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T>>;
     }
     if ('users' in options) {
       if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
@@ -49,7 +49,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
         if (!userID) throw new CustomError('USER_RESOLVE_ID');
         return userID;
       });
-      return this._fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T>>;
+      return this.#fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -68,7 +68,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     if ('username' in options) {
       const { username } = options;
       if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
-      return this._fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
+      return this.#fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
     if ('usernames' in options) {
       if (!Array.isArray(options.usernames)) throw new CustomTypeError('INVALID_TYPE', 'usernames', 'array', true);
@@ -77,14 +77,14 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
           throw new CustomTypeError('INVALID_TYPE', 'username in the usernames array', 'string', false);
         return username;
       });
-      return this._fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T>>;
+      return this.#fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  private async _fetchSingleUser(userID: string, options: FetchUserOptions): Promise<User> {
+  async #fetchSingleUser(userID: string, options: FetchUserOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.get(userID);
       if (cachedUser) return cachedUser;
@@ -100,10 +100,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     return new User(this.client, data);
   }
 
-  private async _fetchMultipleUsers(
-    userIDs: Array<string>,
-    options: FetchUsersOptions,
-  ): Promise<Collection<string, User>> {
+  async #fetchMultipleUsers(userIDs: Array<string>, options: FetchUsersOptions): Promise<Collection<string, User>> {
     const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleUsersByIdsQuery = {
@@ -123,7 +120,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     return fetchedUserCollection;
   }
 
-  private async _fetchSingleUserByUsername(username: string, options: FetchUserByUsernameOptions): Promise<User> {
+  async #fetchSingleUserByUsername(username: string, options: FetchUserByUsernameOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.find(user => user.username === username);
       if (cachedUser) return cachedUser;
@@ -139,7 +136,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     return new User(this.client, data);
   }
 
-  private async _fetchMultipleUsersByUsernames(
+  async #fetchMultipleUsersByUsernames(
     usernames: Array<string>,
     options: FetchUsersByUsernamesOptions,
   ): Promise<Collection<string, User>> {

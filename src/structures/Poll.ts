@@ -4,7 +4,7 @@ import type Client from '../client/Client.js';
 import type { APIPollObject, APIPollVotingStatus } from 'twitter-types';
 
 export default class Poll extends BaseStructure {
-  id: string;
+  override id: string;
 
   options: Array<PollOption>;
 

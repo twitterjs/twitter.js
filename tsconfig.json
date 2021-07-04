@@ -7,7 +7,9 @@
     "strict": true,
     "moduleResolution": "Node",
     "watch": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true,
+    "strictNullChecks": true,
   },
   "compileOnSave": true,
   "include": [
