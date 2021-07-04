@@ -7,7 +7,9 @@ import type {
   ClientEventsMapping,
   FetchTweetOptions,
   FetchTweetsOptions,
+  FetchUserByUsernameOptions,
   FetchUserOptions,
+  FetchUsersByUsernamesOptions,
   FetchUsersOptions,
 } from './Interfaces.js';
 
@@ -67,6 +69,9 @@ export type UserField =
 export type UserManagerFetchResult<T extends FetchUserOptions | FetchUsersOptions> = T extends FetchUserOptions
   ? User
   : Collection<string, User>;
+
+export type UserManagerFetchByUsernameResult<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions> =
+  T extends FetchUserByUsernameOptions ? User : Collection<string, User>;
 
 export type UserResolvable = User | SimplifiedUser | string;
 

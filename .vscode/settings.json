@@ -24,4 +24,7 @@
   "eslint.validate": [
     "typescript",
   ],
+  "editor.quickSuggestions": {
+    "comments": true,
+  }
 }

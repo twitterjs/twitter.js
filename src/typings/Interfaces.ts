@@ -82,6 +82,26 @@ export interface ExtendedRequestData<Q, B> extends RequestData<Q, B> {
   route: string;
 }
 
+/**
+ * Options used to fetch a user by its username
+ */
+export interface FetchUserByUsernameOptions extends BaseFetchOptions {
+  /**
+   * The username of the user to fetch
+   */
+  username: string;
+}
+
+/**
+ * Options used to fetch users by their usernames
+ */
+export interface FetchUsersByUsernamesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The usernames of the users to fetch
+   */
+  usernames: Array<string>;
+}
+
 export interface FetchUserOptions extends BaseFetchOptions {
   /**
    * The user to fetch
