@@ -3,7 +3,13 @@ import type Tweet from '../structures/Tweet.js';
 import type Collection from '../util/Collection.js';
 import type SimplifiedUser from '../structures/SimplifiedUser.js';
 import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
-import type { ClientEventsMapping, FetchTweetOptions, FetchTweetsOptions } from './Interfaces.js';
+import type {
+  ClientEventsMapping,
+  FetchTweetOptions,
+  FetchTweetsOptions,
+  FetchUserOptions,
+  FetchUsersOptions,
+} from './Interfaces.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping ? ClientEventsMapping[K] : any[];
@@ -57,6 +63,10 @@ export type UserField =
   | 'username'
   | 'verified'
   | 'withheld';
+
+export type UserManagerFetchResult<T extends FetchUserOptions | FetchUsersOptions> = T extends FetchUserOptions
+  ? User
+  : Collection<string, User>;
 
 export type UserResolvable = User | SimplifiedUser | string;
 

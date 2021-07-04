@@ -63,14 +63,14 @@ export default class Tweet extends SimplifiedTweet {
     this.media = this._patchMedia(data.includes?.media);
   }
 
-  _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
+  private _patchAuthor(users?: Array<APIUserObject>): SimplifiedUser | undefined {
     if (!users) return;
     const rawAuthor = users.find(user => user.id === this.authorID);
     if (!rawAuthor) return;
     return new SimplifiedUser(this.client, rawAuthor);
   }
 
-  _patchMentions(users?: Array<APIUserObject>): Collection<string, SimplifiedUser> {
+  private _patchMentions(users?: Array<APIUserObject>): Collection<string, SimplifiedUser> {
     const mentionedUsersCollection = new Collection<string, SimplifiedUser>();
     const mentions = this.entities?.mentions;
     if (!users || !mentions) return mentionedUsersCollection;
@@ -83,7 +83,7 @@ export default class Tweet extends SimplifiedTweet {
     return mentionedUsersCollection;
   }
 
-  _patchTweetReferences(
+  private _patchTweetReferences(
     referenceType: APITweetReferencedTweetType,
     tweets?: Array<APITweetObject>,
   ): SimplifiedTweet | undefined {
@@ -94,7 +94,7 @@ export default class Tweet extends SimplifiedTweet {
     return new SimplifiedTweet(this.client, rawOriginalTweet);
   }
 
-  _patchPolls(rawPolls?: Array<APIPollObject>): Collection<string, Poll> {
+  private _patchPolls(rawPolls?: Array<APIPollObject>): Collection<string, Poll> {
     const pollsCollection = new Collection<string, Poll>();
     if (!rawPolls) return pollsCollection;
     for (const rawPoll of rawPolls) {
@@ -104,7 +104,7 @@ export default class Tweet extends SimplifiedTweet {
     return pollsCollection;
   }
 
-  _patchPlaces(rawPlaces?: Array<APIPlaceObject>): Collection<string, Place> {
+  private _patchPlaces(rawPlaces?: Array<APIPlaceObject>): Collection<string, Place> {
     const placesCollection = new Collection<string, Place>();
     if (!rawPlaces) return placesCollection;
     for (const rawPlace of rawPlaces) {
@@ -114,7 +114,7 @@ export default class Tweet extends SimplifiedTweet {
     return placesCollection;
   }
 
-  _patchMedia(rawMediaContents?: Array<APIMediaObject>): Collection<string, Media> {
+  private _patchMedia(rawMediaContents?: Array<APIMediaObject>): Collection<string, Media> {
     const mediaCollection = new Collection<string, Media>();
     if (!rawMediaContents) return mediaCollection;
     for (const rawMediaContent of rawMediaContents) {

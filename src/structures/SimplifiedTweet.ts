@@ -150,7 +150,12 @@ export default class SimplifiedTweet extends BaseStructure {
     this.withheld = data.withheld;
   }
 
-  _patchReferencedTweets(rawTweetReferences?: Array<APITweetReferencedTweet>): Array<TweetReference> {
+  /**
+   * Converts raw tweet references data into desired shape to patch {@link SimplifiedTweet.referencedTweets} property
+   * @param rawTweetReferences The raw data for tweet references
+   * @returns An array of {@link TweetReference} objects
+   */
+  private _patchReferencedTweets(rawTweetReferences?: Array<APITweetReferencedTweet>): Array<TweetReference> {
     const tweetReferencesArray: Array<TweetReference> = [];
     if (!rawTweetReferences) return tweetReferencesArray;
     for (const rawTweetReference of rawTweetReferences) {
@@ -160,7 +165,7 @@ export default class SimplifiedTweet extends BaseStructure {
     return tweetReferencesArray;
   }
 
-  _patchTweetContextAnnotations(
+  private _patchTweetContextAnnotations(
     rawContextAnnotations?: Array<APITweetContextAnnotation>,
   ): Array<TweetContextAnnotation> {
     const tweetContextAnnotationsArray: Array<TweetContextAnnotation> = [];

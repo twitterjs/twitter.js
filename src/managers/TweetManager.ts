@@ -81,12 +81,10 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
     };
     const requestData = new RequestData(query, null, options.userContext);
     const data: GetMultipleTweetsByIdsResponse = await this.client._api.tweets.get(requestData);
-    for (const rawTweet of data.data) {
-      const tweet = this.add<GetSingleTweetByIdResponse>(
-        rawTweet.id,
-        { data: rawTweet, includes: data.includes },
-        options.cacheAfterFetching,
-      );
+    const rawTweets = data.data;
+    const rawTweetsIncludes = data.includes;
+    for (const rawTweet of rawTweets) {
+      const tweet = this.add(rawTweet.id, { data: rawTweet, includes: rawTweetsIncludes }, options.cacheAfterFetching);
       fetchedTweetCollection.set(tweet.id, tweet);
     }
     return fetchedTweetCollection;

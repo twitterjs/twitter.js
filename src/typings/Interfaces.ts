@@ -8,6 +8,7 @@ import type {
   TweetResolvable,
   UserExpansion,
   UserField,
+  UserResolvable,
 } from './Types.js';
 
 /**
@@ -81,6 +82,20 @@ export interface ExtendedRequestData<Q, B> extends RequestData<Q, B> {
   route: string;
 }
 
+export interface FetchUserOptions extends BaseFetchOptions {
+  /**
+   * The user to fetch
+   */
+  user: UserResolvable;
+}
+
+export interface FetchUsersOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The users to fetch
+   */
+  users: Array<UserResolvable>;
+}
+
 export interface FetchTweetOptions extends BaseFetchOptions {
   /**
    * The tweet to fetch
@@ -88,21 +103,11 @@ export interface FetchTweetOptions extends BaseFetchOptions {
   tweet: TweetResolvable;
 }
 
-export interface FetchTweetsOptions {
+export interface FetchTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The tweets to fetch
    */
   tweets: Array<TweetResolvable>;
-
-  /**
-   * Store the fetched content in the memory for later use
-   */
-  cacheAfterFetching?: boolean;
-
-  /**
-   * Make the request using user context auth
-   */
-  userContext?: boolean;
 }
 
 export interface QueryParameters {
