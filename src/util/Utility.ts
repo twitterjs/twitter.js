@@ -1,5 +1,5 @@
 import type { Response } from 'node-fetch';
-import type { APIProblemFields } from 'twitter-types';
+import type { APIProblem } from 'twitter-types';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
 const has = (obj: Record<string, unknown>, key: string) => Object.prototype.hasOwnProperty.call(obj, key);
@@ -24,7 +24,7 @@ export function mergeDefault(defaultObject: any, given: any): ClientOptions {
  * @param res The response sent by the API
  * @returns The body of the response
  */
-export async function parseResponse(res: Response): Promise<Record<string, unknown> | Buffer | APIProblemFields> {
+export async function parseResponse(res: Response): Promise<Record<string, unknown> | Buffer | APIProblem> {
   if (res.headers.get('content-type')?.startsWith('application/json')) return res.json();
   return res.buffer();
 }

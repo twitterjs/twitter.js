@@ -1,11 +1,11 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import { parseResponse } from '../util/Utility.js';
 import { ClientEvents } from '../util/Constants.js';
-import InvalidRequestError from './errors/InvalidRequestError.js';
 import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
-import type { APIProblemFields } from 'twitter-types';
+import type { APIProblem } from 'twitter-types';
+import TwitterAPIError from './TwitterAPIError.js';
 
 export default class RequestHandler {
   /**
@@ -39,7 +39,7 @@ export default class RequestHandler {
     try {
       res = await request.make();
     } catch (error) {
-      throw new Error('TODO'); // TODO
+      throw new Error('TODO'); // TODO make an HTTPError for this
     }
 
     if (res && res.headers) {
@@ -54,22 +54,24 @@ export default class RequestHandler {
            */
           this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
 
-          if ('data' in parsedResponse === false) throw new Error(`${parsedResponse.errors}`);
+          // Throw error if there is no data field in the response as there is nothing to process. (⚠ not sure this is true for every response, will look this up later)
+          // Currently the thrown error will contain information about the first error only, listen for `Client#partialError` to get the complete error object
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          if ('data' in parsedResponse === false) throw new TwitterAPIError(parsedResponse.errors[0]); // TODO
         }
         return parsedResponse;
       }
 
       if (res.status >= 400 && res.status < 500) {
-        let apiError: APIProblemFields; // TODO
+        let apiError: APIProblem; // TODO
         try {
-          apiError = (await parseResponse(res)) as APIProblemFields;
+          apiError = (await parseResponse(res)) as APIProblem;
         } catch (error) {
           console.log('HTTPError at RequestHandler L63', error);
-          throw new Error(`${error}`); // TODO
+          throw new Error(`${error}`); // TODO make an HTTPError for this
         }
-        console.log('APIError at RequestHandler L67', apiError);
-        // @ts-ignore
-        throw new InvalidRequestError(apiError); // TODO
+        throw new TwitterAPIError(apiError);
       }
     }
   }
