@@ -1,9 +1,11 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import { parseResponse } from '../util/Utility.js';
 import { ClientEvents } from '../util/Constants.js';
+import InvalidRequestError from './errors/InvalidRequestError.js';
 import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
+import type { APIProblemFields } from 'twitter-types';
 
 export default class RequestHandler {
   /**
@@ -21,6 +23,7 @@ export default class RequestHandler {
     this.queue = new AsyncQueue();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async push(request: APIRequest): Promise<any> {
     await this.queue.wait();
     try {
@@ -30,6 +33,7 @@ export default class RequestHandler {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(request: APIRequest): Promise<any> {
     let res: Response;
     try {
@@ -49,20 +53,23 @@ export default class RequestHandler {
            * @param {Object}
            */
           this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
+
+          if ('data' in parsedResponse === false) throw new Error(`${parsedResponse.errors}`);
         }
         return parsedResponse;
       }
 
       if (res.status >= 400 && res.status < 500) {
-        let errorObject;
+        let apiError: APIProblemFields; // TODO
         try {
-          errorObject = await parseResponse(res);
+          apiError = (await parseResponse(res)) as APIProblemFields;
         } catch (error) {
-          console.log(error);
-          throw new Error(`${error}`);
+          console.log('HTTPError at RequestHandler L63', error);
+          throw new Error(`${error}`); // TODO
         }
-        console.log(errorObject);
-        throw new Error(`${errorObject}`);
+        console.log('APIError at RequestHandler L67', apiError);
+        // @ts-ignore
+        throw new InvalidRequestError(apiError); // TODO
       }
     }
   }

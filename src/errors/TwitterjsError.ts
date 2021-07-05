@@ -5,16 +5,14 @@ const errorMessagesMap = new Map<string, string | ErrorMessageBuilder>();
 export function makeTwitterjsError(Base: ErrorConstructor): TwitterjsErrorConstructor {
   return class TwitterjsError extends Base {
     code: string;
-    message: string;
 
     constructor(key: string, ...args: Array<unknown>) {
-      super();
+      super(formatErrorMessage(key, args));
       this.code = key;
-      this.message = formatErrorMessage(key, args);
       if (Error.captureStackTrace) Error.captureStackTrace(this, TwitterjsError);
     }
 
-    get name() {
+    override get name(): string {
       return `${super.name} [${this.code}]`;
     }
   };
