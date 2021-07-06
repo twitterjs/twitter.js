@@ -1,13 +1,13 @@
-import type { ClientOptions } from '../typings/Interfaces.js';
 import {
-  userFields,
-  tweetFields,
-  mediaFields,
-  placeFields,
-  pollFields,
-  tweetExpansions,
-  userExpansions,
+  MediaFields,
+  PlaceFields,
+  PollFields,
+  TweetExpansions,
+  TweetFields,
+  UserExpansions,
+  UserFields,
 } from './QueryParameters.js';
+import type { ClientOptions } from '../typings/Interfaces.js';
 
 export const ClientEvents = {
   PARTIAL_ERROR: 'partialError',
@@ -27,12 +27,12 @@ export const DefaultClientOptions: ClientOptions = {
   },
 
   queryParameters: {
-    userFields,
-    tweetFields,
-    mediaFields,
-    placeFields,
-    pollFields,
-    tweetExpansions,
-    userExpansions,
+    userFields: UserFields,
+    tweetFields: TweetFields,
+    mediaFields: MediaFields,
+    placeFields: PlaceFields,
+    pollFields: PollFields,
+    tweetExpansions: TweetExpansions,
+    userExpansions: UserExpansions,
   },
 };

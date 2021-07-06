@@ -1,15 +1,14 @@
 import type { RequestData } from '../structures/misc/Misc.js';
+import type { TweetResolvable, UserResolvable } from './Types.js';
 import type {
-  MediaField,
-  PlaceField,
-  PollField,
-  TweetExpansion,
-  TweetField,
-  TweetResolvable,
-  UserExpansion,
-  UserField,
-  UserResolvable,
-} from './Types.js';
+  APIMediaField,
+  APIPlaceField,
+  APIPollField,
+  APITweetExpansion,
+  APITweetField,
+  APIUserExpansion,
+  APIUserField,
+} from 'twitter-types';
 
 /**
  * The options related to the API version
@@ -131,13 +130,13 @@ export interface FetchTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheChe
 }
 
 export interface QueryParameters {
-  userFields?: Array<UserField>;
-  tweetFields?: Array<TweetField>;
-  mediaFields?: Array<MediaField>;
-  placeFields?: Array<PlaceField>;
-  pollFields?: Array<PollField>;
-  tweetExpansions?: Array<TweetExpansion>;
-  userExpansions?: Array<UserExpansion>;
+  userFields?: Array<APIUserField>;
+  tweetFields?: Array<APITweetField>;
+  mediaFields?: Array<APIMediaField>;
+  placeFields?: Array<APIPlaceField>;
+  pollFields?: Array<APIPollField>;
+  tweetExpansions?: Array<APITweetExpansion>;
+  userExpansions?: Array<APIUserExpansion>;
 }
 
 export interface StructureConstructable<T> {

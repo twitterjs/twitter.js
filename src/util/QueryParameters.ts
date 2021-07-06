@@ -1,14 +1,14 @@
 import type {
-  MediaField,
-  PlaceField,
-  PollField,
-  TweetExpansion,
-  TweetField,
-  UserExpansion,
-  UserField,
-} from '../typings/Types.js';
+  APIMediaField,
+  APIPlaceField,
+  APIPollField,
+  APITweetExpansion,
+  APITweetField,
+  APIUserExpansion,
+  APIUserField,
+} from 'twitter-types';
 
-export const userFields: Array<UserField> = [
+export const UserFields: Array<APIUserField> = [
   'created_at',
   'description',
   'entities',
@@ -25,7 +25,7 @@ export const userFields: Array<UserField> = [
   'withheld',
 ];
 
-export const tweetFields: Array<TweetField> = [
+export const TweetFields: Array<APITweetField> = [
   'attachments',
   'author_id',
   'context_annotations',
@@ -45,7 +45,7 @@ export const tweetFields: Array<TweetField> = [
   'withheld',
 ];
 
-export const mediaFields: Array<MediaField> = [
+export const MediaFields: Array<APIMediaField> = [
   'duration_ms',
   'height',
   'media_key',
@@ -57,7 +57,7 @@ export const mediaFields: Array<MediaField> = [
   'organic_metrics',
 ];
 
-export const placeFields: Array<PlaceField> = [
+export const PlaceFields: Array<APIPlaceField> = [
   'contained_within',
   'country',
   'country_code',
@@ -68,9 +68,9 @@ export const placeFields: Array<PlaceField> = [
   'place_type',
 ];
 
-export const pollFields: Array<PollField> = ['duration_minutes', 'end_datetime', 'id', 'options', 'voting_status'];
+export const PollFields: Array<APIPollField> = ['duration_minutes', 'end_datetime', 'id', 'options', 'voting_status'];
 
-export const tweetExpansions: Array<TweetExpansion> = [
+export const TweetExpansions: Array<APITweetExpansion> = [
   'attachments.poll_ids',
   'attachments.media_keys',
   'author_id',
@@ -81,4 +81,4 @@ export const tweetExpansions: Array<TweetExpansion> = [
   'referenced_tweets.id.author_id',
 ];
 
-export const userExpansions: Array<UserExpansion> = ['pinned_tweet_id'];
+export const UserExpansions: Array<APIUserExpansion> = ['pinned_tweet_id'];
