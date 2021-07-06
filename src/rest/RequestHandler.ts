@@ -1,11 +1,12 @@
+import HTTPError from './HTTPError.js';
 import { AsyncQueue } from '@sapphire/async-queue';
 import { parseResponse } from '../util/Utility.js';
+import TwitterAPIError from './TwitterAPIError.js';
 import { ClientEvents } from '../util/Constants.js';
 import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
 import type { APIProblem } from 'twitter-types';
-import TwitterAPIError from './TwitterAPIError.js';
 
 export default class RequestHandler {
   /**
@@ -39,7 +40,7 @@ export default class RequestHandler {
     try {
       res = await request.make();
     } catch (error) {
-      throw new Error('TODO'); // TODO make an HTTPError for this
+      throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
     }
 
     if (res && res.headers) {
@@ -64,12 +65,11 @@ export default class RequestHandler {
       }
 
       if (res.status >= 400 && res.status < 500) {
-        let apiError: APIProblem; // TODO
+        let apiError: APIProblem;
         try {
           apiError = (await parseResponse(res)) as APIProblem;
         } catch (error) {
-          console.log('HTTPError at RequestHandler L63', error);
-          throw new Error(`${error}`); // TODO make an HTTPError for this
+          throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
         }
         throw new TwitterAPIError(apiError);
       }
