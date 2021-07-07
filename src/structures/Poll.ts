@@ -1,9 +1,9 @@
 import { PollOption } from './misc/Misc.js';
 import BaseStructure from './BaseStructure.js';
-import type Client from '../client/Client.js';
+import { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { APIPollObject, APIPollVotingStatus } from 'twitter-types';
 
-export default class Poll extends BaseStructure {
+export default class Poll<C extends ClientUnionType> extends BaseStructure<C> {
   id: string;
 
   options: Array<PollOption>;
@@ -14,7 +14,7 @@ export default class Poll extends BaseStructure {
 
   votingStatus: APIPollVotingStatus | null;
 
-  constructor(client: Client, data: APIPollObject) {
+  constructor(client: ClientInUse<C>, data: APIPollObject) {
     super(client);
 
     this.id = data.id;

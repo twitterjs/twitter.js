@@ -1,19 +1,20 @@
 import fetch from 'node-fetch';
+import UserContextClient from '../client/UserContextClient.js';
 import type { Response, HeaderInit, BodyInit } from 'node-fetch';
-import type Client from '../client/Client.js';
 import type RESTManager from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
-export default class APIRequest {
-  rest: RESTManager;
+export default class APIRequest<C extends ClientUnionType> {
+  rest: RESTManager<C>;
   method: string;
   path: string;
   options: RequestData<unknown, unknown>;
   route: string;
-  client: Client;
+  client: ClientInUse<C>;
 
-  constructor(rest: RESTManager, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
+  constructor(rest: RESTManager<C>, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
     this.rest = rest;
     this.method = method;
     this.path = path;
@@ -36,9 +37,10 @@ export default class APIRequest {
     const url = baseURL + this.path;
 
     const headers: HeaderInit = {};
-    headers.Authorization = this.options.requireUserContextAuth
-      ? this.rest.getUserContextAuth(this.method, url)
-      : this.rest.getBasicAuth();
+    headers.Authorization =
+      this.client instanceof UserContextClient
+        ? this.rest.getUserContextAuth(this.method, url)
+        : this.rest.getBasicAuth();
 
     let body: BodyInit | undefined;
     if (this.method !== 'get' && this.options.body) {

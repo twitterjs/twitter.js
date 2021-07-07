@@ -25,15 +25,9 @@ export class RequestData<Q, B> {
    */
   body: B;
 
-  /**
-   * Whether the requested endpoint require user context authorization
-   */
-  requireUserContextAuth: boolean;
-
-  constructor(query: Q, body: B, requireUserContextAuth?: boolean) {
+  constructor(query: Q, body: B) {
     this.query = query;
     this.body = body;
-    this.requireUserContextAuth = requireUserContextAuth ?? false;
   }
 }
 

@@ -1,9 +1,9 @@
 import { PlaceGeo } from './misc/Misc.js';
 import BaseStructure from './BaseStructure.js';
-import type Client from '../client/Client.js';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { APIPlaceGeo, APIPlaceObject, APIPlaceType } from 'twitter-types';
 
-export default class Place extends BaseStructure {
+export default class Place<C extends ClientUnionType> extends BaseStructure<C> {
   fullName: string;
 
   id: string;
@@ -20,7 +20,7 @@ export default class Place extends BaseStructure {
 
   placeType: APIPlaceType | null;
 
-  constructor(client: Client, data: APIPlaceObject) {
+  constructor(client: ClientInUse<C>, data: APIPlaceObject) {
     super(client);
 
     this.fullName = data.full_name;

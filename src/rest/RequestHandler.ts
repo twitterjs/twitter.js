@@ -8,24 +8,25 @@ import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
 import type { APIProblem } from 'twitter-types';
+import type { ClientUnionType } from '../typings/Types.js';
 
-export default class RequestHandler {
+export default class RequestHandler<C extends ClientUnionType> {
   /**
    * The manager of that initiated this class
    */
-  manager: RESTManager;
+  manager: RESTManager<C>;
 
   /**
    * The queue for the requests
    */
   queue: AsyncQueue;
 
-  constructor(manager: RESTManager) {
+  constructor(manager: RESTManager<C>) {
     this.manager = manager;
     this.queue = new AsyncQueue();
   }
 
-  async push(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
+  async push(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
     await this.queue.wait();
     try {
       return await this.execute(request);
@@ -34,7 +35,7 @@ export default class RequestHandler {
     }
   }
 
-  async execute(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
+  async execute(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
     let res: Response;
     try {
       res = await request.make();
@@ -53,13 +54,11 @@ export default class RequestHandler {
           /**
            * Emitted when the raw data of a 200 OK API response contains error along with the requested data.
            * Use this to debug what fields are missing and why
-           * @event Client#partialError
-           * @param {Object}
            */
           this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
 
           // Throw error if there is no data field in the response as there is nothing to process. (⚠ not sure this is true for every response, will look this up later)
-          // Currently the thrown error will contain information about the first error only, listen for `Client#partialError` to get the complete error object
+          // Currently the thrown error will contain information about the first error only, listen for `partialError` to get the complete error object
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           if ('data' in parsedResponse === false) throw new TwitterAPIError(parsedResponse.errors[0]); // TODO

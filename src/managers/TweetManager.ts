@@ -3,8 +3,7 @@ import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
 import { RequestData } from '../structures/misc/Misc.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import type Client from '../client/Client.js';
-import type { TweetManagerFetchResult, TweetResolvable } from '../typings/Types.js';
+import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
   GetMultipleTweetsByIdsQuery,
@@ -17,8 +16,13 @@ import type {
 /**
  * Holds API methods for tweets and stores their cache
  */
-export default class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
-  constructor(client: Client) {
+export default class TweetManager<C extends ClientUnionType> extends BaseManager<
+  Snowflake,
+  TweetResolvable<C>,
+  Tweet<C>,
+  C
+> {
+  constructor(client: ClientInUse<C>) {
     super(client, Tweet);
   }
 
@@ -27,12 +31,14 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
    * @param options The options for fetching tweets
    * @returns A {@link Tweet} or a {@link Collection} of them as a Promise
    */
-  async fetch<T extends FetchTweetOptions | FetchTweetsOptions>(options: T): Promise<TweetManagerFetchResult<T>> {
+  async fetch<T extends FetchTweetOptions<C> | FetchTweetsOptions<C>>(
+    options: T,
+  ): Promise<TweetManagerFetchResult<T, C>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('tweet' in options) {
       const tweetID = this.resolveID(options.tweet);
       if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
-      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
+      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T, C>>;
     }
     if ('tweets' in options) {
       if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
@@ -41,14 +47,14 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
         if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
         return tweetID;
       });
-      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T>>;
+      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T, C>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
+  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions<C>): Promise<Tweet<C>> {
     if (!options.skipCacheCheck) {
       const cachedTweet = this.cache.get(tweetID);
       if (cachedTweet) return cachedTweet;
@@ -62,16 +68,16 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, options.userContext);
+    const requestData = new RequestData(query, null);
     const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetID).get(requestData);
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
 
   async #fetchMultipleTweets(
     tweetIDs: Array<Snowflake>,
-    options: FetchTweetsOptions,
-  ): Promise<Collection<Snowflake, Tweet>> {
-    const fetchedTweetCollection = new Collection<Snowflake, Tweet>();
+    options: FetchTweetsOptions<C>,
+  ): Promise<Collection<Snowflake, Tweet<C>>> {
+    const fetchedTweetCollection = new Collection<Snowflake, Tweet<C>>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleTweetsByIdsQuery = {
       ids: tweetIDs,
@@ -82,7 +88,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, options.userContext);
+    const requestData = new RequestData(query, null);
     const data: GetMultipleTweetsByIdsResponse = await this.client._api.tweets.get(requestData);
     const rawTweets = data.data;
     const rawTweetsIncludes = data.includes;

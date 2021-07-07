@@ -1,15 +1,15 @@
 import Collection from '../util/Collection.js';
-import type Client from '../client/Client.js';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { StructureConstructable } from '../typings/Interfaces.js';
 
 /**
  * Base class for all managers
  */
-export default class BaseManager<K extends string, R, T extends { id: K }> {
+export default class BaseManager<K extends string, R, T extends { id: K }, C extends ClientUnionType> {
   /**
    * Client that instantiated this class
    */
-  client: Client;
+  client: ClientInUse<C>;
 
   /**
    * The cache of the structures held by this manager
@@ -21,7 +21,7 @@ export default class BaseManager<K extends string, R, T extends { id: K }> {
    */
   protected _holds: StructureConstructable<T>;
 
-  constructor(client: Client, structureType: StructureConstructable<T>) {
+  constructor(client: ClientInUse<C>, structureType: StructureConstructable<T>) {
     Object.defineProperty(this, 'client', { writable: true });
     this.client = client;
 

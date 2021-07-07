@@ -1,10 +1,10 @@
 import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
-import type Client from '../client/Client.js';
 import type { APIUserObject, Snowflake } from 'twitter-types';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
-export default class SimplifiedUser extends BaseStructure {
+export default class SimplifiedUser<C extends ClientUnionType> extends BaseStructure<C> {
   /**
    * The unique identifier of the user
    */
@@ -80,7 +80,7 @@ export default class SimplifiedUser extends BaseStructure {
    */
   withheld?: any; // TODO
 
-  constructor(client: Client, data: APIUserObject) {
+  constructor(client: ClientInUse<C>, data: APIUserObject) {
     super(client);
 
     this.id = data.id;

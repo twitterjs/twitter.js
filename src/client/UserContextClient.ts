@@ -1,40 +1,34 @@
-import BaseClient from './BaseClient.js';
+import CommonClient from './CommonClient.js';
 import RESTManager from '../rest/RESTManager.js';
 import { ClientEvents } from '../util/Constants.js';
 import UserManager from '../managers/UserManager.js';
 import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
-import type { ClientCredentials, ClientEventsMapping, ClientOptions } from '../typings/Interfaces.js';
-import type { ClientEventArgsType, ClientEventKeyType, ClientEventListenerType } from '../typings/Types.js';
+import type { ClientCredentials, ClientOptions } from '../typings/Interfaces.js';
 
 /**
  * The core of the library
  */
-export default class Client extends BaseClient {
+export default class UserContextClient extends CommonClient {
   /**
    * The credentials for the client to login with
    */
   credentials: ClientCredentials | null;
 
   /**
-   * Time at which the client became `ready`
-   */
-  readyAt: Date | null;
-
-  /**
    * The rest manager class that holds the methods for API calls
    */
-  rest: RESTManager;
+  rest: RESTManager<UserContextClient>;
 
   /**
    * The tweet manager of this client
    */
-  tweets: TweetManager;
+  tweets: TweetManager<UserContextClient>;
 
   /**
    * The user manager of this client
    */
-  users: UserManager;
+  users: UserManager<UserContextClient>;
 
   constructor(options?: ClientOptions) {
     super(options);
@@ -42,7 +36,6 @@ export default class Client extends BaseClient {
     Object.defineProperty(this, 'credentials', { writable: true });
     this.credentials = null;
 
-    this.readyAt = null;
     this.rest = new RESTManager(this);
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
@@ -67,36 +60,7 @@ export default class Client extends BaseClient {
     this.credentials = credentials;
     this.readyAt = new Date();
 
-    /**
-     * Emitted when the client becomes ready for use
-     * @event Client#ready
-     */
     this.emit(ClientEvents.READY);
     return this.credentials;
-  }
-
-  override on<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
-  ): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    super.on(event, listener as (...args: any[]) => void);
-    return this;
-  }
-
-  override once<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
-  ): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    super.on(event, listener as (...args: any[]) => void);
-    return this;
-  }
-
-  override emit<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    ...args: ClientEventArgsType<K>
-  ): boolean {
-    return super.emit(event, args);
   }
 }

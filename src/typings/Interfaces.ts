@@ -1,5 +1,5 @@
 import type { RequestData } from '../structures/misc/Misc.js';
-import type { TweetResolvable, UserResolvable } from './Types.js';
+import type { ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
 import type {
   APIMediaField,
   APIPlaceField,
@@ -38,11 +38,6 @@ export interface BaseFetchOptions {
    * Store the fetched content in the memory for later use
    */
   cacheAfterFetching?: boolean;
-
-  /**
-   * Make the request using user context auth
-   */
-  userContext?: boolean;
 }
 
 export interface ClientCredentials {
@@ -50,7 +45,6 @@ export interface ClientCredentials {
   consumerSecret: string;
   accessToken: string;
   accessTokenSecret: string;
-  bearerToken: string;
   username: string;
 }
 
@@ -101,32 +95,32 @@ export interface FetchUsersByUsernamesOptions extends Omit<BaseFetchOptions, 'sk
   usernames: Array<string>;
 }
 
-export interface FetchUserOptions extends BaseFetchOptions {
+export interface FetchUserOptions<C extends ClientUnionType> extends BaseFetchOptions {
   /**
    * The user to fetch
    */
-  user: UserResolvable;
+  user: UserResolvable<C>;
 }
 
-export interface FetchUsersOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchUsersOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The users to fetch
    */
-  users: Array<UserResolvable>;
+  users: Array<UserResolvable<C>>;
 }
 
-export interface FetchTweetOptions extends BaseFetchOptions {
+export interface FetchTweetOptions<C extends ClientUnionType> extends BaseFetchOptions {
   /**
    * The tweet to fetch
    */
-  tweet: TweetResolvable;
+  tweet: TweetResolvable<C>;
 }
 
-export interface FetchTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The tweets to fetch
    */
-  tweets: Array<TweetResolvable>;
+  tweets: Array<TweetResolvable<C>>;
 }
 
 export interface QueryParameters {

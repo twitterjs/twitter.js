@@ -8,7 +8,7 @@ import {
   TweetPromotedMetrics,
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
-import type Client from '../client/Client.js';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type {
   APITweetContextAnnotation,
   APITweetObject,
@@ -17,7 +17,7 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
-export default class SimplifiedTweet extends BaseStructure {
+export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStructure<C> {
   /**
    * The unique identifier of the requested Tweet
    */
@@ -126,7 +126,7 @@ export default class SimplifiedTweet extends BaseStructure {
    */
   withheld?: any; // TODO
 
-  constructor(client: Client, data: APITweetObject) {
+  constructor(client: ClientInUse<C>, data: APITweetObject) {
     super(client);
 
     this.id = data.id;

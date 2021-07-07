@@ -1,32 +1,36 @@
-import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
+import OAuth from 'oauth-1.0a';
 import APIRequest from './APIRequest.js';
 import { buildRoute } from './APIRouter.js';
 import Collection from '../util/Collection.js';
+import { CustomError } from '../errors/index.js';
 import RequestHandler from './RequestHandler.js';
-import type Client from '../client/Client.js';
+import BearerClient from '../client/BearerClient.js';
+import UserContextClient from '../client/UserContextClient.js';
 import type { APIProblem } from 'twitter-types';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
+import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
 /**
  * Manager class for the rest API
  */
-export default class RESTManager {
+export default class RESTManager<C extends ClientUnionType> {
   /**
    * The client that instantiated this class
    */
-  client: Client;
+  client: ClientInUse<C>;
 
   /**
    * The collection of request handlers
    */
-  requestHandlers: Collection<string, RequestHandler>;
+  requestHandlers: Collection<string, RequestHandler<C>>;
 
-  constructor(client: Client) {
+  constructor(client: ClientInUse<C>) {
     this.client = client;
     this.requestHandlers = new Collection();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get routeBuilder(): any {
     return buildRoute(this);
   }
@@ -36,12 +40,17 @@ export default class RESTManager {
   }
 
   getBasicAuth(): string {
-    return `Bearer ${this.client.credentials?.bearerToken}`;
+    const client = this.client;
+    if (!(client instanceof BearerClient)) throw new CustomError('NOT_BEARER_CLIENT');
+    if (!client.token) throw new CustomError('NO_BEARER_TOKEN');
+    return `Bearer ${client.token}`;
   }
 
   getUserContextAuth(method: string, url: string): string {
-    const clientCredentials = this.client.credentials;
-    if (!clientCredentials) throw new Error('No client credentials found');
+    const client = this.client;
+    if (!(client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const clientCredentials = client.credentials;
+    if (!clientCredentials) throw new CustomError('NO_CLIENT_CREDENTIALS');
 
     const oauth = new OAuth({
       consumer: {
