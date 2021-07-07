@@ -20,12 +20,13 @@ import type {
   GetSingleUserByIdResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
+  Snowflake,
 } from 'twitter-types';
 
 /**
  * Holds API methods for {@link User} objects and stores their cache
  */
-export default class UserManager extends BaseManager<UserResolvable, User> {
+export default class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   constructor(client: Client) {
     super(client, User);
   }
@@ -84,7 +85,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleUser(userID: string, options: FetchUserOptions): Promise<User> {
+  async #fetchSingleUser(userID: Snowflake, options: FetchUserOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.get(userID);
       if (cachedUser) return cachedUser;
@@ -100,7 +101,7 @@ export default class UserManager extends BaseManager<UserResolvable, User> {
     return new User(this.client, data);
   }
 
-  async #fetchMultipleUsers(userIDs: Array<string>, options: FetchUsersOptions): Promise<Collection<string, User>> {
+  async #fetchMultipleUsers(userIDs: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
     const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleUsersByIdsQuery = {

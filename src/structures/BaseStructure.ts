@@ -9,15 +9,8 @@ export default class BaseStructure {
    */
   client: Client;
 
-  /**
-   * The Spotify ID of the structure
-   */
-  id: string;
-
-  constructor(client: Client, id: string) {
+  constructor(client: Client) {
     Object.defineProperty(this, 'client', { writable: true });
     this.client = client;
-
-    this.id = id;
   }
 }

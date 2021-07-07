@@ -1,4 +1,5 @@
 import type User from '../structures/User.js';
+import type { Snowflake } from 'twitter-types';
 import type Tweet from '../structures/Tweet.js';
 import type Collection from '../util/Collection.js';
 import type SimplifiedUser from '../structures/SimplifiedUser.js';
@@ -27,15 +28,15 @@ export type LiteralUnion<K extends T, T = string> = K | (T & { zz_ignore_me?: ne
 
 export type UserManagerFetchResult<T extends FetchUserOptions | FetchUsersOptions> = T extends FetchUserOptions
   ? User
-  : Collection<string, User>;
+  : Collection<Snowflake, User>;
 
 export type UserManagerFetchByUsernameResult<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions> =
-  T extends FetchUserByUsernameOptions ? User : Collection<string, User>;
+  T extends FetchUserByUsernameOptions ? User : Collection<Snowflake, User>;
 
-export type UserResolvable = User | SimplifiedUser | string;
+export type UserResolvable = User | SimplifiedUser | Snowflake;
 
 export type TweetManagerFetchResult<T extends FetchTweetOptions | FetchTweetsOptions> = T extends FetchTweetOptions
   ? Tweet
-  : Collection<string, Tweet>;
+  : Collection<Snowflake, Tweet>;
 
-export type TweetResolvable = Tweet | SimplifiedTweet | string;
+export type TweetResolvable = Tweet | SimplifiedTweet | Snowflake;

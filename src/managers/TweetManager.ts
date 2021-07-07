@@ -11,12 +11,13 @@ import type {
   GetMultipleTweetsByIdsResponse,
   GetSingleTweetByIdQuery,
   GetSingleTweetByIdResponse,
+  Snowflake,
 } from 'twitter-types';
 
 /**
  * Holds API methods for tweets and stores their cache
  */
-export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
+export default class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
   constructor(client: Client) {
     super(client, Tweet);
   }
@@ -47,7 +48,7 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleTweet(tweetID: string, options: FetchTweetOptions): Promise<Tweet> {
+  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
       const cachedTweet = this.cache.get(tweetID);
       if (cachedTweet) return cachedTweet;
@@ -66,8 +67,11 @@ export default class TweetManager extends BaseManager<TweetResolvable, Tweet> {
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
 
-  async #fetchMultipleTweets(tweetIDs: Array<string>, options: FetchTweetsOptions): Promise<Collection<string, Tweet>> {
-    const fetchedTweetCollection = new Collection<string, Tweet>();
+  async #fetchMultipleTweets(
+    tweetIDs: Array<Snowflake>,
+    options: FetchTweetsOptions,
+  ): Promise<Collection<Snowflake, Tweet>> {
+    const fetchedTweetCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleTweetsByIdsQuery = {
       ids: tweetIDs,

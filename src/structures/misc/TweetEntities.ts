@@ -6,6 +6,7 @@ import type {
   APITweetHashtagEntity,
   APITweetMentionEntity,
   APITweetURLEntity,
+  Snowflake,
 } from 'twitter-types';
 
 export class TweetEntities {
@@ -117,7 +118,7 @@ export class TweetHashtagEntity extends TweetBaseEntity {
 
 export class TweetMentionEntity extends TweetBaseEntity {
   username: string;
-  id: string;
+  id: Snowflake;
 
   constructor(data: APITweetMentionEntity) {
     super(data);

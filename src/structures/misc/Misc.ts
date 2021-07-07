@@ -8,6 +8,7 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
+  Snowflake,
 } from 'twitter-types';
 
 /**
@@ -55,7 +56,7 @@ export class TweetReference {
   /**
    * The ID of the referenced tweet
    */
-  id: string;
+  id: Snowflake;
 
   constructor(data: APITweetReferencedTweet) {
     this.type = data.type;

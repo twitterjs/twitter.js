@@ -17,6 +17,7 @@ import Tweet from './structures/Tweet.js';
 // typings
 export * from './typings/Interfaces.js';
 export * from './typings/Types.js';
+export { Snowflake } from 'twitter-types';
 
 import Collection from './util/Collection.js';
 export * from './util/Constants.js';

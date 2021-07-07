@@ -2,13 +2,13 @@ import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
 import type Client from '../client/Client.js';
-import type { APIUserObject } from 'twitter-types';
+import type { APIUserObject, Snowflake } from 'twitter-types';
 
 export default class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of the user
    */
-  override id: string;
+  id: Snowflake;
 
   /**
    * The name of the user, as they’ve defined it on their profile. Not necessarily a person’s name.
@@ -48,7 +48,7 @@ export default class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of this user's pinned Tweet
    */
-  pinnedTweetID: string | null;
+  pinnedTweetID: Snowflake | null;
 
   /**
    * The URL to the profile image for this user, as shown on the user's profile
@@ -81,7 +81,7 @@ export default class SimplifiedUser extends BaseStructure {
   withheld?: any; // TODO
 
   constructor(client: Client, data: APIUserObject) {
-    super(client, data.id);
+    super(client);
 
     this.id = data.id;
     this.name = data.name;

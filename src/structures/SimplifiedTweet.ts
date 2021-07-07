@@ -14,13 +14,14 @@ import type {
   APITweetObject,
   APITweetReferencedTweet,
   APITweetReplySettings,
+  Snowflake,
 } from 'twitter-types';
 
 export default class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the requested Tweet
    */
-  override id: string;
+  id: Snowflake;
 
   /**
    * The actual `UTF-8` text of the Tweet
@@ -35,7 +36,7 @@ export default class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the User who posted the Tweet
    */
-  authorID: string | null;
+  authorID: Snowflake | null;
 
   /**
    * Contains context annotations for the Tweet
@@ -45,7 +46,7 @@ export default class SimplifiedTweet extends BaseStructure {
   /**
    * The ID of the original Tweet of the conversation (which includes direct replies, replies of replies)
    */
-  conversationID: string | null;
+  conversationID: Snowflake | null;
 
   /**
    * The `ISO 8601` creation time of the Tweet
@@ -66,7 +67,7 @@ export default class SimplifiedTweet extends BaseStructure {
    * If the Tweet is a reply, this field will contain the original Tweet’s author ID.
    * This will not necessarily always be the user directly mentioned in the Tweet
    */
-  inReplyToUserID: string | null;
+  inReplyToUserID: Snowflake | null;
 
   /**
    * The language of the Tweet, if detected by Twitter. Returned as a `BCP47` language tag
@@ -126,7 +127,7 @@ export default class SimplifiedTweet extends BaseStructure {
   withheld?: any; // TODO
 
   constructor(client: Client, data: APITweetObject) {
-    super(client, data.id);
+    super(client);
 
     this.id = data.id;
     this.text = data.text;

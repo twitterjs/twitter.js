@@ -4,7 +4,7 @@ import type Client from '../client/Client.js';
 import type { APIPollObject, APIPollVotingStatus } from 'twitter-types';
 
 export default class Poll extends BaseStructure {
-  override id: string;
+  id: string;
 
   options: Array<PollOption>;
 
@@ -15,7 +15,7 @@ export default class Poll extends BaseStructure {
   votingStatus: APIPollVotingStatus | null;
 
   constructor(client: Client, data: APIPollObject) {
-    super(client, data.id);
+    super(client);
 
     this.id = data.id;
     this.options = data.options.map(option => new PollOption(option));
