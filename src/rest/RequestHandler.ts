@@ -1,7 +1,8 @@
 import HTTPError from './HTTPError.js';
+import { FetchError } from 'node-fetch';
+import TwitterAPIError from './TwitterAPIError.js';
 import { AsyncQueue } from '@sapphire/async-queue';
 import { parseResponse } from '../util/Utility.js';
-import TwitterAPIError from './TwitterAPIError.js';
 import { ClientEvents } from '../util/Constants.js';
 import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
@@ -24,8 +25,7 @@ export default class RequestHandler {
     this.queue = new AsyncQueue();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async push(request: APIRequest): Promise<any> {
+  async push(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
     await this.queue.wait();
     try {
       return await this.execute(request);
@@ -34,13 +34,16 @@ export default class RequestHandler {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async execute(request: APIRequest): Promise<any> {
+  async execute(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
     let res: Response;
     try {
       res = await request.make();
-    } catch (error) {
-      throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
+    } catch (error: unknown) {
+      if (error instanceof FetchError) {
+        throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
+      } else {
+        throw error;
+      }
     }
 
     if (res && res.headers) {
@@ -68,8 +71,12 @@ export default class RequestHandler {
         let apiError: APIProblem;
         try {
           apiError = (await parseResponse(res)) as APIProblem;
-        } catch (error) {
-          throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
+        } catch (error: unknown) {
+          if (error instanceof FetchError) {
+            throw new HTTPError(request.method, error.message, error.name, request.path, error.type, error.code);
+          } else {
+            throw error;
+          }
         }
         throw new TwitterAPIError(apiError);
       }

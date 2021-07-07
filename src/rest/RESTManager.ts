@@ -5,6 +5,7 @@ import { buildRoute } from './APIRouter.js';
 import Collection from '../util/Collection.js';
 import RequestHandler from './RequestHandler.js';
 import type Client from '../client/Client.js';
+import type { APIProblem } from 'twitter-types';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 
 /**
@@ -67,7 +68,11 @@ export default class RESTManager {
     ).Authorization;
   }
 
-  async request(method: string, path: string, options: ExtendedRequestData<string, unknown>): Promise<any> {
+  async request(
+    method: string,
+    path: string,
+    options: ExtendedRequestData<string, unknown>,
+  ): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
     const apiRequest = new APIRequest(this, method, path, options);
     let handler = this.requestHandlers.get(apiRequest.route);
     if (!handler) {

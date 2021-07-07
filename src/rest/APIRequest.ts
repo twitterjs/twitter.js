@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type Client from '../client/Client.js';
 import type RESTManager from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
@@ -30,16 +31,16 @@ export default class APIRequest {
     }
   }
 
-  async make(): Promise<any> {
+  async make(): Promise<Response> {
     const baseURL = `${this.client.options.api?.baseURL}/${this.client.options.api?.version}`;
     const url = baseURL + this.path;
 
-    const headers: any = {};
+    const headers: HeaderInit = {};
     headers.Authorization = this.options.requireUserContextAuth
       ? this.rest.getUserContextAuth(this.method, url)
       : this.rest.getBasicAuth();
 
-    let body;
+    let body: BodyInit | undefined;
     if (this.method !== 'get' && this.options.body) {
       body = JSON.stringify(this.options.body);
       headers['Content-Type'] = 'application/json';
