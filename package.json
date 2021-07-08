@@ -1,7 +1,7 @@
 {
   "name": "twitter.js",
-  "version": "0.1.0",
-  "description": "An object-oriented JavaScript library for interacting with Twitter API v2",
+  "version": "0.2.0",
+  "description": "An object-oriented TypeScript library for interacting with Twitter API v2",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
