@@ -1,5 +1,4 @@
-node_modules/
-.vscode
-
-# docs should be ignored while we are in early dev
-docs/
+dist
+docs
+node_modules
+test
