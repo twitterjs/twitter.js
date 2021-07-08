@@ -39,7 +39,7 @@ export default class RESTManager<C extends ClientUnionType> {
     return this.client.options.api?.baseURL as string;
   }
 
-  getBasicAuth(): string {
+  getBearerAuth(): string {
     const client = this.client;
     if (!(client instanceof BearerClient)) throw new CustomError('NOT_BEARER_CLIENT');
     if (!client.token) throw new CustomError('NO_BEARER_TOKEN');

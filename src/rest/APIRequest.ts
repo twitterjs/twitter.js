@@ -40,7 +40,7 @@ export default class APIRequest<C extends ClientUnionType> {
     headers.Authorization =
       this.client instanceof UserContextClient
         ? this.rest.getUserContextAuth(this.method, url)
-        : this.rest.getBasicAuth();
+        : this.rest.getBearerAuth();
 
     let body: BodyInit | undefined;
     if (this.method !== 'get' && this.options.body) {
