@@ -3,6 +3,9 @@ import BaseStructure from './BaseStructure.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { APIPlaceGeo, APIPlaceObject, APIPlaceType } from 'twitter-types';
 
+/**
+ * The class that represents a place tagged in a {@link Tweet}
+ */
 export default class Place<C extends ClientUnionType> extends BaseStructure<C> {
   fullName: string;
 

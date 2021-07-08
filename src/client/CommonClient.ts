@@ -2,12 +2,18 @@ import BaseClient from './BaseClient.js';
 import type { ClientEventsMapping, ClientOptions } from '../typings/Interfaces.js';
 import type { ClientEventArgsType, ClientEventKeyType, ClientEventListenerType } from '../typings/Types.js';
 
+/**
+ * The class for holding common members of {@link BearerClient} and {@link UserContextClient}
+ */
 export default class CommonClient extends BaseClient {
   /**
-   * Time at which the client became `ready`
+   * The time at which the client became `ready`
    */
   readyAt: Date | null;
 
+  /**
+   * @param options The options to initialize the client with
+   */
   constructor(options?: ClientOptions) {
     super(options);
 

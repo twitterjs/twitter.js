@@ -4,6 +4,9 @@ import { UserEntities } from './misc/UserEntities.js';
 import type { APIUserObject, Snowflake } from 'twitter-types';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
+/**
+ * A simplified version of {@link User} class
+ */
 export default class SimplifiedUser<C extends ClientUnionType> extends BaseStructure<C> {
   /**
    * The unique identifier of the user

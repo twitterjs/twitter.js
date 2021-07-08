@@ -14,7 +14,7 @@ import type {
 } from 'twitter-types';
 
 /**
- * Holds API methods for tweets and stores their cache
+ * The manager class that holds API methods for {@link Tweet} objects and stores their cache
  */
 export default class TweetManager<C extends ClientUnionType> extends BaseManager<
   Snowflake,
@@ -22,14 +22,17 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
   Tweet<C>,
   C
 > {
+  /**
+   * @param client The client this manager belongs to
+   */
   constructor(client: ClientInUse<C>) {
     super(client, Tweet);
   }
 
   /**
-   * Fetches tweets from twitter
+   * Fetches tweets from twitter.
    * @param options The options for fetching tweets
-   * @returns A {@link Tweet} or a {@link Collection} of them as a Promise
+   * @returns A {@link Tweet} or a {@link Collection} of them as a `Promise`
    */
   async fetch<T extends FetchTweetOptions<C> | FetchTweetsOptions<C>>(
     options: T,

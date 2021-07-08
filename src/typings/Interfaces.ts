@@ -11,7 +11,7 @@ import type {
 } from 'twitter-types';
 
 /**
- * The options related to the API version
+ * The options for the API in use
  */
 export interface ApiOptions {
   /**
@@ -30,12 +30,12 @@ export interface ApiOptions {
  */
 export interface BaseFetchOptions {
   /**
-   * Do not check for the existence of requested content in the cache, instead fetch it from the API directly
+   * Whether to skip cache check for the requested content and fetch from the API directly
    */
   skipCacheCheck?: boolean;
 
   /**
-   * Store the fetched content in the memory for later use
+   * Whether to store the fetched content in cache for later use
    */
   cacheAfterFetching?: boolean;
 }
@@ -54,16 +54,16 @@ export interface ClientEventsMapping {
 }
 
 /**
- * The options with which the client gets initiated
+ * The options which the client gets initialized with
  */
 export interface ClientOptions {
   /**
-   * The options for the API
+   * The options provided for the API
    */
   api?: ApiOptions;
 
   /**
-   * The options for query of an API request
+   * The options provided for query of an API request
    */
   queryParameters?: QueryParameters;
 }
@@ -76,7 +76,7 @@ export interface ExtendedRequestData<Q, B> extends RequestData<Q, B> {
 }
 
 /**
- * Options used to fetch a user by its username
+ * Options used to fetch a single user by its username
  */
 export interface FetchUserByUsernameOptions extends BaseFetchOptions {
   /**
@@ -86,7 +86,7 @@ export interface FetchUserByUsernameOptions extends BaseFetchOptions {
 }
 
 /**
- * Options used to fetch users by their usernames
+ * Options used to fetch multiple users by their usernames
  */
 export interface FetchUsersByUsernamesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
@@ -95,6 +95,9 @@ export interface FetchUsersByUsernamesOptions extends Omit<BaseFetchOptions, 'sk
   usernames: Array<string>;
 }
 
+/**
+ * Options used to fetch a single user
+ */
 export interface FetchUserOptions<C extends ClientUnionType> extends BaseFetchOptions {
   /**
    * The user to fetch
@@ -102,6 +105,9 @@ export interface FetchUserOptions<C extends ClientUnionType> extends BaseFetchOp
   user: UserResolvable<C>;
 }
 
+/**
+ * Options used to fetch multiple users
+ */
 export interface FetchUsersOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The users to fetch
@@ -109,6 +115,9 @@ export interface FetchUsersOptions<C extends ClientUnionType> extends Omit<BaseF
   users: Array<UserResolvable<C>>;
 }
 
+/**
+ * Options used to feth a single tweet
+ */
 export interface FetchTweetOptions<C extends ClientUnionType> extends BaseFetchOptions {
   /**
    * The tweet to fetch
@@ -116,6 +125,9 @@ export interface FetchTweetOptions<C extends ClientUnionType> extends BaseFetchO
   tweet: TweetResolvable<C>;
 }
 
+/**
+ * Options used to feth multiple tweets
+ */
 export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The tweets to fetch

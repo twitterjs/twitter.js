@@ -7,30 +7,32 @@ import TweetManager from '../managers/TweetManager.js';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
 /**
- * This is the core of the library that exposes methods and properties
- * to the user for making Bearer Token authorized requests
+ * The core class that exposes library APIs for making bearer token authorized requests
  */
 export default class BearerClient extends CommonClient {
   /**
-   * The bearer token for the client to login with
+   * The bearer token that was provided for the client
    */
   token: string | null;
 
   /**
-   * The rest manager class that holds the methods for API calls
+   * The class that manages and forwards API requests made by the client
    */
   rest: RESTManager<BearerClient>;
 
   /**
-   * The tweet manager of this client
+   * The tweet manager class of the client
    */
   tweets: TweetManager<BearerClient>;
 
   /**
-   * The user manager of this client
+   * The user manager class of the client
    */
   users: UserManager<BearerClient>;
 
+  /**
+   * @param options The options to initialize the client with
+   */
   constructor(options?: ClientOptions) {
     super(options);
 
@@ -42,17 +44,22 @@ export default class BearerClient extends CommonClient {
     this.users = new UserManager(this);
   }
 
+  /**
+   * A getter that returns the buildRoute function from {@link APIRouter}
+   * @private
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get _api(): any {
     return this.rest.routeBuilder;
   }
 
   /**
-   * Logs in the client and stores the provided token in memory
-   * @param token The bearer token for making requests
-   * @returns The token that was provided
+   * Makes the client ready for use and stores the provided token in memory.
+   * Emits a `ready` event on success.
+   * @param token The bearer token for the client
+   * @returns The provided bearer token as a `Promise`
    *
-   * @throws {@link CustomTypeError} The exception is thrown if the credentials param is not an Object
+   * @throws {@link CustomTypeError} The exception is thrown if the `token` param is not a string
    */
   async login(token: string): Promise<string> {
     if (typeof token !== 'string') {

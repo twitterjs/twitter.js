@@ -7,29 +7,32 @@ import TweetManager from '../managers/TweetManager.js';
 import type { ClientCredentials, ClientOptions } from '../typings/Interfaces.js';
 
 /**
- * The core of the library
+ * The core class that exposes library APIs for making user-context authorized requests
  */
 export default class UserContextClient extends CommonClient {
   /**
-   * The credentials for the client to login with
+   * The credentials that were provided to the client
    */
   credentials: ClientCredentials | null;
 
   /**
-   * The rest manager class that holds the methods for API calls
+   * The class that manages and forwards API requests made by the client
    */
   rest: RESTManager<UserContextClient>;
 
   /**
-   * The tweet manager of this client
+   * The tweet manager class of the client
    */
   tweets: TweetManager<UserContextClient>;
 
   /**
-   * The user manager of this client
+   * The user manager class of the client
    */
   users: UserManager<UserContextClient>;
 
+  /**
+   * @param options The options to initialize the client with
+   */
   constructor(options?: ClientOptions) {
     super(options);
 
@@ -41,17 +44,22 @@ export default class UserContextClient extends CommonClient {
     this.users = new UserManager(this);
   }
 
+  /**
+   * A getter that returns the buildRoute function from {@link APIRouter}
+   * @private
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get _api(): any {
     return this.rest.routeBuilder;
   }
 
   /**
-   * Logs in the client and stores the provided credentials in memory
-   * @param credentials The credentials for making requests
-   * @returns The credentials that were provided
+   * Makes the client ready for use and stores the provided credentials in memory.
+   * Emits a `ready` event on success.
+   * @param credentials The credentials for the client
+   * @returns The provided credentials as a `Promise`
    *
-   * @throws {@link CustomTypeError} The exception is thrown if the credentials param is not an Object
+   * @throws {@link CustomTypeError} The exception is thrown if the `credentials` param is not an object
    */
   async login(credentials: ClientCredentials): Promise<ClientCredentials> {
     if (typeof credentials !== 'object') {

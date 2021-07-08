@@ -3,6 +3,9 @@ import SimplifiedTweet from './SimplifiedTweet.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { APITweetObject, GetSingleUserByIdResponse } from 'twitter-types';
 
+/**
+ * The class that represents a Twitter user
+ */
 export default class User<C extends ClientUnionType> extends SimplifiedUser<C> {
   /**
    * The tweet pinned by this user
@@ -14,6 +17,8 @@ export default class User<C extends ClientUnionType> extends SimplifiedUser<C> {
 
     this.pinnedTweet = this.#patchPinnedTweet(data.includes?.tweets) ?? null;
   }
+
+  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   #patchPinnedTweet(tweets?: Array<APITweetObject>): SimplifiedTweet<C> | undefined {
     if (!tweets) return;

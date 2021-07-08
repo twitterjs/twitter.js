@@ -17,6 +17,9 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
+/**
+ * A simplified version of {@link Tweet} class
+ */
 export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStructure<C> {
   /**
    * The unique identifier of the requested Tweet
@@ -150,6 +153,8 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
     this.source = data.source ?? null;
     this.withheld = data.withheld;
   }
+
+  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   /**
    * Converts raw tweet references data into desired shape to patch {@link SimplifiedTweet.referencedTweets} property

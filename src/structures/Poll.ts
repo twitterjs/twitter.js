@@ -3,6 +3,9 @@ import BaseStructure from './BaseStructure.js';
 import { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { APIPollObject, APIPollVotingStatus } from 'twitter-types';
 
+/**
+ * The class that represents a poll in a {@link Tweet}
+ */
 export default class Poll<C extends ClientUnionType> extends BaseStructure<C> {
   id: string;
 

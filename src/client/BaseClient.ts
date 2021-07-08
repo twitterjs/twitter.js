@@ -4,7 +4,7 @@ import { DefaultClientOptions } from '../util/Constants.js';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
 /**
- * The base class for client
+ * The base class for all clients
  */
 export default class BaseClient extends EventEmitter {
   /**
@@ -12,6 +12,9 @@ export default class BaseClient extends EventEmitter {
    */
   options: ClientOptions;
 
+  /**
+   * @param options The options to initialize the client with
+   */
   constructor(options = {}) {
     super();
 

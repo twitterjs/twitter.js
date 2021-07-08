@@ -29,7 +29,7 @@ import type {
 } from 'twitter-types';
 
 /**
- * Holds API methods for {@link User} objects and stores their cache
+ * The manager class that holds API methods for {@link User} objects and stores their cache
  */
 export default class UserManager<C extends ClientUnionType> extends BaseManager<
   Snowflake,
@@ -37,14 +37,17 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   User<C>,
   C
 > {
+  /**
+   * @param client The client this manager belongs to
+   */
   constructor(client: ClientInUse<C>) {
     super(client, User);
   }
 
   /**
-   * Fetches users from Twitter
+   * Fetches users from Twitter.
    * @param options The options for fetching users
-   * @returns A {@link User} or a {@link Collection} of them as a Promise
+   * @returns A {@link User} or a {@link Collection} of them as a `Promise`
    */
   async fetch<T extends FetchUserOptions<C> | FetchUsersOptions<C>>(options: T): Promise<UserManagerFetchResult<T, C>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
@@ -66,11 +69,11 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   }
 
   /**
-   * Fetches users from Twitter using their usernames
+   * Fetches users from Twitter using their usernames.
    *
-   * **⚠ Use {@link UserManager.fetch} if you can as usernames are subject to change**
+   * **⚠ Use {@link UserManager.fetch} if you have IDs, because usernames are subject to change**
    * @param options The options for fetching users
-   * @returns A {@link User} or a {@link Collection} of them as a Promise
+   * @returns A {@link User} or a {@link Collection} of them as a `Promise`
    */
   async fetchByUsername<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions>(
     options: T,

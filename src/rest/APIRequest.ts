@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
 import UserContextClient from '../client/UserContextClient.js';
-import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type RESTManager from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
+import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 

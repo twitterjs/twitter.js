@@ -15,17 +15,20 @@ export const ClientEvents = {
 };
 
 /**
- * Default options with which the client gets initiated
+ * The default options which the client gets initialized with
  */
 export const DefaultClientOptions: ClientOptions = {
   /**
-   * The details about API
+   * The options for the API to use
    */
   api: {
     version: 2,
     baseURL: 'https://api.twitter.com',
   },
 
+  /**
+   * The parameters to pass in the query of a request
+   */
   queryParameters: {
     userFields: UserFields,
     tweetFields: TweetFields,

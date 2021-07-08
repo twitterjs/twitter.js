@@ -15,6 +15,9 @@ import type {
   GetSingleTweetByIdResponse,
 } from 'twitter-types';
 
+/**
+ * The class that represents a tweet on Twitter
+ */
 export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C> {
   /**
    * The author of the tweet
@@ -62,6 +65,8 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
     this.places = this.#patchPlaces(data.includes?.places);
     this.media = this.#patchMedia(data.includes?.media);
   }
+
+  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   #patchAuthor(users?: Array<APIUserObject>): SimplifiedUser<C> | undefined {
     if (!users) return;
