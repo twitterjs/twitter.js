@@ -40,14 +40,14 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('tweet' in options) {
       const tweetID = this.resolveID(options.tweet);
-      if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
+      if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
       return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T, C>>;
     }
     if ('tweets' in options) {
       if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
       const tweetIDs = options.tweets.map(tweet => {
         const tweetID = this.resolveID(tweet);
-        if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID');
+        if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
         return tweetID;
       });
       return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T, C>>;

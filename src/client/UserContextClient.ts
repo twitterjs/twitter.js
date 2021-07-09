@@ -4,6 +4,7 @@ import { ClientEvents } from '../util/Constants.js';
 import UserManager from '../managers/UserManager.js';
 import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
+import type User from '../structures/User.js';
 import type { ClientCredentials, ClientOptions } from '../typings/Interfaces.js';
 
 /**
@@ -14,6 +15,11 @@ export default class UserContextClient extends CommonClient {
    * The credentials that were provided to the client
    */
   credentials: ClientCredentials | null;
+
+  /**
+   * The twitter user this client represents and authorized with
+   */
+  me: User<UserContextClient> | null;
 
   /**
    * The class that manages and forwards API requests made by the client
@@ -39,6 +45,7 @@ export default class UserContextClient extends CommonClient {
     Object.defineProperty(this, 'credentials', { writable: true });
     this.credentials = null;
 
+    this.me = null;
     this.rest = new RESTManager(this);
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
@@ -67,6 +74,10 @@ export default class UserContextClient extends CommonClient {
     }
     this.credentials = credentials;
     this.readyAt = new Date();
+
+    this.me = await this.users.fetchByUsername({
+      username: credentials.username,
+    });
 
     this.emit(ClientEvents.READY);
     return this.credentials;

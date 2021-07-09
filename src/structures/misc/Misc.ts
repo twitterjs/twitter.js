@@ -8,6 +8,8 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
+  DeleteUnfollowUserResponse,
+  PostFollowUserResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -115,5 +117,39 @@ export class PlaceGeo {
     this.type = data.type;
     this.bbox = data.bbox;
     this.properties = data.properties;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user follows a target user
+ */
+export class UserFollowResponse {
+  /**
+   * Whether the authorized user is following the target user
+   */
+  following: boolean;
+
+  /**
+   * Whether the follow request of authorized user is yet to be approved by the target user
+   */
+  pendingFollow: boolean;
+
+  constructor(data: PostFollowUserResponse) {
+    this.following = data.data.following;
+    this.pendingFollow = data.data.pending_follow;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user unfollows a target user
+ */
+export class UserUnfollowResponse {
+  /**
+   * Whether the authorized user is following the target user
+   */
+  following: boolean;
+
+  constructor(data: DeleteUnfollowUserResponse) {
+    this.following = data.data.following;
   }
 }

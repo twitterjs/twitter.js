@@ -1,8 +1,9 @@
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
-import { RequestData } from '../structures/misc/Misc.js';
+import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
+import { RequestData, UserFollowResponse, UserUnfollowResponse } from '../structures/misc/Misc.js';
 import type {
   ClientInUse,
   ClientUnionType,
@@ -17,6 +18,7 @@ import type {
   FetchUsersOptions,
 } from '../typings/Interfaces.js';
 import type {
+  DeleteUnfollowUserResponse,
   GetMultipleUsersByIdsQuery,
   GetMultipleUsersByIdsResponse,
   GetMultipleUsersByUsernamesQuery,
@@ -25,6 +27,8 @@ import type {
   GetSingleUserByIdResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
+  PostFollowUserJSONBody,
+  PostFollowUserResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -53,14 +57,14 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('user' in options) {
       const userID = this.resolveID(options.user);
-      if (!userID) throw new CustomError('USER_RESOLVE_ID');
+      if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
       return this.#fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T, C>>;
     }
     if ('users' in options) {
       if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
       const userIDs = options.users.map(user => {
         const userID = this.resolveID(user);
-        if (!userID) throw new CustomError('USER_RESOLVE_ID');
+        if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
         return userID;
       });
       return this.#fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T, C>>;
@@ -94,6 +98,43 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       return this.#fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T, C>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
+  }
+
+  /**
+   * Follows a user on twitter.
+   * @param targetUser The user to follow
+   * @returns A {@link UserFollowResponse} object
+   */
+  async follow(targetUser: UserResolvable<C>): Promise<UserFollowResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'follow');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostFollowUserJSONBody = {
+      target_user_id: targetUserID,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PostFollowUserResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
+    return new UserFollowResponse(data);
+  }
+
+  /**
+   * Unfollows a user on twitter.
+   * @param targetUser The user to unfollow
+   * @returns A {@link UserUnfollowResponse} object
+   */
+  async unfollow(targetUser: UserResolvable<C>): Promise<UserUnfollowResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const data: DeleteUnfollowUserResponse = await this.client._api
+      .users(loggedInUser.id)
+      .following(targetUserID)
+      .delete();
+    return new UserUnfollowResponse(data);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
