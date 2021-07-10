@@ -8,8 +8,10 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
-  DeleteUnfollowUserResponse,
-  PostFollowUserResponse,
+  DeleteUserUnblockResponse,
+  DeleteUserUnfollowResponse,
+  PostUserBlockResponse,
+  PostUserFollowResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -134,7 +136,7 @@ export class UserFollowResponse {
    */
   pendingFollow: boolean;
 
-  constructor(data: PostFollowUserResponse) {
+  constructor(data: PostUserFollowResponse) {
     this.following = data.data.following;
     this.pendingFollow = data.data.pending_follow;
   }
@@ -149,7 +151,35 @@ export class UserUnfollowResponse {
    */
   following: boolean;
 
-  constructor(data: DeleteUnfollowUserResponse) {
+  constructor(data: DeleteUserUnfollowResponse) {
     this.following = data.data.following;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user blocks a target user
+ */
+export class UserBlockResponse {
+  /**
+   * Whether the authorized user is blocking the target user
+   */
+  blocking: boolean;
+
+  constructor(data: PostUserBlockResponse) {
+    this.blocking = data.data.blocking;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user unblocks a target user
+ */
+export class UserUnblockResponse {
+  /**
+   * Whether the authorized user is blocking the target user
+   */
+  blocking: boolean;
+
+  constructor(data: DeleteUserUnblockResponse) {
+    this.blocking = data.data.blocking;
   }
 }

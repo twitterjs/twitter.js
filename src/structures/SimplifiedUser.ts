@@ -3,7 +3,7 @@ import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
 import type { APIUserObject, Snowflake } from 'twitter-types';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
-import type { UserFollowResponse, UserUnfollowResponse } from './misc/Misc.js';
+import type { UserFollowResponse, UserUnfollowResponse, UserBlockResponse, UserUnblockResponse } from './misc/Misc.js';
 
 /**
  * A simplified version of {@link User} class
@@ -117,5 +117,21 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    */
   async unfollow(): Promise<UserUnfollowResponse> {
     return this.client.users.unfollow(this.id);
+  }
+
+  /**
+   * Blocks this user on twitter.
+   * @returns A {@link UserBlockResponse} object
+   */
+  async block(): Promise<UserBlockResponse> {
+    return this.client.users.block(this.id);
+  }
+
+  /**
+   * Unblocks this user on twitter.
+   * @returns A {@link UserUnblockResponse} object
+   */
+  async unblock(): Promise<UserUnblockResponse> {
+    return this.client.users.unblock(this.id);
   }
 }

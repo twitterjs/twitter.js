@@ -3,7 +3,13 @@ import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import { RequestData, UserFollowResponse, UserUnfollowResponse } from '../structures/misc/Misc.js';
+import {
+  RequestData,
+  UserBlockResponse,
+  UserFollowResponse,
+  UserUnblockResponse,
+  UserUnfollowResponse,
+} from '../structures/misc/Misc.js';
 import type {
   ClientInUse,
   ClientUnionType,
@@ -18,7 +24,8 @@ import type {
   FetchUsersOptions,
 } from '../typings/Interfaces.js';
 import type {
-  DeleteUnfollowUserResponse,
+  DeleteUserUnblockResponse,
+  DeleteUserUnfollowResponse,
   GetMultipleUsersByIdsQuery,
   GetMultipleUsersByIdsResponse,
   GetMultipleUsersByUsernamesQuery,
@@ -27,8 +34,10 @@ import type {
   GetSingleUserByIdResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
-  PostFollowUserJSONBody,
-  PostFollowUserResponse,
+  PostUserBlockJSONBody,
+  PostUserBlockResponse,
+  PostUserFollowJSONBody,
+  PostUserFollowResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -111,11 +120,11 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostFollowUserJSONBody = {
+    const body: PostUserFollowJSONBody = {
       target_user_id: targetUserID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostFollowUserResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
+    const data: PostUserFollowResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
     return new UserFollowResponse(data);
   }
 
@@ -130,11 +139,48 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteUnfollowUserResponse = await this.client._api
+    const data: DeleteUserUnfollowResponse = await this.client._api
       .users(loggedInUser.id)
       .following(targetUserID)
       .delete();
     return new UserUnfollowResponse(data);
+  }
+
+  /**
+   * Blocks a user on twitter.
+   * @param targetUser The user to block
+   * @returns
+   */
+  async block(targetUser: UserResolvable<C>): Promise<UserBlockResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'block');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostUserBlockJSONBody = {
+      target_user_id: targetUserID,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PostUserBlockResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
+    return new UserBlockResponse(data);
+  }
+
+  /**
+   * Unblocks a user on twitter.
+   * @param targetUser The user to unblock
+   * @returns
+   */
+  async unblock(targetUser: UserResolvable<C>): Promise<UserUnblockResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unblock');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const data: DeleteUserUnblockResponse = await this.client._api
+      .users(loggedInUser.id)
+      .blocking(targetUserID)
+      .delete();
+    return new UserUnblockResponse(data);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
