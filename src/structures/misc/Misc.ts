@@ -10,8 +10,10 @@ import type {
   APIUserPublicMetrics,
   DeleteUserUnblockResponse,
   DeleteUserUnfollowResponse,
+  DeleteUserUnmuteResponse,
   PostUserBlockResponse,
   PostUserFollowResponse,
+  PostUserMuteResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -181,5 +183,33 @@ export class UserUnblockResponse {
 
   constructor(data: DeleteUserUnblockResponse) {
     this.blocking = data.data.blocking;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user mutes a target user
+ */
+export class UserMuteResponse {
+  /**
+   * Whether the authorized user is muting the target user
+   */
+  muting: boolean;
+
+  constructor(data: PostUserMuteResponse) {
+    this.muting = data.data.muting;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user unmutes a target user
+ */
+export class UserUnmuteResponse {
+  /**
+   * Whether the authorized user is muting the target user
+   */
+  muting: boolean;
+
+  constructor(data: DeleteUserUnmuteResponse) {
+    this.muting = data.data.muting;
   }
 }

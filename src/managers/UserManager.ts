@@ -7,8 +7,10 @@ import {
   RequestData,
   UserBlockResponse,
   UserFollowResponse,
+  UserMuteResponse,
   UserUnblockResponse,
   UserUnfollowResponse,
+  UserUnmuteResponse,
 } from '../structures/misc/Misc.js';
 import type {
   ClientInUse,
@@ -38,6 +40,8 @@ import type {
   PostUserBlockResponse,
   PostUserFollowJSONBody,
   PostUserFollowResponse,
+  PostUserMuteJSONBody,
+  PostUserMuteResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -149,7 +153,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   /**
    * Blocks a user on twitter.
    * @param targetUser The user to block
-   * @returns
+   * @returns A {@link UserBlockResponse} object
    */
   async block(targetUser: UserResolvable<C>): Promise<UserBlockResponse> {
     if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
@@ -168,7 +172,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   /**
    * Unblocks a user on twitter.
    * @param targetUser The user to unblock
-   * @returns
+   * @returns A {@link UserUnblockResponse} object
    */
   async unblock(targetUser: UserResolvable<C>): Promise<UserUnblockResponse> {
     if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
@@ -181,6 +185,40 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       .blocking(targetUserID)
       .delete();
     return new UserUnblockResponse(data);
+  }
+
+  /**
+   * Mutes a user on twitter.
+   * @param targetUser The user to mute
+   * @returns A {@link UserMuteResponse} object
+   */
+  async mute(targetUser: UserResolvable<C>): Promise<UserMuteResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'mute');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostUserMuteJSONBody = {
+      target_user_id: targetUserID,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PostUserMuteResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
+    return new UserMuteResponse(data);
+  }
+
+  /**
+   * Unmutes a user on twitter.
+   * @param targetUser The user to unmute
+   * @returns A {@link UserUnmuteResponse} object
+   */
+  async unmute(targetUser: UserResolvable<C>): Promise<UserUnmuteResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unmute');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const data: PostUserMuteResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
+    return new UserUnmuteResponse(data);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
