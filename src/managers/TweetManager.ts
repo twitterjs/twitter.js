@@ -2,6 +2,7 @@ import Tweet from '../structures/Tweet.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
 import { RequestData } from '../structures/misc/Misc.js';
+import SimplifiedTweet from '../structures/SimplifiedTweet.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
 import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
@@ -27,6 +28,30 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    */
   constructor(client: ClientInUse<C>) {
     super(client, Tweet);
+  }
+
+  /**
+   * Resolves a tweet resolvable to its respective {@link Tweet} object.
+   * @param tweetResolvable An ID or instance that can be resolved to a tweet object
+   * @returns The resolved tweet object
+   */
+  override resolve(tweetResolvable: TweetResolvable<C>): Tweet<C> | null {
+    const tweet = super.resolve(tweetResolvable);
+    if (tweet) return tweet;
+    if (tweetResolvable instanceof SimplifiedTweet) return super.resolve(tweetResolvable.id);
+    return null;
+  }
+
+  /**
+   * Resolves a tweet resolvable to its respective id.
+   * @param tweetResolvable An ID or instance that can be resolved to a tweet object
+   * @returns The id of the resolved tweet object
+   */
+  override resolveID(tweetResolvable: TweetResolvable<C>): Snowflake | null {
+    const tweetID = super.resolveID(tweetResolvable);
+    if (typeof tweetID === 'string') return tweetID;
+    if (tweetResolvable instanceof SimplifiedTweet) return tweetResolvable.id;
+    return null;
   }
 
   /**

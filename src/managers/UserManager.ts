@@ -44,6 +44,7 @@ import type {
   PostUserMuteResponse,
   Snowflake,
 } from 'twitter-types';
+import SimplifiedUser from '../structures/SimplifiedUser.js';
 
 /**
  * The manager class that holds API methods for {@link User} objects and stores their cache
@@ -59,6 +60,30 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    */
   constructor(client: ClientInUse<C>) {
     super(client, User);
+  }
+
+  /**
+   * Resolves a user resolvable to its respective {@link User} object.
+   * @param userResolvable An ID or instance that can be resolved to a user object
+   * @returns The resolved user object
+   */
+  override resolve(userResolvable: UserResolvable<C>): User<C> | null {
+    const user = super.resolve(userResolvable);
+    if (user) return user;
+    if (userResolvable instanceof SimplifiedUser) return super.resolve(userResolvable.id);
+    return null;
+  }
+
+  /**
+   * Resolves a user resolvable to its respective id.
+   * @param userResolvable An ID or instance that can be resolved to a user object
+   * @returns The id of the resolved user object
+   */
+  override resolveID(userResolvable: UserResolvable<C>): Snowflake | null {
+    const userID = super.resolveID(userResolvable);
+    if (typeof userID === 'string') return userID;
+    if (userResolvable instanceof SimplifiedUser) return userResolvable.id;
+    return null;
   }
 
   /**
