@@ -1,7 +1,12 @@
 import Tweet from '../structures/Tweet.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
-import { RequestData, TweetLikeResponse, TweetUnlikeResponse } from '../structures/misc/Misc.js';
+import {
+  RequestData,
+  TweetLikeResponse,
+  TweetReplyHideUnhideResponse,
+  TweetUnlikeResponse,
+} from '../structures/misc/Misc.js';
 import SimplifiedTweet from '../structures/SimplifiedTweet.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
@@ -15,6 +20,8 @@ import type {
   GetSingleTweetByIdResponse,
   PostTweetLikeJSONBody,
   PostTweetLikeResponse,
+  PutTweetReplyHideUnhideJSONBody,
+  PutTweetReplyHideUnhideResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -118,6 +125,24 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     return new TweetUnlikeResponse(data);
   }
 
+  /**
+   * Hides a reply to a tweet of the authorized user.
+   * @param targetTweet The reply to hide. This should be a tweet reply to a tweet of the authorized user
+   * @returns A {@link TweetReplyHideUnhideResponse} object
+   */
+  async hide(targetTweet: TweetResolvable<C>): Promise<TweetReplyHideUnhideResponse> {
+    return this.#editTweetReplyVisibility(targetTweet, true);
+  }
+
+  /**
+   * Unhides a reply to a tweet of the authorized user.
+   * @param targetTweet The reply to unhide. This should be a tweet reply to one of the tweets of the authorized user
+   * @returns A {@link TweetReplyHideUnhideResponse} object
+   */
+  async unhide(targetTweet: TweetResolvable<C>): Promise<TweetReplyHideUnhideResponse> {
+    return this.#editTweetReplyVisibility(targetTweet, false);
+  }
+
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions<C>): Promise<Tweet<C>> {
@@ -163,5 +188,20 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
       fetchedTweetCollection.set(tweet.id, tweet);
     }
     return fetchedTweetCollection;
+  }
+
+  async #editTweetReplyVisibility(
+    targetTweet: TweetResolvable<C>,
+    isHidden: boolean,
+  ): Promise<TweetReplyHideUnhideResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
+    const body: PutTweetReplyHideUnhideJSONBody = {
+      hidden: isHidden,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(targetTweetID).hidden.put(requestData);
+    return new TweetReplyHideUnhideResponse(data);
   }
 }

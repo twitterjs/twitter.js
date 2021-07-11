@@ -16,6 +16,7 @@ import type {
   PostUserBlockResponse,
   PostUserFollowResponse,
   PostUserMuteResponse,
+  PutTweetReplyHideUnhideResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -241,5 +242,19 @@ export class TweetUnlikeResponse {
 
   constructor(data: DeleteTweetUnlikeResponse) {
     this.liked = data.data.liked;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user hides or unhides a target tweet reply
+ */
+export class TweetReplyHideUnhideResponse {
+  /**
+   * Whether the target tweet reply is hidden
+   */
+  hidden: boolean;
+
+  constructor(data: PutTweetReplyHideUnhideResponse) {
+    this.hidden = data.data.hidden;
   }
 }

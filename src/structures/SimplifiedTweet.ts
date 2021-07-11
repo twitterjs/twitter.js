@@ -9,7 +9,7 @@ import {
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
-import type { TweetLikeResponse, TweetUnlikeResponse } from './misc/Misc.js';
+import type { TweetLikeResponse, TweetUnlikeResponse, TweetReplyHideUnhideResponse } from './misc/Misc.js';
 import type {
   APITweetContextAnnotation,
   APITweetObject,
@@ -169,6 +169,28 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
    */
   async unlike(): Promise<TweetUnlikeResponse> {
     return this.client.tweets.unlike(this.id);
+  }
+
+  /**
+   * Hides this tweet from the tweet replies section.
+   *
+   * **Note:** This tweet should be a reply to a tweet of the authorized user
+   *
+   * @returns A {@link TweetReplyHideUnhideResponse} object
+   */
+  async hide(): Promise<TweetReplyHideUnhideResponse> {
+    return this.client.tweets.hide(this.id);
+  }
+
+  /**
+   * Unhides this tweet.
+   *
+   * **Note:** This tweet should be a reply to a tweet of the authorized user
+   *
+   * @returns A {@link TweetReplyHideUnhideResponse} object
+   */
+  async unhide(): Promise<TweetReplyHideUnhideResponse> {
+    return this.client.tweets.unhide(this.id);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
