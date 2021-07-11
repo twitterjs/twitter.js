@@ -9,6 +9,7 @@ import {
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type { TweetLikeResponse, TweetUnlikeResponse } from './misc/Misc.js';
 import type {
   APITweetContextAnnotation,
   APITweetObject,
@@ -152,6 +153,22 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
     this.replySettings = data.reply_settings ?? null;
     this.source = data.source ?? null;
     this.withheld = data.withheld;
+  }
+
+  /**
+   * Likes this tweet.
+   * @returns A {@link TweetLikeResponse} object
+   */
+  async like(): Promise<TweetLikeResponse> {
+    return this.client.tweets.like(this.id);
+  }
+
+  /**
+   * Unlikes this tweet.
+   * @returns A {@link TweetUnlikeResponse} object
+   */
+  async unlike(): Promise<TweetUnlikeResponse> {
+    return this.client.tweets.unlike(this.id);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

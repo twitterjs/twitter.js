@@ -1,16 +1,20 @@
 import Tweet from '../structures/Tweet.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
-import { RequestData } from '../structures/misc/Misc.js';
+import { RequestData, TweetLikeResponse, TweetUnlikeResponse } from '../structures/misc/Misc.js';
 import SimplifiedTweet from '../structures/SimplifiedTweet.js';
+import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
 import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
+  DeleteTweetUnlikeResponse,
   GetMultipleTweetsByIdsQuery,
   GetMultipleTweetsByIdsResponse,
   GetSingleTweetByIdQuery,
   GetSingleTweetByIdResponse,
+  PostTweetLikeJSONBody,
+  PostTweetLikeResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -78,6 +82,40 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
       return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T, C>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
+  }
+
+  /**
+   * Likes a tweet.
+   * @param targetTweet The tweet to like
+   * @returns A {@link TweetLikeResponse} object
+   */
+  async like(targetTweet: TweetResolvable<C>): Promise<TweetLikeResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'like');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostTweetLikeJSONBody = {
+      tweet_id: targetTweetID,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PostTweetLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
+    return new TweetLikeResponse(data);
+  }
+
+  /**
+   * Unlikes a tweet.
+   * @param targetTweet The tweet to unlike
+   * @returns A {@link TweetUnlikeResponse} object
+   */
+  async unlike(targetTweet: TweetResolvable<C>): Promise<TweetUnlikeResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const data: DeleteTweetUnlikeResponse = await this.client._api.users(loggedInUser.id).likes(targetTweetID).delete();
+    return new TweetUnlikeResponse(data);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

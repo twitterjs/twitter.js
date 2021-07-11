@@ -8,9 +8,11 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
+  DeleteTweetUnlikeResponse,
   DeleteUserUnblockResponse,
   DeleteUserUnfollowResponse,
   DeleteUserUnmuteResponse,
+  PostTweetLikeResponse,
   PostUserBlockResponse,
   PostUserFollowResponse,
   PostUserMuteResponse,
@@ -211,5 +213,33 @@ export class UserUnmuteResponse {
 
   constructor(data: DeleteUserUnmuteResponse) {
     this.muting = data.data.muting;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user likes a target tweet
+ */
+export class TweetLikeResponse {
+  /**
+   * Whether the authorized user is liking the target tweet
+   */
+  liked: boolean;
+
+  constructor(data: PostTweetLikeResponse) {
+    this.liked = data.data.liked;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user unlikes a target tweet
+ */
+export class TweetUnlikeResponse {
+  /**
+   * Whether the authorized user is liking the target tweet
+   */
+  liked: boolean;
+
+  constructor(data: DeleteTweetUnlikeResponse) {
+    this.liked = data.data.liked;
   }
 }
