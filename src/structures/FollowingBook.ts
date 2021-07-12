@@ -4,12 +4,12 @@ import { RequestData } from './misc/Misc.js';
 import Collection from '../util/Collection.js';
 import { CustomError } from '../errors/index.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
-import type { GetUserFollowersQuery, GetUserFollowersResponse, Snowflake } from 'twitter-types';
+import type { GetUserFollowingQuery, GetUserFollowingResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of followers of a twitter user
+ * A class used for keeping track of users followed by a twitter user
  */
-export default class FollowersBook<C extends ClientUnionType> extends BaseBook<C> {
+export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C> {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -20,7 +20,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseBook<C
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of users that are following the specified user
+   * @returns A {@link Collection} of users that the specified user is following
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
@@ -29,7 +29,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseBook<C
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of users that are following the specified user
+   * @returns A {@link Collection} of users that the specified user is following
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User<C>>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
@@ -51,7 +51,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseBook<C
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
     const fetchedFollowersCollection = new Collection<Snowflake, User<C>>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUserFollowersQuery = {
+    const query: GetUserFollowingQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
@@ -59,7 +59,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseBook<C
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData(query, null);
-    const data: GetUserFollowersResponse = await this.client._api.users(this.userID).followers.get(requestData);
+    const data: GetUserFollowingResponse = await this.client._api.users(this.userID).following.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;

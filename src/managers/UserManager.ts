@@ -2,6 +2,7 @@ import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
 import FollowersBook from '../structures/FollowersBook.js';
+import FollowingBook from '../structures/FollowingBook.js';
 import SimplifiedUser from '../structures/SimplifiedUser.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
@@ -259,6 +260,20 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     const followersBook = new FollowersBook(this.client, targetUserID, maxResultsPerPage);
     await followersBook._init();
     return followersBook;
+  }
+
+  /**
+   * Fetches a {@link FollowingBook} object belonging to a user.
+   * @param targetUser The user whose following book is to be fetched
+   * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
+   * @returns A {@link FollowingBook} object as a `Promise`
+   */
+  async fetchFollowingBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): Promise<FollowingBook<C>> {
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'fetch followers of');
+    const followingBook = new FollowingBook(this.client, targetUserID, maxResultsPerPage);
+    await followingBook._init();
+    return followingBook;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

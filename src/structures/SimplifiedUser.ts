@@ -1,6 +1,8 @@
 import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
+import type FollowersBook from './FollowersBook.js';
+import type FollowingBook from './FollowingBook.js';
 import type { APIUserObject, Snowflake } from 'twitter-types';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type {
@@ -11,7 +13,6 @@ import type {
   UserMuteResponse,
   UserUnmuteResponse,
 } from './misc/Misc.js';
-import type FollowersBook from './FollowersBook.js';
 
 /**
  * A simplified version of {@link User} class
@@ -161,10 +162,19 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
 
   /**
    * Fetches the {@link FollowersBook} object belonging to this user.
-   * @param maxResults The maximum amount of followers to fetch per page. The API will default this to `100` if not provided
+   * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
    * @returns A {@link FollowersBook} object as a `Promise`
    */
-  async fetchFollowersBook(maxResults?: number): Promise<FollowersBook<C>> {
-    return this.client.users.fetchFollowersBook(this.id, maxResults) as Promise<FollowersBook<C>>;
+  async fetchFollowersBook(maxResultsPerPage?: number): Promise<FollowersBook<C>> {
+    return this.client.users.fetchFollowersBook(this.id, maxResultsPerPage) as Promise<FollowersBook<C>>;
+  }
+
+  /**
+   * Fetches the {@link FollowingBook} object belonging to this user.
+   * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
+   * @returns A {@link FollowingBook} object as a `Promise`
+   */
+  async fetchFollowingBook(maxResultsPerPage?: number): Promise<FollowingBook<C>> {
+    return this.client.users.fetchFollowingBook(this.id, maxResultsPerPage) as Promise<FollowingBook<C>>;
   }
 }
