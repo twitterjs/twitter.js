@@ -11,6 +11,7 @@ import type {
   UserMuteResponse,
   UserUnmuteResponse,
 } from './misc/Misc.js';
+import type FollowersBook from './FollowersBook.js';
 
 /**
  * A simplified version of {@link User} class
@@ -156,5 +157,14 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    */
   async unmute(): Promise<UserUnmuteResponse> {
     return this.client.users.unmute(this.id);
+  }
+
+  /**
+   * Fetches the {@link FollowersBook} object belonging to this user.
+   * @param maxResults The maximum amount of followers to fetch per page. The API will default this to `100` if not provided
+   * @returns A {@link FollowersBook} object as a `Promise`
+   */
+  async fetchFollowersBook(maxResults?: number): Promise<FollowersBook<C>> {
+    return this.client.users.fetchFollowersBook(this.id, maxResults) as Promise<FollowersBook<C>>;
   }
 }

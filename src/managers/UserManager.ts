@@ -1,6 +1,8 @@
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
+import FollowersBook from '../structures/FollowersBook.js';
+import SimplifiedUser from '../structures/SimplifiedUser.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
 import {
@@ -44,7 +46,6 @@ import type {
   PostUserMuteResponse,
   Snowflake,
 } from 'twitter-types';
-import SimplifiedUser from '../structures/SimplifiedUser.js';
 
 /**
  * The manager class that holds API methods for {@link User} objects and stores their cache
@@ -244,6 +245,20 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const data: PostUserMuteResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
     return new UserUnmuteResponse(data);
+  }
+
+  /**
+   * Fetches a {@link FollowersBook} object belonging to a user.
+   * @param targetUser The user whose followers book is to be fetched
+   * @param maxResultsPerPage The maximum amount of followers to fetch per page. The API will default this to `100` if not provided
+   * @returns A {@link FollowersBook} object as a `Promise`
+   */
+  async fetchFollowersBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): Promise<FollowersBook<C>> {
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'fetch followers of');
+    const followersBook = new FollowersBook(this.client, targetUserID, maxResultsPerPage);
+    await followersBook._init();
+    return followersBook;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
