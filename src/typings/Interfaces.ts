@@ -1,3 +1,4 @@
+import type Tweet from '../structures/Tweet.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
 import type {
@@ -48,7 +49,7 @@ export interface ClientCredentials {
   username: string;
 }
 
-export interface ClientEventsMapping {
+export interface ClientEventsMapping<C extends ClientUnionType> {
   partialError: [partialError: Record<string, unknown>];
   ready: [];
 }
@@ -153,4 +154,8 @@ export interface StructureConstructable<T> {
 export interface TwitterjsErrorConstructor {
   // eslint-disable-next-line
   new(key: string, ...args: Array<unknown>): Error;
+}
+
+export interface SampledTweetStreamEventsMapping<C extends ClientUnionType> {
+  sampledTweetCreate: [tweet: Tweet<C>];
 }

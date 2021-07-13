@@ -1,3 +1,4 @@
+import https from 'https';
 import fetch from 'node-fetch';
 import UserContextClient from '../client/UserContextClient.js';
 import type RESTManager from './RESTManager.js';
@@ -6,6 +7,8 @@ import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
+const agent = new https.Agent({ keepAlive: true });
+
 export default class APIRequest<C extends ClientUnionType> {
   rest: RESTManager<C>;
   method: string;
@@ -13,6 +16,7 @@ export default class APIRequest<C extends ClientUnionType> {
   options: RequestData<unknown, unknown>;
   route: string;
   client: ClientInUse<C>;
+  isStreaming?: boolean;
 
   constructor(rest: RESTManager<C>, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
     this.rest = rest;
@@ -21,6 +25,7 @@ export default class APIRequest<C extends ClientUnionType> {
     this.options = options;
     this.route = options.route;
     this.client = rest.client;
+    this.isStreaming = options.isStreaming;
 
     if (options.query) {
       const queryString = Object.entries(options.query)
@@ -51,6 +56,7 @@ export default class APIRequest<C extends ClientUnionType> {
     return fetch(url, {
       method: this.method,
       headers,
+      agent,
       body,
     });
   }

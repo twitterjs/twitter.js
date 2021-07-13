@@ -1,11 +1,16 @@
 import BaseClient from './BaseClient.js';
 import type { ClientEventsMapping, ClientOptions } from '../typings/Interfaces.js';
-import type { ClientEventArgsType, ClientEventKeyType, ClientEventListenerType } from '../typings/Types.js';
+import type {
+  ClientEventArgsType,
+  ClientEventKeyType,
+  ClientEventListenerType,
+  ClientUnionType,
+} from '../typings/Types.js';
 
 /**
  * The class for holding common members of {@link BearerClient} and {@link UserContextClient}
  */
-export default class CommonClient extends BaseClient {
+export default class CommonClient<C extends ClientUnionType> extends BaseClient {
   /**
    * The time at which the client became `ready`
    */
@@ -20,28 +25,28 @@ export default class CommonClient extends BaseClient {
     this.readyAt = null;
   }
 
-  override on<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
+  override on<K extends keyof ClientEventsMapping<C> | symbol>(
+    event: ClientEventKeyType<K, C>,
+    listener: (...args: ClientEventListenerType<K, C>) => void,
   ): this {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     super.on(event, listener as (...args: any[]) => void);
     return this;
   }
 
-  override once<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
+  override once<K extends keyof ClientEventsMapping<C> | symbol>(
+    event: ClientEventKeyType<K, C>,
+    listener: (...args: ClientEventListenerType<K, C>) => void,
   ): this {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     super.on(event, listener as (...args: any[]) => void);
     return this;
   }
 
-  override emit<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    ...args: ClientEventArgsType<K>
+  override emit<K extends keyof ClientEventsMapping<C> | symbol>(
+    event: ClientEventKeyType<K, C>,
+    ...args: ClientEventArgsType<K, C>
   ): boolean {
-    return super.emit(event, args);
+    return super.emit(event, ...args);
   }
 }

@@ -26,7 +26,7 @@ export default class RequestHandler<C extends ClientUnionType> {
     this.queue = new AsyncQueue();
   }
 
-  async push(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
+  async push(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
     await this.queue.wait();
     try {
       return await this.execute(request);
@@ -35,7 +35,7 @@ export default class RequestHandler<C extends ClientUnionType> {
     }
   }
 
-  async execute(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
+  async execute(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
     let res: Response;
     try {
       res = await request.make();
@@ -46,6 +46,8 @@ export default class RequestHandler<C extends ClientUnionType> {
         throw error;
       }
     }
+
+    if (request.isStreaming) return res;
 
     if (res && res.headers) {
       if (res.ok) {

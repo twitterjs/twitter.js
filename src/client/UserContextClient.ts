@@ -10,7 +10,7 @@ import type { ClientCredentials, ClientOptions } from '../typings/Interfaces.js'
 /**
  * The core class that exposes library APIs for making user-context authorized requests
  */
-export default class UserContextClient extends CommonClient {
+export default class UserContextClient extends CommonClient<UserContextClient> {
   /**
    * The credentials that were provided to the client
    */

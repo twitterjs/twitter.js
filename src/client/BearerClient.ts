@@ -9,7 +9,7 @@ import type { ClientOptions } from '../typings/Interfaces.js';
 /**
  * The core class that exposes library APIs for making bearer token authorized requests
  */
-export default class BearerClient extends CommonClient {
+export default class BearerClient extends CommonClient<BearerClient> {
   /**
    * The bearer token that was provided for the client
    */

@@ -34,9 +34,15 @@ export class RequestData<Q, B> {
    */
   body: B;
 
-  constructor(query: Q, body: B) {
+  /**
+   * Whether the endpoint responds with a stream of data over persisent http connection
+   */
+  isStreaming?: boolean;
+
+  constructor(query: Q, body: B, isStreaming?: boolean) {
     this.query = query;
     this.body = body;
+    this.isStreaming = isStreaming;
   }
 }
 

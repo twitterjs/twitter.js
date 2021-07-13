@@ -14,17 +14,22 @@ import type {
   FetchUserOptions,
   FetchUsersByUsernamesOptions,
   FetchUsersOptions,
+  SampledTweetStreamEventsMapping,
 } from './Interfaces.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping ? ClientEventsMapping[K] : any[];
+export type ClientEventArgsType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
+  ? ClientEventsMapping<C>[K]
+  : // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
+  any[];
 
-export type ClientEventKeyType<K> = K extends keyof ClientEventsMapping
+export type ClientEventKeyType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
   ? LiteralUnion<K>
-  : Exclude<K, keyof ClientEventsMapping>;
+  : Exclude<K, keyof ClientEventsMapping<C>>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ClientEventListenerType<K> = K extends keyof ClientEventsMapping ? ClientEventsMapping[K] : any[];
+export type ClientEventListenerType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
+  ? ClientEventsMapping<C>[K]
+  : // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
+  any[];
 
 export type ClientInUse<T extends UserContextClient | BearerClient> = T extends UserContextClient
   ? UserContextClient
@@ -55,3 +60,23 @@ export type TweetManagerFetchResult<
   > = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
 
 export type TweetResolvable<C extends ClientUnionType> = Tweet<C> | SimplifiedTweet<C> | Snowflake;
+
+export type SampledTweetStreamEventArgsType<
+  K,
+  C extends ClientUnionType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
+  > = K extends keyof SampledTweetStreamEventsMapping<C> ? SampledTweetStreamEventsMapping<C>[K] : any[];
+
+export type SampledTweetStreamEventKeyType<
+  K,
+  C extends ClientUnionType,
+  // eslint-disable-next-line prettier/prettier
+  > = K extends keyof SampledTweetStreamEventsMapping<C>
+  ? LiteralUnion<K>
+  : Exclude<K, keyof SampledTweetStreamEventsMapping<C>>;
+
+export type SampledTweetStreamEventListenerType<
+  K,
+  C extends ClientUnionType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
+  > = K extends keyof SampledTweetStreamEventsMapping<C> ? SampledTweetStreamEventsMapping<C>[K] : any[];

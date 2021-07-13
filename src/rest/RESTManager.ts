@@ -7,6 +7,7 @@ import { CustomError } from '../errors/index.js';
 import RequestHandler from './RequestHandler.js';
 import BearerClient from '../client/BearerClient.js';
 import UserContextClient from '../client/UserContextClient.js';
+import type { Response } from 'node-fetch';
 import type { APIProblem } from 'twitter-types';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
@@ -81,7 +82,7 @@ export default class RESTManager<C extends ClientUnionType> {
     method: string,
     path: string,
     options: ExtendedRequestData<string, unknown>,
-  ): Promise<Record<string, unknown> | Buffer | APIProblem | undefined> {
+  ): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
     const apiRequest = new APIRequest(this, method, path, options);
     let handler = this.requestHandlers.get(apiRequest.route);
     if (!handler) {
