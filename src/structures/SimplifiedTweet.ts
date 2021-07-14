@@ -8,8 +8,16 @@ import {
   TweetPromotedMetrics,
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
+import type User from './User.js';
+import type Collection from '../util/Collection.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
-import type { TweetLikeResponse, TweetUnlikeResponse, TweetReplyHideUnhideResponse } from './misc/Misc.js';
+import type {
+  TweetLikeResponse,
+  TweetUnlikeResponse,
+  TweetReplyHideUnhideResponse,
+  RetweetResponse,
+  RemovedRetweetResponse,
+} from './misc/Misc.js';
 import type {
   APITweetContextAnnotation,
   APITweetObject,
@@ -191,6 +199,30 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
    */
   async unhide(): Promise<TweetReplyHideUnhideResponse> {
     return this.client.tweets.unhide(this.id);
+  }
+
+  /**
+   * Retweets this tweet.
+   * @returns A {@link RetweetResponse} object
+   */
+  async retweet(): Promise<RetweetResponse> {
+    return this.client.tweets.retweet(this.id);
+  }
+
+  /**
+   * Removes the retweet of this tweet.
+   * @returns A {@link RemovedRetweetResponse} object
+   */
+  async unRetweet(): Promise<RemovedRetweetResponse> {
+    return this.client.tweets.unRetweet(this.id);
+  }
+
+  /**
+   * Fetches users who have retweeted this tweet.
+   * @returns A {@link Collection} of {@link User} objects
+   */
+  async fetchRetweetedBy(): Promise<Collection<Snowflake, User<C>>> {
+    return this.client.tweets.fetchRetweetedBy(this.id) as Promise<Collection<Snowflake, User<C>>>;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

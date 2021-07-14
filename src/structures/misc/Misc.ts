@@ -8,10 +8,12 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
+  DeleteRetweetResponse,
   DeleteTweetUnlikeResponse,
   DeleteUserUnblockResponse,
   DeleteUserUnfollowResponse,
   DeleteUserUnmuteResponse,
+  PostRetweetResponse,
   PostTweetLikeResponse,
   PostUserBlockResponse,
   PostUserFollowResponse,
@@ -262,5 +264,27 @@ export class TweetReplyHideUnhideResponse {
 
   constructor(data: PutTweetReplyHideUnhideResponse) {
     this.hidden = data.data.hidden;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user retweets a target tweet
+ */
+export class RetweetResponse {
+  retweeted: boolean;
+
+  constructor(data: PostRetweetResponse) {
+    this.retweeted = data.data.retweeted;
+  }
+}
+
+/**
+ * A class that represents the data returned when the authorized user removes retweet of a target tweet
+ */
+export class RemovedRetweetResponse {
+  retweeted: boolean;
+
+  constructor(data: DeleteRetweetResponse) {
+    this.retweeted = data.data.retweeted;
   }
 }

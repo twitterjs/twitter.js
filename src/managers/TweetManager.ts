@@ -1,8 +1,11 @@
+import User from '../structures/User.js';
 import Tweet from '../structures/Tweet.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
 import {
+  RemovedRetweetResponse,
   RequestData,
+  RetweetResponse,
   TweetLikeResponse,
   TweetReplyHideUnhideResponse,
   TweetUnlikeResponse,
@@ -14,11 +17,16 @@ import SampledTweetStream from '../structures/misc/SampledTweetStream.js';
 import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
+  DeleteRetweetResponse,
   DeleteTweetUnlikeResponse,
   GetMultipleTweetsByIdsQuery,
   GetMultipleTweetsByIdsResponse,
+  GetRetweetedByQuery,
+  GetRetweetedByResponse,
   GetSingleTweetByIdQuery,
   GetSingleTweetByIdResponse,
+  PostRetweetJSONBody,
+  PostRetweetResponse,
   PostTweetLikeJSONBody,
   PostTweetLikeResponse,
   PutTweetReplyHideUnhideJSONBody,
@@ -150,6 +158,66 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    */
   createSampledTweetStream(): SampledTweetStream<C> {
     return new SampledTweetStream(this.client);
+  }
+
+  /**
+   * Retweets a tweet.
+   * @param targetTweet The tweet to retweet
+   * @returns A {@link RetweetResponse} object
+   */
+  async retweet(targetTweet: TweetResolvable<C>): Promise<RetweetResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostRetweetJSONBody = {
+      tweet_id: targetTweetID,
+    };
+    const requestData = new RequestData(null, body);
+    const data: PostRetweetResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
+    return new RetweetResponse(data);
+  }
+
+  /**
+   * Removes the retweet of a tweet.
+   * @param targetTweet The tweet whose retweet is to be removed
+   * @returns A {@link RemovedRetweetResponse} object
+   */
+  async unRetweet(targetTweet: TweetResolvable<C>): Promise<RemovedRetweetResponse> {
+    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const data: DeleteRetweetResponse = await this.client._api.users(loggedInUser.id).retweets(targetTweetID).delete();
+    return new RemovedRetweetResponse(data);
+  }
+
+  /**
+   * Fetches users who have retweeted a tweet.
+   * @param targetTweet The tweet whose retweeters are to be fetched
+   * @returns A {@link Collection} of {@link User} objects
+   */
+  async fetchRetweetedBy(targetTweet: TweetResolvable<C>): Promise<Collection<Snowflake, User<C>>> {
+    const retweetedByUsersCollection = new Collection<Snowflake, User<C>>();
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
+    const queryParameters = this.client.options.queryParameters;
+    const query: GetRetweetedByQuery = {
+      expansions: queryParameters?.userExpansions,
+      'user.fields': queryParameters?.userFields,
+      'tweet.fields': queryParameters?.tweetFields,
+    };
+    const requestData = new RequestData(query, null);
+    const data: GetRetweetedByResponse = await this.client._api.tweets(targetTweetID).retweeted_by.get(requestData);
+    const rawUsers = data.data;
+    const rawUsersIncludes = data.includes;
+    for (const rawUser of rawUsers) {
+      const user = new User(this.client, { data: rawUser, includes: rawUsersIncludes });
+      retweetedByUsersCollection.set(user.id, user);
+    }
+    return retweetedByUsersCollection;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
