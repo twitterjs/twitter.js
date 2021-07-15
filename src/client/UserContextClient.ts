@@ -80,7 +80,7 @@ export default class UserContextClient extends CommonClient<UserContextClient> {
       username: credentials.username,
     });
 
-    if (this.me?.username === this.credentials.username)
+    if (this.me?.username !== this.credentials.username)
       throw new CustomError('USER_CONTEXT_LOGIN_ERROR', this.credentials.username);
 
     this.emit(ClientEvents.READY, this);
