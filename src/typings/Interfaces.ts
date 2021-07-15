@@ -1,6 +1,6 @@
 import type Tweet from '../structures/Tweet.js';
 import type { RequestData } from '../structures/misc/Misc.js';
-import type { ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
+import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
 import type {
   APIMediaField,
   APIPlaceField,
@@ -41,7 +41,7 @@ export interface BaseFetchOptions {
   cacheAfterFetching?: boolean;
 }
 
-export interface ClientCredentials {
+export interface ClientCredentialsInterface {
   consumerKey: string;
   consumerSecret: string;
   accessToken: string;
@@ -51,7 +51,7 @@ export interface ClientCredentials {
 
 export interface ClientEventsMapping<C extends ClientUnionType> {
   partialError: [partialError: Record<string, unknown>];
-  ready: [];
+  ready: [client: ClientInUse<C>];
 }
 
 /**

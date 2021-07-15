@@ -13,6 +13,8 @@ const messages = {
   NO_LOGGED_IN_USER: 'Could not find the logged in user to make the authorized request on behalf of',
   PAGINATED_RESPONSE_TAIL_REACHED: 'Cannot fetch the next page due to hitting the end of the book.',
   PAGINATED_RESPONSE_HEAD_REACHED: 'Cannot fetch the previous page due to hitting the start of the book.',
+  USER_CONTEXT_LOGIN_ERROR: (username: string) => `Could not fetch the user ${username}.`,
+  CREDENTIALS_NOT_STRING: "One or more client credentials fields are missing or aren't of type string.",
 };
 
 for (const [key, message] of Object.entries(messages)) {

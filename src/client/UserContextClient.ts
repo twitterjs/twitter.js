@@ -2,10 +2,11 @@ import CommonClient from './CommonClient.js';
 import RESTManager from '../rest/RESTManager.js';
 import { ClientEvents } from '../util/Constants.js';
 import UserManager from '../managers/UserManager.js';
-import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
+import { ClientCredentials } from '../structures/misc/Misc.js';
+import { CustomError, CustomTypeError } from '../errors/index.js';
 import type User from '../structures/User.js';
-import type { ClientCredentials, ClientOptions } from '../typings/Interfaces.js';
+import type { ClientCredentialsInterface, ClientOptions } from '../typings/Interfaces.js';
 
 /**
  * The core class that exposes library APIs for making user-context authorized requests
@@ -68,18 +69,21 @@ export default class UserContextClient extends CommonClient<UserContextClient> {
    *
    * @throws {@link CustomTypeError} The exception is thrown if the `credentials` param is not an object
    */
-  async login(credentials: ClientCredentials): Promise<ClientCredentials> {
+  async login(credentials: ClientCredentialsInterface): Promise<ClientCredentials> {
     if (typeof credentials !== 'object') {
       throw new CustomTypeError('INVALID_TYPE', 'credentials', 'object', true);
     }
-    this.credentials = credentials;
+    this.credentials = new ClientCredentials(credentials);
     this.readyAt = new Date();
 
     this.me = await this.users.fetchByUsername({
       username: credentials.username,
     });
 
-    this.emit(ClientEvents.READY);
+    if (this.me?.username === this.credentials.username)
+      throw new CustomError('USER_CONTEXT_LOGIN_ERROR', this.credentials.username);
+
+    this.emit(ClientEvents.READY, this);
     return this.credentials;
   }
 }

@@ -1,3 +1,5 @@
+import { CustomError } from '../../errors/index.js';
+import type { ClientCredentialsInterface } from '../../typings/Interfaces';
 import type {
   APIPlaceGeo,
   APIPlaceGeoBoundingBox,
@@ -286,5 +288,40 @@ export class RemovedRetweetResponse {
 
   constructor(data: DeleteRetweetResponse) {
     this.retweeted = data.data.retweeted;
+  }
+}
+
+export class ClientCredentials {
+  consumerKey: string;
+  consumerSecret: string;
+  accessToken: string;
+  accessTokenSecret: string;
+  username: string;
+
+  constructor(data: ClientCredentialsInterface) {
+    this.#validate(data);
+    this.consumerKey = data.consumerKey;
+    this.consumerSecret = data.consumerSecret;
+    this.accessToken = data.accessToken;
+    this.accessTokenSecret = data.accessTokenSecret;
+    this.username = data.username;
+  }
+
+  #validate({
+    consumerKey,
+    consumerSecret,
+    accessToken,
+    accessTokenSecret,
+    username,
+  }: ClientCredentialsInterface): void {
+    if (
+      typeof consumerKey !== 'string' ||
+      typeof consumerSecret !== 'string' ||
+      typeof accessToken !== 'string' ||
+      typeof accessTokenSecret !== 'string' ||
+      typeof username !== 'string'
+    ) {
+      throw new CustomError('CREDENTIALS_NOT_STRING');
+    }
   }
 }

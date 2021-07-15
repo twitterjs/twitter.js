@@ -68,7 +68,7 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.token = token;
     this.readyAt = new Date();
 
-    this.emit(ClientEvents.READY);
+    this.emit(ClientEvents.READY, this);
     return this.token;
   }
 }
