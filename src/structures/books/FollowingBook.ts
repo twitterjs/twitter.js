@@ -49,7 +49,7 @@ export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C
   }
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
-    const fetchedFollowersCollection = new Collection<Snowflake, User<C>>();
+    const followingCollection = new Collection<Snowflake, User<C>>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersFollowingQuery = {
       expansions: queryParameters?.userExpansions,
@@ -67,9 +67,9 @@ export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {
       const user = new User(this.client, { data: rawUser, includes: rawUsersIncludes });
-      fetchedFollowersCollection.set(user.id, user);
+      followingCollection.set(user.id, user);
     }
-    this.currentPage = fetchedFollowersCollection;
-    return fetchedFollowersCollection;
+    this.currentPage = followingCollection;
+    return followingCollection;
   }
 }
