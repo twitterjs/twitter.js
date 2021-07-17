@@ -3,7 +3,6 @@ import type {
   APIMediaOrganicMetrics,
   APIMediaPromotedMetrics,
   APIMediaPublicMetrics,
-  APIMediaPublicNonPublicMetricsUnion,
 } from 'twitter-types';
 
 export class MediaNonPublicMetrics {
@@ -58,7 +57,7 @@ export class MediaPublicNonPublicMetricsUnion extends MediaNonPublicMetrics {
    */
   viewCount: number;
 
-  constructor(data: APIMediaPublicNonPublicMetricsUnion) {
+  constructor(data: APIMediaNonPublicMetrics & APIMediaPublicMetrics) {
     super(data);
 
     this.viewCount = data.view_count;

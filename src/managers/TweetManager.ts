@@ -17,18 +17,18 @@ import SampledTweetStream from '../structures/misc/SampledTweetStream.js';
 import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
-  DeleteRetweetResponse,
-  DeleteTweetUnlikeResponse,
+  DeleteTweetsLikeResponse,
+  DeleteUsersRetweetsResponse,
   GetMultipleTweetsByIdsQuery,
   GetMultipleTweetsByIdsResponse,
-  GetRetweetedByQuery,
-  GetRetweetedByResponse,
   GetSingleTweetByIdQuery,
   GetSingleTweetByIdResponse,
-  PostRetweetJSONBody,
-  PostRetweetResponse,
-  PostTweetLikeJSONBody,
-  PostTweetLikeResponse,
+  GetTweetsRetweetingUsersQuery,
+  GetTweetsRetweetingUsersResponse,
+  PostTweetsLikeJSONBody,
+  PostTweetsLikeResponse,
+  PostUsersRetweetsJSONBody,
+  PostUsersRetweetsResponse,
   PutTweetReplyHideUnhideJSONBody,
   PutTweetReplyHideUnhideResponse,
   Snowflake,
@@ -111,11 +111,11 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'like');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostTweetLikeJSONBody = {
+    const body: PostTweetsLikeJSONBody = {
       tweet_id: targetTweetID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostTweetLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
+    const data: PostTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
     return new TweetLikeResponse(data);
   }
 
@@ -130,7 +130,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteTweetUnlikeResponse = await this.client._api.users(loggedInUser.id).likes(targetTweetID).delete();
+    const data: DeleteTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes(targetTweetID).delete();
     return new TweetUnlikeResponse(data);
   }
 
@@ -171,11 +171,11 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostRetweetJSONBody = {
+    const body: PostUsersRetweetsJSONBody = {
       tweet_id: targetTweetID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostRetweetResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
+    const data: PostUsersRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
     return new RetweetResponse(data);
   }
 
@@ -190,7 +190,10 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteRetweetResponse = await this.client._api.users(loggedInUser.id).retweets(targetTweetID).delete();
+    const data: DeleteUsersRetweetsResponse = await this.client._api
+      .users(loggedInUser.id)
+      .retweets(targetTweetID)
+      .delete();
     return new RemovedRetweetResponse(data);
   }
 
@@ -204,13 +207,15 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const queryParameters = this.client.options.queryParameters;
-    const query: GetRetweetedByQuery = {
+    const query: GetTweetsRetweetingUsersQuery = {
       expansions: queryParameters?.userExpansions,
       'user.fields': queryParameters?.userFields,
       'tweet.fields': queryParameters?.tweetFields,
     };
     const requestData = new RequestData(query, null);
-    const data: GetRetweetedByResponse = await this.client._api.tweets(targetTweetID).retweeted_by.get(requestData);
+    const data: GetTweetsRetweetingUsersResponse = await this.client._api
+      .tweets(targetTweetID)
+      .retweeted_by.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {

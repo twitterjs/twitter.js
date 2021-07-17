@@ -2,13 +2,13 @@ import type Tweet from '../structures/Tweet.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
 import type {
-  APIMediaField,
-  APIPlaceField,
-  APIPollField,
-  APITweetExpansion,
-  APITweetField,
-  APIUserExpansion,
-  APIUserField,
+  MediaFieldsParameter,
+  PlaceFieldsParameter,
+  PollFieldsParameter,
+  TweetExpansionsParameter,
+  TweetFieldsParameter,
+  UserExpansionsParameter,
+  UserFieldsParameter,
 } from 'twitter-types';
 
 /**
@@ -137,13 +137,13 @@ export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<Base
 }
 
 export interface QueryParameters {
-  userFields?: Array<APIUserField>;
-  tweetFields?: Array<APITweetField>;
-  mediaFields?: Array<APIMediaField>;
-  placeFields?: Array<APIPlaceField>;
-  pollFields?: Array<APIPollField>;
-  tweetExpansions?: Array<APITweetExpansion>;
-  userExpansions?: Array<APIUserExpansion>;
+  userFields?: Array<UserFieldsParameter>;
+  tweetFields?: Array<TweetFieldsParameter>;
+  mediaFields?: Array<MediaFieldsParameter>;
+  placeFields?: Array<PlaceFieldsParameter>;
+  pollFields?: Array<PollFieldsParameter>;
+  tweetExpansions?: Array<TweetExpansionsParameter>;
+  userExpansions?: Array<UserExpansionsParameter>;
 }
 
 export interface StructureConstructable<T> {

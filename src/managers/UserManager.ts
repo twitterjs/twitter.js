@@ -1,8 +1,8 @@
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
-import FollowersBook from '../structures/FollowersBook.js';
-import FollowingBook from '../structures/FollowingBook.js';
+import FollowersBook from '../structures/books/FollowersBook.js';
+import FollowingBook from '../structures/books/FollowingBook.js';
 import SimplifiedUser from '../structures/SimplifiedUser.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
@@ -29,8 +29,9 @@ import type {
   FetchUsersOptions,
 } from '../typings/Interfaces.js';
 import type {
-  DeleteUserUnblockResponse,
-  DeleteUserUnfollowResponse,
+  DeleteUsersBlockingResponse,
+  DeleteUsersFollowingResponse,
+  DeleteUsersMutingResponse,
   GetMultipleUsersByIdsQuery,
   GetMultipleUsersByIdsResponse,
   GetMultipleUsersByUsernamesQuery,
@@ -39,12 +40,12 @@ import type {
   GetSingleUserByIdResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
-  PostUserBlockJSONBody,
-  PostUserBlockResponse,
-  PostUserFollowJSONBody,
-  PostUserFollowResponse,
-  PostUserMuteJSONBody,
-  PostUserMuteResponse,
+  PostUsersBlockingJSONBody,
+  PostUsersBlockingResponse,
+  PostUsersFollowingJSONBody,
+  PostUsersFollowingResponse,
+  PostUsersMutingJSONBody,
+  PostUsersMutingResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -151,11 +152,11 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostUserFollowJSONBody = {
+    const body: PostUsersFollowingJSONBody = {
       target_user_id: targetUserID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostUserFollowResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
+    const data: PostUsersFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
     return new UserFollowResponse(data);
   }
 
@@ -170,7 +171,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteUserUnfollowResponse = await this.client._api
+    const data: DeleteUsersFollowingResponse = await this.client._api
       .users(loggedInUser.id)
       .following(targetUserID)
       .delete();
@@ -188,11 +189,11 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'block');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostUserBlockJSONBody = {
+    const body: PostUsersBlockingJSONBody = {
       target_user_id: targetUserID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostUserBlockResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
+    const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
 
@@ -207,7 +208,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unblock');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteUserUnblockResponse = await this.client._api
+    const data: DeleteUsersBlockingResponse = await this.client._api
       .users(loggedInUser.id)
       .blocking(targetUserID)
       .delete();
@@ -225,11 +226,11 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'mute');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostUserMuteJSONBody = {
+    const body: PostUsersMutingJSONBody = {
       target_user_id: targetUserID,
     };
     const requestData = new RequestData(null, body);
-    const data: PostUserMuteResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
+    const data: PostUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
     return new UserMuteResponse(data);
   }
 
@@ -244,7 +245,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unmute');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: PostUserMuteResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
+    const data: DeleteUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
     return new UserUnmuteResponse(data);
   }
 

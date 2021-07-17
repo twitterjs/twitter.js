@@ -1,9 +1,9 @@
 import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
-import type FollowersBook from './FollowersBook.js';
-import type FollowingBook from './FollowingBook.js';
-import type { APIUserObject, Snowflake } from 'twitter-types';
+import type FollowersBook from './books/FollowersBook.js';
+import type FollowingBook from './books/FollowingBook.js';
+import type { APIUser, Snowflake } from 'twitter-types';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type {
   UserFollowResponse,
@@ -93,7 +93,7 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    */
   withheld?: any; // TODO
 
-  constructor(client: ClientInUse<C>, data: APIUserObject) {
+  constructor(client: ClientInUse<C>, data: APIUser) {
     super(client);
 
     this.id = data.id;

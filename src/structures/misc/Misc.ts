@@ -10,16 +10,16 @@ import type {
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
   APIUserPublicMetrics,
-  DeleteRetweetResponse,
-  DeleteTweetUnlikeResponse,
-  DeleteUserUnblockResponse,
-  DeleteUserUnfollowResponse,
-  DeleteUserUnmuteResponse,
-  PostRetweetResponse,
-  PostTweetLikeResponse,
-  PostUserBlockResponse,
-  PostUserFollowResponse,
-  PostUserMuteResponse,
+  DeleteTweetsLikeResponse,
+  DeleteUsersBlockingResponse,
+  DeleteUsersFollowingResponse,
+  DeleteUsersMutingResponse,
+  DeleteUsersRetweetsResponse,
+  PostTweetsLikeResponse,
+  PostUsersBlockingResponse,
+  PostUsersFollowingResponse,
+  PostUsersMutingResponse,
+  PostUsersRetweetsResponse,
   PutTweetReplyHideUnhideResponse,
   Snowflake,
 } from 'twitter-types';
@@ -151,7 +151,7 @@ export class UserFollowResponse {
    */
   pendingFollow: boolean;
 
-  constructor(data: PostUserFollowResponse) {
+  constructor(data: PostUsersFollowingResponse) {
     this.following = data.data.following;
     this.pendingFollow = data.data.pending_follow;
   }
@@ -166,7 +166,7 @@ export class UserUnfollowResponse {
    */
   following: boolean;
 
-  constructor(data: DeleteUserUnfollowResponse) {
+  constructor(data: DeleteUsersFollowingResponse) {
     this.following = data.data.following;
   }
 }
@@ -180,7 +180,7 @@ export class UserBlockResponse {
    */
   blocking: boolean;
 
-  constructor(data: PostUserBlockResponse) {
+  constructor(data: PostUsersBlockingResponse) {
     this.blocking = data.data.blocking;
   }
 }
@@ -194,7 +194,7 @@ export class UserUnblockResponse {
    */
   blocking: boolean;
 
-  constructor(data: DeleteUserUnblockResponse) {
+  constructor(data: DeleteUsersBlockingResponse) {
     this.blocking = data.data.blocking;
   }
 }
@@ -208,7 +208,7 @@ export class UserMuteResponse {
    */
   muting: boolean;
 
-  constructor(data: PostUserMuteResponse) {
+  constructor(data: PostUsersMutingResponse) {
     this.muting = data.data.muting;
   }
 }
@@ -222,7 +222,7 @@ export class UserUnmuteResponse {
    */
   muting: boolean;
 
-  constructor(data: DeleteUserUnmuteResponse) {
+  constructor(data: DeleteUsersMutingResponse) {
     this.muting = data.data.muting;
   }
 }
@@ -236,7 +236,7 @@ export class TweetLikeResponse {
    */
   liked: boolean;
 
-  constructor(data: PostTweetLikeResponse) {
+  constructor(data: PostTweetsLikeResponse) {
     this.liked = data.data.liked;
   }
 }
@@ -250,7 +250,7 @@ export class TweetUnlikeResponse {
    */
   liked: boolean;
 
-  constructor(data: DeleteTweetUnlikeResponse) {
+  constructor(data: DeleteTweetsLikeResponse) {
     this.liked = data.data.liked;
   }
 }
@@ -275,7 +275,7 @@ export class TweetReplyHideUnhideResponse {
 export class RetweetResponse {
   retweeted: boolean;
 
-  constructor(data: PostRetweetResponse) {
+  constructor(data: PostUsersRetweetsResponse) {
     this.retweeted = data.data.retweeted;
   }
 }
@@ -286,7 +286,7 @@ export class RetweetResponse {
 export class RemovedRetweetResponse {
   retweeted: boolean;
 
-  constructor(data: DeleteRetweetResponse) {
+  constructor(data: DeleteUsersRetweetsResponse) {
     this.retweeted = data.data.retweeted;
   }
 }

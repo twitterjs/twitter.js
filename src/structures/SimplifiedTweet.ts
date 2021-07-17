@@ -19,8 +19,8 @@ import type {
   RemovedRetweetResponse,
 } from './misc/Misc.js';
 import type {
+  APITweet,
   APITweetContextAnnotation,
-  APITweetObject,
   APITweetReferencedTweet,
   APITweetReplySettings,
   Snowflake,
@@ -138,7 +138,7 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
    */
   withheld?: any; // TODO
 
-  constructor(client: ClientInUse<C>, data: APITweetObject) {
+  constructor(client: ClientInUse<C>, data: APITweet) {
     super(client);
 
     this.id = data.id;

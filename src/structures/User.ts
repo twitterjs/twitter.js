@@ -1,7 +1,7 @@
 import SimplifiedUser from './SimplifiedUser.js';
 import SimplifiedTweet from './SimplifiedTweet.js';
 import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
-import type { APITweetObject, GetSingleUserByIdResponse } from 'twitter-types';
+import type { APITweet, GetSingleUserByIdResponse } from 'twitter-types';
 
 /**
  * The class that represents a Twitter user
@@ -20,7 +20,7 @@ export default class User<C extends ClientUnionType> extends SimplifiedUser<C> {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  #patchPinnedTweet(tweets?: Array<APITweetObject>): SimplifiedTweet<C> | undefined {
+  #patchPinnedTweet(tweets?: Array<APITweet>): SimplifiedTweet<C> | undefined {
     if (!tweets) return;
     const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetID);
     if (!rawPinnedTweet) return;

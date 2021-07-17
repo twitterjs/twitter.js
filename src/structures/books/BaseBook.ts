@@ -1,8 +1,8 @@
-import User from './User.js';
-import BaseStructure from './BaseStructure.js';
-import Collection from '../util/Collection.js';
+import User from '../User.js';
+import BaseStructure from '../BaseStructure.js';
+import Collection from '../../util/Collection.js';
 import type { Snowflake } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
 
 /**
  * A base class for all books

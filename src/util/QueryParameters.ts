@@ -1,14 +1,14 @@
 import type {
-  APIMediaField,
-  APIPlaceField,
-  APIPollField,
-  APITweetExpansion,
-  APITweetField,
-  APIUserExpansion,
-  APIUserField,
+  MediaFieldsParameter,
+  PlaceFieldsParameter,
+  PollFieldsParameter,
+  TweetExpansionsParameter,
+  TweetFieldsParameter,
+  UserExpansionsParameter,
+  UserFieldsParameter,
 } from 'twitter-types';
 
-export const UserFields: Array<APIUserField> = [
+export const UserFields: Array<UserFieldsParameter> = [
   'created_at',
   'description',
   'entities',
@@ -25,7 +25,7 @@ export const UserFields: Array<APIUserField> = [
   'withheld',
 ];
 
-export const TweetFields: Array<APITweetField> = [
+export const TweetFields: Array<TweetFieldsParameter> = [
   'attachments',
   'author_id',
   'context_annotations',
@@ -45,7 +45,7 @@ export const TweetFields: Array<APITweetField> = [
   'withheld',
 ];
 
-export const MediaFields: Array<APIMediaField> = [
+export const MediaFields: Array<MediaFieldsParameter> = [
   'duration_ms',
   'height',
   'media_key',
@@ -57,7 +57,7 @@ export const MediaFields: Array<APIMediaField> = [
   'organic_metrics',
 ];
 
-export const PlaceFields: Array<APIPlaceField> = [
+export const PlaceFields: Array<PlaceFieldsParameter> = [
   'contained_within',
   'country',
   'country_code',
@@ -68,9 +68,15 @@ export const PlaceFields: Array<APIPlaceField> = [
   'place_type',
 ];
 
-export const PollFields: Array<APIPollField> = ['duration_minutes', 'end_datetime', 'id', 'options', 'voting_status'];
+export const PollFields: Array<PollFieldsParameter> = [
+  'duration_minutes',
+  'end_datetime',
+  'id',
+  'options',
+  'voting_status',
+];
 
-export const TweetExpansions: Array<APITweetExpansion> = [
+export const TweetExpansions: Array<TweetExpansionsParameter> = [
   'attachments.poll_ids',
   'attachments.media_keys',
   'author_id',
@@ -81,4 +87,4 @@ export const TweetExpansions: Array<APITweetExpansion> = [
   'referenced_tweets.id.author_id',
 ];
 
-export const UserExpansions: Array<APIUserExpansion> = ['pinned_tweet_id'];
+export const UserExpansions: Array<UserExpansionsParameter> = ['pinned_tweet_id'];
