@@ -23,6 +23,8 @@ import type {
   GetMultipleTweetsByIdsResponse,
   GetSingleTweetByIdQuery,
   GetSingleTweetByIdResponse,
+  GetTweetsLikingUsersQuery,
+  GetTweetsLikingUsersResponse,
   GetTweetsRetweetingUsersQuery,
   GetTweetsRetweetingUsersResponse,
   PostTweetsLikeJSONBody,
@@ -203,7 +205,6 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @returns A {@link Collection} of {@link User} objects
    */
   async fetchRetweetedBy(targetTweet: TweetResolvable<C>): Promise<Collection<Snowflake, User<C>>> {
-    const retweetedByUsersCollection = new Collection<Snowflake, User<C>>();
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const queryParameters = this.client.options.queryParameters;
@@ -216,13 +217,44 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     const data: GetTweetsRetweetingUsersResponse = await this.client._api
       .tweets(targetTweetID)
       .retweeted_by.get(requestData);
+    const retweetedByUsersCollection = new Collection<Snowflake, User<C>>();
+    if (data.meta.result_count === 0) return retweetedByUsersCollection;
     const rawUsers = data.data;
-    const rawUsersIncludes = data.includes;
+    const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawUsersIncludes });
+      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
       retweetedByUsersCollection.set(user.id, user);
     }
     return retweetedByUsersCollection;
+  }
+
+  /**
+   * Fetches a collection of users who liked a tweet.
+   * @param targetTweet The tweet whose liking users are to be fetched
+   * @returns A {@link Collection} of {@link User} objects who liked the specified tweet
+   */
+  async fetchLikedBy(targetTweet: TweetResolvable<C>): Promise<Collection<Snowflake, User<C>>> {
+    const targetTweetID = this.resolveID(targetTweet);
+    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
+    const queryParameters = this.client.options.queryParameters;
+    const query: GetTweetsLikingUsersQuery = {
+      expansions: queryParameters?.userExpansions,
+      'user.fields': queryParameters?.userFields,
+      'tweet.fields': queryParameters?.tweetFields,
+    };
+    const requestData = new RequestData(query, null);
+    const data: GetTweetsLikingUsersResponse = await this.client._api
+      .tweets(targetTweetID)
+      .liking_users.get(requestData);
+    const likedByUsersCollection = new Collection<Snowflake, User<C>>();
+    if (data.meta.result_count === 0) return likedByUsersCollection;
+    const rawUsers = data.data;
+    const rawIncludes = data.includes;
+    for (const rawUser of rawUsers) {
+      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
+      likedByUsersCollection.set(user.id, user);
+    }
+    return likedByUsersCollection;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
