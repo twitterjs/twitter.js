@@ -1,4 +1,5 @@
 import type Tweet from '../structures/Tweet.js';
+import type { ClientEvents } from '../util/Constants.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
 import type {
@@ -52,6 +53,7 @@ export interface ClientCredentialsInterface {
 export interface ClientEventsMapping<C extends ClientUnionType> {
   partialError: [partialError: Record<string, unknown>];
   ready: [client: ClientInUse<C>];
+  sampledTweetCreate: [tweet: Tweet<C>];
 }
 
 /**
@@ -67,6 +69,11 @@ export interface ClientOptions {
    * The options provided for query of an API request
    */
   queryParameters?: QueryParameters;
+
+  /**
+   * The options for selecting what events should be fired
+   */
+  events: Array<keyof typeof ClientEvents>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,8 +161,4 @@ export interface StructureConstructable<T> {
 export interface TwitterjsErrorConstructor {
   // eslint-disable-next-line
   new(key: string, ...args: Array<unknown>): Error;
-}
-
-export interface SampledTweetStreamEventsMapping<C extends ClientUnionType> {
-  sampledTweetCreate: [tweet: Tweet<C>];
 }

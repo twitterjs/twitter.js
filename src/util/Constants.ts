@@ -12,6 +12,7 @@ import type { ClientOptions } from '../typings/Interfaces.js';
 export const ClientEvents = {
   PARTIAL_ERROR: 'partialError',
   READY: 'ready',
+  SAMPLED_TWEET_CREATE: 'sampledTweetCreate',
 };
 
 /**
@@ -38,4 +39,9 @@ export const DefaultClientOptions: ClientOptions = {
     tweetExpansions: TweetExpansions,
     userExpansions: UserExpansions,
   },
+
+  /**
+   * The events that the client opted-in for
+   */
+  events: [],
 };

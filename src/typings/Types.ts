@@ -14,7 +14,6 @@ import type {
   FetchUserOptions,
   FetchUsersByUsernamesOptions,
   FetchUsersOptions,
-  SampledTweetStreamEventsMapping,
 } from './Interfaces.js';
 
 export type ClientEventArgsType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
@@ -60,23 +59,3 @@ export type TweetManagerFetchResult<
   > = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
 
 export type TweetResolvable<C extends ClientUnionType> = Tweet<C> | SimplifiedTweet<C> | Snowflake;
-
-export type SampledTweetStreamEventArgsType<
-  K,
-  C extends ClientUnionType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
-  > = K extends keyof SampledTweetStreamEventsMapping<C> ? SampledTweetStreamEventsMapping<C>[K] : any[];
-
-export type SampledTweetStreamEventKeyType<
-  K,
-  C extends ClientUnionType,
-  // eslint-disable-next-line prettier/prettier
-  > = K extends keyof SampledTweetStreamEventsMapping<C>
-  ? LiteralUnion<K>
-  : Exclude<K, keyof SampledTweetStreamEventsMapping<C>>;
-
-export type SampledTweetStreamEventListenerType<
-  K,
-  C extends ClientUnionType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
-  > = K extends keyof SampledTweetStreamEventsMapping<C> ? SampledTweetStreamEventsMapping<C>[K] : any[];

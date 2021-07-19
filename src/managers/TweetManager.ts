@@ -13,7 +13,6 @@ import {
 import SimplifiedTweet from '../structures/SimplifiedTweet.js';
 import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import SampledTweetStream from '../structures/misc/SampledTweetStream.js';
 import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
@@ -152,14 +151,6 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    */
   async unhide(targetTweet: TweetResolvable<C>): Promise<TweetReplyHideUnhideResponse> {
     return this.#editTweetReplyVisibility(targetTweet, false);
-  }
-
-  /**
-   * Creates a listener for sampled tweet stream.
-   * @returns A {@link SampledTweetStream} object
-   */
-  createSampledTweetStream(): SampledTweetStream<C> {
-    return new SampledTweetStream(this.client);
   }
 
   /**

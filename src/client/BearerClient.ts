@@ -4,6 +4,7 @@ import { ClientEvents } from '../util/Constants.js';
 import UserManager from '../managers/UserManager.js';
 import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
+import { createSampledStream } from '../streams/SampledTweetStream.js';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
 /**
@@ -69,6 +70,13 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.readyAt = new Date();
 
     this.emit(ClientEvents.READY, this);
+    this.#initSampledStream();
     return this.token;
+  }
+
+  #initSampledStream(): void {
+    if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
+      createSampledStream<BearerClient>(this);
+    }
   }
 }
