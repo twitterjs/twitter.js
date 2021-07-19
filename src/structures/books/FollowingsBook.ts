@@ -1,6 +1,6 @@
 import User from '../User.js';
-import BaseBook from './BaseBook.js';
 import { RequestData } from '../misc/Misc.js';
+import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
 import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
@@ -9,13 +9,43 @@ import type { GetUsersFollowingQuery, GetUsersFollowingResponse, Snowflake } fro
 /**
  * A class used for keeping track of users followed by a twitter user
  */
-export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C> {
+export default class FollowingsBook<C extends ClientUnionType> extends BaseStructure<C> {
   #nextToken?: string;
 
   #previousToken?: string;
 
+  #hasBeenInitialized?: boolean;
+
+  /**
+   * The ID of the user this book belongs to
+   */
+  userID: Snowflake;
+
+  /**
+   * The maximum amount of users that will be fetched per page.
+   *
+   * **Note:** This is the max count and will **not** always be equal to the number of users fetched in a page
+   */
+  maxResultsPerPage: number | null;
+
+  /**
+   * Whether there are more pages of users to be fetched
+   *
+   * **Note:** Use this as a check for deciding whether to fetch more pages
+   */
+  hasMore: boolean;
+
+  /**
+   * The collection of users that have been fetched
+   */
+  cache: Collection<Snowflake, User<C>>;
+
   constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
-    super(client, userID, maxResultsPerPage);
+    super(client);
+    this.userID = userID;
+    this.maxResultsPerPage = maxResultsPerPage ?? null;
+    this.hasMore = true;
+    this.cache = new Collection<Snowflake, User<C>>();
   }
 
   /**
@@ -23,8 +53,12 @@ export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C
    * @returns A {@link Collection} of users that the specified user is following
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
+    if (!this.#hasBeenInitialized) {
+      this.#hasBeenInitialized = true;
+      return this.#fetchPages(this.#nextToken, true);
+    }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken);
+    return this.#fetchPages(this.#nextToken, true);
   }
 
   /**
@@ -38,18 +72,8 @@ export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  /**
-   * Fetches the first page of the book and makes it ready for use.
-   *
-   * ⚠ **Note:** This method is only for internal use of the library
-   * @private
-   */
-  async _init(): Promise<void> {
-    await this.#fetchPages();
-  }
-
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
-    const followingCollection = new Collection<Snowflake, User<C>>();
+  async #fetchPages(token?: string, isNext?: boolean): Promise<Collection<Snowflake, User<C>>> {
+    const followingsCollection = new Collection<Snowflake, User<C>>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersFollowingQuery = {
       expansions: queryParameters?.userExpansions,
@@ -64,12 +88,12 @@ export default class FollowingBook<C extends ClientUnionType> extends BaseBook<C
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     const rawUsers = data.data;
-    const rawUsersIncludes = data.includes;
+    const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawUsersIncludes });
-      followingCollection.set(user.id, user);
+      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
+      followingsCollection.set(user.id, user);
     }
-    this.currentPage = followingCollection;
-    return followingCollection;
+    if (isNext) this.cache = this.cache.concat(followingsCollection);
+    return followingsCollection;
   }
 }

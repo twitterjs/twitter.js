@@ -88,15 +88,14 @@ export default class UserContextClient extends CommonClient<UserContextClient> {
   }
 
   /**
-   * Fetches a {@link BlocksBook} object belonging to the authorized user.
-   * @param maxResultsPerPage The maximum amount of blocked users to fetch per page
-   * @returns A {@link BlocksBook} object as a `Promise`
+   * Creates a {@link BlocksBook} object for fetching users blocked by the authorized user.
+   * @param maxResultsPerPage The maximum amount of users to fetch per page
+   * @returns A {@link BlocksBook} object
    */
-  async fetchBlocksBook(maxResultsPerPage?: number): Promise<BlocksBook<UserContextClient>> {
+  createBlocksBook(maxResultsPerPage?: number): BlocksBook<UserContextClient> {
     const userID = this.me?.id;
-    if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch blocks book of');
+    if (!userID) throw new CustomError('USER_RESOLVE_ID', 'create blocks book for');
     const blocksBook = new BlocksBook(this, userID, maxResultsPerPage);
-    await blocksBook._init();
     return blocksBook;
   }
 

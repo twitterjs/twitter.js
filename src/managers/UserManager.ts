@@ -1,11 +1,12 @@
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
-import FollowersBook from '../structures/books/FollowersBook.js';
-import FollowingBook from '../structures/books/FollowingBook.js';
 import SimplifiedUser from '../structures/SimplifiedUser.js';
 import UserContextClient from '../client/UserContextClient.js';
+import FollowersBook from '../structures/books/FollowersBook.js';
+import FollowingsBook from '../structures/books/FollowingsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
+import LikedTweetsBook from '../structures/books/LikedTweetsBook.js';
 import {
   RequestData,
   UserBlockResponse,
@@ -250,31 +251,42 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   }
 
   /**
-   * Fetches a {@link FollowersBook} object belonging to a user.
-   * @param targetUser The user whose followers book is to be fetched
-   * @param maxResultsPerPage The maximum amount of followers to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowersBook} object as a `Promise`
+   * Creates a {@link FollowersBook} object for fetching followers of a user.
+   * @param targetUser The user whose followers are to be fetched
+   * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
+   * @returns A {@link FollowersBook} object
    */
-  async fetchFollowersBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): Promise<FollowersBook<C>> {
+  createFollowersBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): FollowersBook<C> {
     const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'fetch followers of');
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create followers book for');
     const followersBook = new FollowersBook(this.client, targetUserID, maxResultsPerPage);
-    await followersBook._init();
     return followersBook;
   }
 
   /**
-   * Fetches a {@link FollowingBook} object belonging to a user.
-   * @param targetUser The user whose following book is to be fetched
+   * Creates a {@link FollowingsBook} object for fetching users followed by a user.
+   * @param targetUser The user whose following users are to be fetched
    * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowingBook} object as a `Promise`
+   * @returns A {@link FollowingsBook} object
    */
-  async fetchFollowingBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): Promise<FollowingBook<C>> {
+  createFollowingBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): FollowingsBook<C> {
     const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'fetch followers of');
-    const followingBook = new FollowingBook(this.client, targetUserID, maxResultsPerPage);
-    await followingBook._init();
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create following book for');
+    const followingBook = new FollowingsBook(this.client, targetUserID, maxResultsPerPage);
     return followingBook;
+  }
+
+  /**
+   * Creates a {@link LikedTweetsBook} object for fetching liked tweet of a user.
+   * @param targetUser The user whose liked tweet are to be fetched
+   * @param maxResultsPerPage The maximum amount of tweets to fetch per page
+   * @returns A {@link LikedTweetsBook} object
+   */
+  createLikedTweetsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): LikedTweetsBook<C> {
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create liked book for');
+    const likedTweetBook = new LikedTweetsBook(this.client, targetUserID, maxResultsPerPage);
+    return likedTweetBook;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

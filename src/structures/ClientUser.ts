@@ -10,11 +10,11 @@ export default class ClientUser<C extends UserContextClient> extends User<C> {
   }
 
   /**
-   * Fetches a {@link BlocksBook} object belonging to this user.
-   * @param maxResultsPerPage The maximum amount of blocked users to fetch per page
-   * @returns A {@link BlocksBook} object as a `Promise`
+   * Creates a {@link BlocksBook} object for fetching users blocked by the authorized user.
+   * @param maxResultsPerPage The maximum amount of users to fetch per page
+   * @returns A {@link BlocksBook} object
    */
-  async fetchBlocksBook(maxResultsPerPage?: number): Promise<BlocksBook<UserContextClient>> {
-    return this.client.fetchBlocksBook(maxResultsPerPage);
+  createBlocksBook(maxResultsPerPage?: number): BlocksBook<UserContextClient> {
+    return this.client.createBlocksBook(maxResultsPerPage);
   }
 }
