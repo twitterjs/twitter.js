@@ -35,17 +35,11 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
    */
   hasMore: boolean;
 
-  /**
-   * The collection of tweets that have been fetched
-   */
-  cache: Collection<Snowflake, Tweet<C>>;
-
   constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
     super(client);
     this.userID = userID;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
-    this.cache = new Collection<Snowflake, Tweet<C>>();
   }
 
   /**
@@ -55,10 +49,10 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
-      return this.#fetchPages(this.#nextToken, true);
+      return this.#fetchPages(this.#nextToken);
     }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken, true);
+    return this.#fetchPages(this.#nextToken);
   }
 
   /**
@@ -72,7 +66,7 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string, isNext?: boolean): Promise<Collection<Snowflake, Tweet<C>>> {
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
     const likedTweetsCollection = new Collection<Snowflake, Tweet<C>>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersLikedTweetsQuery = {
@@ -96,7 +90,6 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
       const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
       likedTweetsCollection.set(tweet.id, tweet);
     }
-    if (isNext) this.cache = this.cache.concat(likedTweetsCollection);
     return likedTweetsCollection;
   }
 }

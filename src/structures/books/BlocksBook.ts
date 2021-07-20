@@ -35,17 +35,11 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
    */
   hasMore: boolean;
 
-  /**
-   * The collection of users that have been fetched
-   */
-  cache: Collection<Snowflake, User<C>>;
-
   constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
     super(client);
     this.userID = userID;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
-    this.cache = new Collection<Snowflake, User<C>>();
   }
 
   /**
@@ -55,10 +49,10 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
   async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
-      return this.#fetchPages(this.#nextToken, true);
+      return this.#fetchPages(this.#nextToken);
     }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken, true);
+    return this.#fetchPages(this.#nextToken);
   }
 
   /**
@@ -72,7 +66,7 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string, isNext?: boolean): Promise<Collection<Snowflake, User<C>>> {
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
     const blockedUsersCollection = new Collection<Snowflake, User<C>>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersBlockingQuery = {
@@ -94,7 +88,6 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
       const user = new User(this.client, { data: rawUser, includes: rawIncludes });
       blockedUsersCollection.set(user.id, user);
     }
-    if (isNext) this.cache = this.cache.concat(blockedUsersCollection);
     return blockedUsersCollection;
   }
 }

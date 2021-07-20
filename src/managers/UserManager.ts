@@ -1,8 +1,10 @@
 import User from '../structures/User.js';
 import BaseManager from './BaseManager.js';
 import Collection from '../util/Collection.js';
+import TweetsBook from '../structures/books/TweetsBook.js';
 import SimplifiedUser from '../structures/SimplifiedUser.js';
 import UserContextClient from '../client/UserContextClient.js';
+import MentionsBook from '../structures/books/MentionsBook.js';
 import FollowersBook from '../structures/books/FollowersBook.js';
 import FollowingsBook from '../structures/books/FollowingsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
@@ -287,6 +289,32 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create liked book for');
     const likedTweetBook = new LikedTweetsBook(this.client, targetUserID, maxResultsPerPage);
     return likedTweetBook;
+  }
+
+  /**
+   * Creates a {@link TweetsBook} object for fetching tweets composed by a user.
+   * @param targetUser The user whose tweets are to be fetched
+   * @param maxResultsPerPage The maximum amount of tweets to fetch per page
+   * @returns A {@link TweetsBook} object
+   */
+  createTweetsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): TweetsBook<C> {
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
+    const tweetsBook = new TweetsBook(this.client, targetUserID, maxResultsPerPage);
+    return tweetsBook;
+  }
+
+  /**
+   * Creates a {@link MentionsBook} object for fetching tweets mentioning a user.
+   * @param targetUser The mentioned user in the tweets
+   * @param maxResultsPerPage The maximum amount of tweets to fetch per page
+   * @returns A {@link MentionsBook} object
+   */
+  createMentionsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): MentionsBook<C> {
+    const targetUserID = this.resolveID(targetUser);
+    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create mentions book for');
+    const mentionsBook = new MentionsBook(this.client, targetUserID, maxResultsPerPage);
+    return mentionsBook;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

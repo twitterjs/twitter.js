@@ -1,15 +1,15 @@
-import User from '../User.js';
+import Tweet from '../Tweet.js';
 import { RequestData } from '../misc/Misc.js';
 import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
 import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
-import type { GetUsersFollowersQuery, GetUsersFollowersResponse, Snowflake } from 'twitter-types';
+import type { GetUsersTweetsQuery, GetUsersTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of followers of a twitter user
+ * A class used for keeping track of tweets composed by a twitter user
  */
-export default class FollowersBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class TweetsBook<C extends ClientUnionType> extends BaseStructure<C> {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -22,14 +22,14 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
   userID: Snowflake;
 
   /**
-   * The maximum amount of users that will be fetched per page.
+   * The maximum amount of tweets that will be fetched per page.
    *
-   * **Note:** This is the max count and will **not** always be equal to the number of users fetched in a page
+   * **Note:** This is the max count and will **not** always be equal to the number of tweets fetched in a page
    */
   maxResultsPerPage: number | null;
 
   /**
-   * Whether there are more pages of users to be fetched
+   * Whether there are more pages of tweets to be fetched
    *
    * **Note:** Use this as a check for deciding whether to fetch more pages
    */
@@ -44,9 +44,9 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of users that are following the specified user
+   * @returns A {@link Collection} of tweets composed by the specified user
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -57,36 +57,39 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of users that are following the specified user
+   * @returns A {@link Collection} of tweets composed by the specified user
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet<C>>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
-    const followersCollection = new Collection<Snowflake, User<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
+    const tweetsCollection = new Collection<Snowflake, Tweet<C>>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersFollowersQuery = {
-      expansions: queryParameters?.userExpansions,
+    const query: GetUsersTweetsQuery = {
+      expansions: queryParameters?.tweetExpansions,
+      'media.fields': queryParameters?.mediaFields,
+      pagination_token: token,
+      'place.fields': queryParameters?.placeFields,
+      'poll.fields': queryParameters?.pollFields,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
-      pagination_token: token,
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData(query, null);
-    const data: GetUsersFollowersResponse = await this.client._api.users(this.userID).followers.get(requestData);
+    const data: GetUsersTweetsResponse = await this.client._api.users(this.userID).tweets.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    const rawUsers = data.data;
+    const rawTweets = data.data;
     const rawIncludes = data.includes;
-    for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
-      followersCollection.set(user.id, user);
+    for (const rawTweet of rawTweets) {
+      const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
+      tweetsCollection.set(tweet.id, tweet);
     }
-    return followersCollection;
+    return tweetsCollection;
   }
 }
