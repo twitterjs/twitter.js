@@ -6,7 +6,6 @@
     "outDir": "dist",
     "strict": true,
     "moduleResolution": "Node",
-    "watch": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "strictNullChecks": true,

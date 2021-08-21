@@ -1,5 +1,10 @@
 {
   "editor.formatOnSave": true,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": false,
+    "editor.formatOnSave": false
+  },
   "[javascript]": {
     "editor.formatOnSave": false,
   },
@@ -26,5 +31,7 @@
   ],
   "editor.quickSuggestions": {
     "comments": true,
-  }
+  },
+  "explorer.compactFolders": false,
+  "files.insertFinalNewline": true
 }
