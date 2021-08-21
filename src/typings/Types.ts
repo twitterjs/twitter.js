@@ -1,10 +1,12 @@
 import type User from '../structures/User.js';
 import type { Snowflake } from 'twitter-types';
 import type Tweet from '../structures/Tweet.js';
+import type Space from '../structures/Space.js';
 import type Collection from '../util/Collection.js';
 import type BearerClient from '../client/BearerClient.js';
 import type SimplifiedUser from '../structures/SimplifiedUser.js';
 import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
+import type SimplifiedSpace from '../structures/SimplifiedSpace.js';
 import type UserContextClient from '../client/UserContextClient.js';
 import type {
   ClientEventsMapping,
@@ -59,3 +61,5 @@ export type TweetManagerFetchResult<
   > = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
 
 export type TweetResolvable<C extends ClientUnionType> = Tweet<C> | SimplifiedTweet<C> | Snowflake;
+
+export type SpaceResolvable<C extends ClientUnionType> = Space<C> | SimplifiedSpace<C> | Snowflake;

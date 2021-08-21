@@ -2,6 +2,8 @@ import type {
   MediaFieldsParameter,
   PlaceFieldsParameter,
   PollFieldsParameter,
+  SpaceExpansionsParameter,
+  SpaceFieldsParameter,
   TweetExpansionsParameter,
   TweetFieldsParameter,
   UserExpansionsParameter,
@@ -43,6 +45,23 @@ export const TweetFields: Array<TweetFieldsParameter> = [
   'source',
   'text',
   'withheld',
+];
+
+export const SpaceFields: Array<SpaceFieldsParameter> = [
+  'created_at',
+  'creator_id',
+  'host_ids',
+  'id',
+  'invited_user_ids',
+  'is_ticketed',
+  'lang',
+  'participant_count',
+  'scheduled_start',
+  'speaker_ids',
+  'started_at',
+  'state',
+  'title',
+  'updated_at',
 ];
 
 export const MediaFields: Array<MediaFieldsParameter> = [
@@ -88,3 +107,10 @@ export const TweetExpansions: Array<TweetExpansionsParameter> = [
 ];
 
 export const UserExpansions: Array<UserExpansionsParameter> = ['pinned_tweet_id'];
+
+export const SpaceExpansions: Array<SpaceExpansionsParameter> = [
+  'creator_id',
+  'host_ids',
+  'invited_user_ids',
+  'speaker_ids',
+];

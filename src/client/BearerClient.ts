@@ -4,6 +4,7 @@ import { ClientEvents } from '../util/Constants.js';
 import UserManager from '../managers/UserManager.js';
 import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
+import SpaceManager from '../managers/SpaceManager.js';
 import { createSampledStream } from '../streams/SampledTweetStream.js';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
@@ -31,6 +32,8 @@ export default class BearerClient extends CommonClient<BearerClient> {
    */
   users: UserManager<BearerClient>;
 
+  spaces: SpaceManager<BearerClient>;
+
   /**
    * @param options The options to initialize the client with
    */
@@ -43,6 +46,7 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.rest = new RESTManager(this);
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
+    this.spaces = new SpaceManager(this);
   }
 
   /**

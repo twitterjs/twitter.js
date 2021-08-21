@@ -2,6 +2,8 @@ import {
   MediaFields,
   PlaceFields,
   PollFields,
+  SpaceExpansions,
+  SpaceFields,
   TweetExpansions,
   TweetFields,
   UserExpansions,
@@ -33,11 +35,13 @@ export const DefaultClientOptions: ClientOptions = {
   queryParameters: {
     userFields: UserFields,
     tweetFields: TweetFields,
+    spaceFields: SpaceFields,
     mediaFields: MediaFields,
     placeFields: PlaceFields,
     pollFields: PollFields,
     tweetExpansions: TweetExpansions,
     userExpansions: UserExpansions,
+    spaceExpansions: SpaceExpansions,
   },
 
   /**

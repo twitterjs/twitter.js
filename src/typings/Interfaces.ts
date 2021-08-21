@@ -6,6 +6,8 @@ import type {
   MediaFieldsParameter,
   PlaceFieldsParameter,
   PollFieldsParameter,
+  SpaceExpansionsParameter,
+  SpaceFieldsParameter,
   TweetExpansionsParameter,
   TweetFieldsParameter,
   UserExpansionsParameter,
@@ -146,11 +148,13 @@ export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<Base
 export interface QueryParameters {
   userFields?: Array<UserFieldsParameter>;
   tweetFields?: Array<TweetFieldsParameter>;
+  spaceFields?: Array<SpaceFieldsParameter>;
   mediaFields?: Array<MediaFieldsParameter>;
   placeFields?: Array<PlaceFieldsParameter>;
   pollFields?: Array<PollFieldsParameter>;
   tweetExpansions?: Array<TweetExpansionsParameter>;
   userExpansions?: Array<UserExpansionsParameter>;
+  spaceExpansions?: Array<SpaceExpansionsParameter>;
 }
 
 export interface StructureConstructable<T> {
