@@ -1,7 +1,7 @@
 import type Tweet from '../structures/Tweet.js';
 import type { ClientEvents } from '../util/Constants.js';
 import type { RequestData } from '../structures/misc/Misc.js';
-import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable } from './Types.js';
+import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
 import type {
   MediaFieldsParameter,
   PlaceFieldsParameter,
@@ -143,6 +143,26 @@ export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<Base
    * The tweets to fetch
    */
   tweets: Array<TweetResolvable<C>>;
+}
+
+/**
+ * Options used to fetch a single space
+ */
+export interface FetchSpaceOptions<C extends ClientUnionType> extends BaseFetchOptions {
+  /**
+   * The space to fetch
+   */
+  space: SpaceResolvable<C>;
+}
+
+/**
+ * Options used to fetch multiple spaces
+ */
+export interface FetchSpacesOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The spaces to fetch
+   */
+  spaces: Array<SpaceResolvable<C>>;
 }
 
 export interface QueryParameters {

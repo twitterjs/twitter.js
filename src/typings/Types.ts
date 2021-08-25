@@ -16,6 +16,8 @@ import type {
   FetchUserOptions,
   FetchUsersByUsernamesOptions,
   FetchUsersOptions,
+  FetchSpaceOptions,
+  FetchSpacesOptions,
 } from './Interfaces.js';
 
 export type ClientEventArgsType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
@@ -43,23 +45,25 @@ export type LiteralUnion<K extends T, T = string> = K | (T & { zz_ignore_me?: ne
 export type UserManagerFetchResult<
   T extends FetchUserOptions<ClientUnionType> | FetchUsersOptions<ClientUnionType>,
   C extends ClientUnionType,
-  // eslint-disable-next-line prettier/prettier
-  > = T extends FetchUserOptions<ClientUnionType> ? User<C> : Collection<Snowflake, User<C>>;
+> = T extends FetchUserOptions<ClientUnionType> ? User<C> : Collection<Snowflake, User<C>>;
 
 export type UserManagerFetchByUsernameResult<
   T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions,
   C extends ClientUnionType,
-  // eslint-disable-next-line prettier/prettier
-  > = T extends FetchUserByUsernameOptions ? User<C> : Collection<Snowflake, User<C>>;
+> = T extends FetchUserByUsernameOptions ? User<C> : Collection<Snowflake, User<C>>;
 
 export type UserResolvable<C extends ClientUnionType> = User<C> | SimplifiedUser<C> | Snowflake;
 
 export type TweetManagerFetchResult<
   T extends FetchTweetOptions<ClientUnionType> | FetchTweetsOptions<ClientUnionType>,
   C extends ClientUnionType,
-  // eslint-disable-next-line prettier/prettier
-  > = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
+> = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
 
 export type TweetResolvable<C extends ClientUnionType> = Tweet<C> | SimplifiedTweet<C> | Snowflake;
 
 export type SpaceResolvable<C extends ClientUnionType> = Space<C> | SimplifiedSpace<C> | Snowflake;
+
+export type SpaceManagerFetchResult<
+  C extends ClientUnionType,
+  T extends FetchSpaceOptions<C> | FetchSpacesOptions<C>,
+> = T extends FetchSpaceOptions<ClientUnionType> ? Space<C> : Collection<Snowflake, Space<C>>;
