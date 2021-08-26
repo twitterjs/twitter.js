@@ -165,6 +165,17 @@ export interface FetchSpacesOptions<C extends ClientUnionType> extends Omit<Base
   spaces: Array<SpaceResolvable<C>>;
 }
 
+/**
+ * Options used to fetch spaces using creator ids
+ */
+export interface FetchSpacesByCreatorIdsOptions<C extends ClientUnionType>
+  extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The creators whose spaces are to be fetched
+   */
+  users: Array<UserResolvable<C>>;
+}
+
 export interface QueryParameters {
   userFields?: Array<UserFieldsParameter>;
   tweetFields?: Array<TweetFieldsParameter>;

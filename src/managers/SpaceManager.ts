@@ -7,11 +7,15 @@ import type {
   ClientInUse,
   ClientUnionType,
   FetchSpaceOptions,
+  FetchSpacesByCreatorIdsOptions,
   FetchSpacesOptions,
   SpaceManagerFetchResult,
   SpaceResolvable,
+  UserResolvable,
 } from '../typings';
 import type {
+  GetMultipleSpacesByCreatorIdsQuery,
+  GetMultipleSpacesByCreatorIdsResponse,
   GetMultipleSpacesByIdsQuery,
   GetMultipleSpacesByIdsResponse,
   GetSingleSpaceByIdQuery,
@@ -40,19 +44,52 @@ export default class SpaceManager<C extends ClientUnionType> extends BaseManager
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('space' in options) {
       const spaceId = this.resolveID(options.space);
-      if (!spaceId) throw new CustomTypeError('TODO');
+      if (!spaceId) throw new CustomTypeError('SPACE_RESOLVE_ID');
       return this.#fetchSingleSpace(spaceId, options) as Promise<SpaceManagerFetchResult<C, T>>;
     }
     if ('spaces' in options) {
       if (!Array.isArray(options.spaces)) throw new CustomTypeError('INVALID_TYPE', 'spaces', 'array', true);
       const spaceIds = options.spaces.map(space => {
         const spaceId = this.resolveID(space);
-        if (!spaceId) throw new CustomTypeError('TODO');
+        if (!spaceId) throw new CustomTypeError('SPACE_RESOLVE_ID');
         return spaceId;
       });
       return this.#fetchMultipleSpaces(spaceIds, options) as Promise<SpaceManagerFetchResult<C, T>>;
     }
     throw new CustomTypeError('INVALID_FETCH_OPTIONS');
+  }
+
+  /**
+   * Fetches spaces of creators using their user ids.
+   * @param options The options for fetching spaces
+   * @returns A {@link Collection} of {@link Space} as a `Promise`
+   */
+  async fetchByCreatorIds(options: FetchSpacesByCreatorIdsOptions<C>): Promise<Collection<Snowflake, Space<C>>> {
+    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
+    if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
+    const fetchedSpaceCollection = new Collection<Snowflake, Space<C>>();
+    const userIds = options.users.map(user => {
+      const userId = this.client.users.resolveID(user as UserResolvable<ClientUnionType>);
+      if (!userId) throw new CustomTypeError('USER_RESOLVE_ID', 'fetch spaces of');
+      return userId;
+    });
+    const queryParameters = this.client.options.queryParameters;
+    const query: GetMultipleSpacesByCreatorIdsQuery = {
+      user_ids: userIds,
+      expansions: queryParameters?.spaceExpansions,
+      'user.fields': queryParameters?.userFields,
+      'space.fields': queryParameters?.spaceFields,
+    };
+    const requestData = new RequestData(query, null);
+    const data: GetMultipleSpacesByCreatorIdsResponse = await this.client._api.spaces.by.creator_ids.get(requestData);
+    if (data.meta.result_count === 0) return fetchedSpaceCollection;
+    const rawSpaces = data.data;
+    const rawSpacesIncludes = data.includes;
+    for (const rawSpace of rawSpaces) {
+      const space = this.add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
+      fetchedSpaceCollection.set(space.id, space);
+    }
+    return fetchedSpaceCollection;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

@@ -15,6 +15,7 @@ const messages = {
   PAGINATED_RESPONSE_HEAD_REACHED: 'Cannot fetch the previous page due to hitting the start of the book.',
   USER_CONTEXT_LOGIN_ERROR: (username: string) => `Could not fetch the user ${username}.`,
   CREDENTIALS_NOT_STRING: "One or more client credentials fields are missing or aren't of type string.",
+  SPACE_RESOLVE_ID: (action: string) => `Could not resolve the space ID to ${action}.`,
 };
 
 for (const [key, message] of Object.entries(messages)) {
