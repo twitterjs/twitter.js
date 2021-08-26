@@ -176,6 +176,15 @@ export interface FetchSpacesByCreatorIdsOptions<C extends ClientUnionType>
   users: Array<UserResolvable<C>>;
 }
 
+/**
+ * Options used to search spaces
+ */
+export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  query: string;
+  state: 'live' | 'scheduled';
+  maxResults?: number;
+}
+
 export interface QueryParameters {
   userFields?: Array<UserFieldsParameter>;
   tweetFields?: Array<TweetFieldsParameter>;

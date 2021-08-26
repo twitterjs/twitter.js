@@ -9,6 +9,7 @@ import type {
   FetchSpaceOptions,
   FetchSpacesByCreatorIdsOptions,
   FetchSpacesOptions,
+  SearchSpacesOptions,
   SpaceManagerFetchResult,
   SpaceResolvable,
   UserResolvable,
@@ -18,6 +19,8 @@ import type {
   GetMultipleSpacesByCreatorIdsResponse,
   GetMultipleSpacesByIdsQuery,
   GetMultipleSpacesByIdsResponse,
+  GetMultipleSpacesBySearchQuery,
+  GetMultipleSpacesBySearchResponse,
   GetSingleSpaceByIdQuery,
   GetSingleSpaceByIdResponse,
   Snowflake,
@@ -82,6 +85,34 @@ export default class SpaceManager<C extends ClientUnionType> extends BaseManager
     };
     const requestData = new RequestData(query, null);
     const data: GetMultipleSpacesByCreatorIdsResponse = await this.client._api.spaces.by.creator_ids.get(requestData);
+    if (data.meta.result_count === 0) return fetchedSpaceCollection;
+    const rawSpaces = data.data;
+    const rawSpacesIncludes = data.includes;
+    for (const rawSpace of rawSpaces) {
+      const space = this.add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
+      fetchedSpaceCollection.set(space.id, space);
+    }
+    return fetchedSpaceCollection;
+  }
+
+  /**
+   * Searches spaces to fetch them.
+   * @param options Option used to search spaces
+   * @returns A {@link Collection} of {@link Space} as a `Promise`
+   */
+  async search(options: SearchSpacesOptions): Promise<Collection<Snowflake, Space<C>>> {
+    const fetchedSpaceCollection = new Collection<Snowflake, Space<C>>();
+    const queryParameters = this.client.options.queryParameters;
+    const query: GetMultipleSpacesBySearchQuery = {
+      query: options.query,
+      expansions: queryParameters?.spaceExpansions,
+      max_results: options.maxResults,
+      'space.fields': queryParameters?.spaceFields,
+      state: options.state,
+      'user.fields': queryParameters?.userFields,
+    };
+    const requestData = new RequestData(query, null);
+    const data: GetMultipleSpacesBySearchResponse = await this.client._api.spaces.search.get(requestData);
     if (data.meta.result_count === 0) return fetchedSpaceCollection;
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
