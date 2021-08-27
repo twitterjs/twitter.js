@@ -206,3 +206,16 @@ export interface TwitterjsErrorConstructor {
   // eslint-disable-next-line
   new(key: string, ...args: Array<unknown>): Error;
 }
+
+export interface SearchTweetsBookCreateOptions<C extends ClientUnionType> {
+  query: string;
+
+  /**
+   * The maximum number of tweets to fetch per page. Must be between `10` and `100`, inclusive
+   */
+  maxResultsPerPage?: number;
+  startTime?: Date;
+  endTime?: Date;
+  sinceTweet?: TweetResolvable<C>;
+  untilTweet?: TweetResolvable<C>;
+}

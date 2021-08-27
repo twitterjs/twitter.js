@@ -6,9 +6,14 @@ import UserManager from '../managers/UserManager.js';
 import TweetManager from '../managers/TweetManager.js';
 import BlocksBook from '../structures/books/BlocksBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
+import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
 import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
-import type { ClientCredentialsInterface, ClientOptions } from '../typings/Interfaces.js';
 import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
+import type {
+  ClientCredentialsInterface,
+  ClientOptions,
+  SearchTweetsBookCreateOptions,
+} from '../typings/Interfaces.js';
 
 /**
  * The core class that exposes library APIs for making user-context authorized requests
@@ -97,6 +102,17 @@ export default class UserContextClient extends CommonClient<UserContextClient> {
     if (!userID) throw new CustomError('USER_RESOLVE_ID', 'create blocks book for');
     const blocksBook = new BlocksBook(this, userID, maxResultsPerPage);
     return blocksBook;
+  }
+
+  /**
+   * Creates a {@link SearchTweetsBook} object for fetching tweets using search query.
+   * @param options The options for creating the book
+   * @returns A {@link SearchTweetsBook} object
+   */
+  createSearchTweetsBook(
+    options: SearchTweetsBookCreateOptions<UserContextClient>,
+  ): SearchTweetsBook<UserContextClient> {
+    return new SearchTweetsBook(this, options);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

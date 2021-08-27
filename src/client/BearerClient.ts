@@ -6,7 +6,8 @@ import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
 import SpaceManager from '../managers/SpaceManager.js';
 import { createSampledStream } from '../streams/SampledTweetStream.js';
-import type { ClientOptions } from '../typings/Interfaces.js';
+import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
+import type { ClientOptions, SearchTweetsBookCreateOptions } from '../typings/Interfaces.js';
 
 /**
  * The core class that exposes library APIs for making bearer token authorized requests
@@ -76,6 +77,15 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.emit(ClientEvents.READY, this);
     this.#initSampledStream();
     return this.token;
+  }
+
+  /**
+   * Creates a {@link SearchTweetsBook} object for fetching tweets using search query.
+   * @param options The options for creating the book
+   * @returns A {@link SearchTweetsBook} object
+   */
+  createSearchTweetsBook(options: SearchTweetsBookCreateOptions<BearerClient>): SearchTweetsBook<BearerClient> {
+    return new SearchTweetsBook(this, options);
   }
 
   #initSampledStream(): void {
