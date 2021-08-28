@@ -3,6 +3,7 @@ import type { ClientEvents } from '../util/Constants.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
 import type {
+  Granularity,
   MediaFieldsParameter,
   PlaceFieldsParameter,
   PollFieldsParameter,
@@ -216,6 +217,15 @@ export interface SearchTweetsBookCreateOptions<C extends ClientUnionType> {
   maxResultsPerPage?: number;
   startTime?: Date;
   endTime?: Date;
+  sinceTweet?: TweetResolvable<C>;
+  untilTweet?: TweetResolvable<C>;
+}
+
+export interface CountTweetsBookCreateOptions<C extends ClientUnionType> {
+  query: string;
+  startTime?: Date;
+  endTime?: Date;
+  granularity?: Granularity;
   sinceTweet?: TweetResolvable<C>;
   untilTweet?: TweetResolvable<C>;
 }

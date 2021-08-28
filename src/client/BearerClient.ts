@@ -7,7 +7,12 @@ import TweetManager from '../managers/TweetManager.js';
 import SpaceManager from '../managers/SpaceManager.js';
 import { createSampledStream } from '../streams/SampledTweetStream.js';
 import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
-import type { ClientOptions, SearchTweetsBookCreateOptions } from '../typings/Interfaces.js';
+import CountTweetsBook from '../structures/books/CountTweetsBook.js';
+import type {
+  ClientOptions,
+  CountTweetsBookCreateOptions,
+  SearchTweetsBookCreateOptions,
+} from '../typings/Interfaces.js';
 
 /**
  * The core class that exposes library APIs for making bearer token authorized requests
@@ -86,6 +91,15 @@ export default class BearerClient extends CommonClient<BearerClient> {
    */
   createSearchTweetsBook(options: SearchTweetsBookCreateOptions<BearerClient>): SearchTweetsBook<BearerClient> {
     return new SearchTweetsBook(this, options);
+  }
+
+  /**
+   * Creates a {@link CountTweetsBook} object for fetching number of tweets matching a query
+   * @param options The options for creating the book
+   * @returns
+   */
+  createCountTweetsBook(options: CountTweetsBookCreateOptions<BearerClient>): CountTweetsBook<BearerClient> {
+    return new CountTweetsBook(this, options);
   }
 
   #initSampledStream(): void {
