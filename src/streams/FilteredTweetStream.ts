@@ -39,7 +39,7 @@ export default class FilteredTweetStream extends BaseStream {
     const query: GetFilteredTweetStreamRulesQuery = {
       ids,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(
       requestData,
     );
@@ -62,7 +62,7 @@ export default class FilteredTweetStream extends BaseStream {
     const body: PostAddFilteredTweetStreamRulesJSONBody = {
       add: rules,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostAddFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
@@ -103,7 +103,7 @@ export default class FilteredTweetStream extends BaseStream {
   async #deleteRules(
     body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody | PostRemoveFilteredTweetStreamRulesByValuesJSONBody,
   ): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostRemoveFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
@@ -120,7 +120,7 @@ export default class FilteredTweetStream extends BaseStream {
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, true);
+    const requestData = new RequestData({ query, isStreaming: true });
     const filteredTweetStreamResponse = await this.client._api.tweets.search.stream.get(requestData);
     try {
       for await (const chunk of filteredTweetStreamResponse.body) {

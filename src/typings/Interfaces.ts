@@ -246,3 +246,25 @@ export interface FilteredTweetStreamAddRuleOptions {
    */
   tag?: string;
 }
+
+export interface RequestDataOptions<Q, B> {
+  /**
+   * The query for the request
+   */
+  query?: Q;
+
+  /**
+   * The body for the request
+   */
+  body?: B;
+
+  /**
+   * Whether the request results in a persisent http connection
+   */
+  isStreaming?: boolean;
+
+  /**
+   * Whether the request should be authorized with user context authorization
+   */
+  isUserContext?: boolean;
+}

@@ -26,7 +26,7 @@ export default class SampleTweetStream extends BaseStream {
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, true);
+    const requestData = new RequestData({ query, isStreaming: true });
     const sampledTweetStreamResponse = await this.client._api.tweets.sample.stream.get(requestData);
     try {
       for await (const chunk of sampledTweetStreamResponse.body) {

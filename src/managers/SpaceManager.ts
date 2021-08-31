@@ -75,7 +75,7 @@ export default class SpaceManager extends BaseManager<Snowflake, SpaceResolvable
       'user.fields': queryParameters?.userFields,
       'space.fields': queryParameters?.spaceFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleSpacesByCreatorIdsResponse = await this.client._api.spaces.by.creator_ids.get(requestData);
     if (data.meta.result_count === 0) return fetchedSpaceCollection;
     const rawSpaces = data.data;
@@ -103,7 +103,7 @@ export default class SpaceManager extends BaseManager<Snowflake, SpaceResolvable
       state: options.state,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleSpacesBySearchResponse = await this.client._api.spaces.search.get(requestData);
     if (data.meta.result_count === 0) return fetchedSpaceCollection;
     const rawSpaces = data.data;
@@ -128,7 +128,7 @@ export default class SpaceManager extends BaseManager<Snowflake, SpaceResolvable
       'space.fields': queryParameters?.spaceFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleSpaceByIdResponse = await this.client._api.spaces(spaceId).get(requestData);
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
@@ -145,7 +145,7 @@ export default class SpaceManager extends BaseManager<Snowflake, SpaceResolvable
       'space.fields': queryParameters?.spaceFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleSpacesByIdsResponse = await this.client._api.spaces.get(requestData);
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;

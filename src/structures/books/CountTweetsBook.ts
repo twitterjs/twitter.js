@@ -71,7 +71,7 @@ export default class CountTweetsBook extends BaseStructure {
       until_id: this.untilTweetId ?? undefined,
       next_token: token,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetTweetCountsResponse = await this.client._api.tweets.counts.recent.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.hasMore = data.meta.next_token ? true : false;

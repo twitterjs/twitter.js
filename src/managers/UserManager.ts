@@ -146,7 +146,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
     const body: PostUsersFollowingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostUsersFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
     return new UserFollowResponse(data);
   }
@@ -181,7 +181,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
     const body: PostUsersBlockingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
@@ -216,7 +216,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
     const body: PostUsersMutingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
     return new UserMuteResponse(data);
   }
@@ -313,7 +313,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleUserByIdResponse = await this.client._api.users(userID).get(requestData);
     return new User(this.client, data);
   }
@@ -327,7 +327,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleUsersByIdsResponse = await this.client._api.users.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
@@ -349,7 +349,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleUserByUsernameResponse = await this.client._api.users.by.username(username).get(requestData);
     return new User(this.client, data);
   }
@@ -366,7 +366,7 @@ export default class UserManager extends BaseManager<Snowflake, UserResolvable, 
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleUsersByUsernamesResponse = await this.client._api.users.by.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;

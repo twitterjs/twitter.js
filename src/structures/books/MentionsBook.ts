@@ -79,7 +79,7 @@ export default class MentionsBook extends BaseStructure {
       'user.fields': queryParameters?.userFields,
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetUsersMentionTweetsResponse = await this.client._api.users(this.userID).mentions.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;

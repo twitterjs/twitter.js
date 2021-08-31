@@ -107,7 +107,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
     const body: PostTweetsLikeJSONBody = {
       tweet_id: targetTweetID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
     return new TweetLikeResponse(data);
   }
@@ -157,7 +157,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
     const body: PostUsersRetweetsJSONBody = {
       tweet_id: targetTweetID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostUsersRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
     return new RetweetResponse(data);
   }
@@ -193,7 +193,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'user.fields': queryParameters?.userFields,
       'tweet.fields': queryParameters?.tweetFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetTweetsRetweetingUsersResponse = await this.client._api
       .tweets(targetTweetID)
       .retweeted_by.get(requestData);
@@ -222,7 +222,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'user.fields': queryParameters?.userFields,
       'tweet.fields': queryParameters?.tweetFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetTweetsLikingUsersResponse = await this.client._api
       .tweets(targetTweetID)
       .liking_users.get(requestData);
@@ -253,7 +253,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetID).get(requestData);
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
@@ -273,7 +273,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleTweetsByIdsResponse = await this.client._api.tweets.get(requestData);
     const rawTweets = data.data;
     const rawTweetsIncludes = data.includes;
@@ -293,7 +293,7 @@ export default class TweetManager extends BaseManager<Snowflake, TweetResolvable
     const body: PutTweetReplyHideUnhideJSONBody = {
       hidden: isHidden,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(targetTweetID).hidden.put(requestData);
     return new TweetReplyHideUnhideResponse(data);
   }

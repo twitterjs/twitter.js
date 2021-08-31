@@ -86,7 +86,7 @@ export default class SearchTweetsBook extends BaseStructure {
       until_id: this.untilTweetId ?? undefined,
       next_token: token,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetTweetSearchResponse = await this.client._api.tweets.search.recent.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.hasMore = data.meta.next_token ? true : false;

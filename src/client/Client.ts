@@ -206,7 +206,7 @@ export default class Client extends BaseClient {
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleUserByUsernameResponse = await this._api.users.by.username(username).get(requestData);
     return new ClientUser(this, data);
   }

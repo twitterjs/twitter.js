@@ -76,7 +76,7 @@ export default class FollowingsBook extends BaseStructure {
       pagination_token: token,
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetUsersFollowingResponse = await this.client._api.users(this.userID).following.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
