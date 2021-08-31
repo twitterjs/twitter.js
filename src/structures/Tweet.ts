@@ -1,10 +1,10 @@
-import Poll from './Poll.js';
-import Place from './Place.js';
-import Media from './Media.js';
-import Collection from '../util/Collection.js';
-import SimplifiedUser from './SimplifiedUser.js';
-import SimplifiedTweet from './SimplifiedTweet.js';
-import type Client from '../client/Client.js';
+import { Poll } from './Poll.js';
+import { Place } from './Place.js';
+import { Media } from './Media.js';
+import { Collection } from '../util/Collection.js';
+import { SimplifiedUser } from './SimplifiedUser.js';
+import { SimplifiedTweet } from './SimplifiedTweet.js';
+import type { Client } from '../client/Client.js';
 import type {
   APIMedia,
   APIPlace,
@@ -18,7 +18,7 @@ import type {
 /**
  * The class that represents a tweet on Twitter
  */
-export default class Tweet extends SimplifiedTweet {
+export class Tweet extends SimplifiedTweet {
   /**
    * The author of the tweet
    */

@@ -1,9 +1,9 @@
-import Tweet from '../Tweet.js';
+import { Tweet } from '../Tweet.js';
 import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
+import { BaseStructure } from '../BaseStructure.js';
+import { Collection } from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type Client from '../../client/Client.js';
+import type { Client } from '../../client/Client.js';
 import type { GetUsersMentionTweetsQuery, GetUsersMentionTweetsResponse, Snowflake } from 'twitter-types';
 
 /**

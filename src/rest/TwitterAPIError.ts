@@ -1,6 +1,6 @@
 import type { APIInvalidRequestProblemErrors, APIProblem } from 'twitter-types';
 
-export default class TwitterAPIError extends Error {
+export class TwitterAPIError extends Error {
   title: string;
   detail: string;
   type: string;

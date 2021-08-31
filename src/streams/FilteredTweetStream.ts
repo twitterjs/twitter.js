@@ -1,9 +1,9 @@
-import BaseStream from './BaseStream.js';
-import Collection from '../util/Collection.js';
+import { BaseStream } from './BaseStream.js';
+import { Collection } from '../util/Collection.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
 import FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type { FilteredTweetStreamAddRuleOptions, FilteredTweetStreamRuleResolvable } from '../typings/index.js';
 import type {
   GetFilteredTweetStreamQuery,
@@ -18,7 +18,7 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
-export default class FilteredTweetStream extends BaseStream {
+export class FilteredTweetStream extends BaseStream {
   constructor(client: Client) {
     super(client);
 

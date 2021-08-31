@@ -1,9 +1,9 @@
-import User from './User.js';
-import type Client from '../client/Client.js';
+import { User } from './User.js';
+import type { Client } from '../client/Client.js';
 import type { SingleUserLookupResponse } from 'twitter-types';
-import type BlocksBook from '../structures/books/BlocksBook.js';
+import type { BlocksBook } from '../structures/books/BlocksBook.js';
 
-export default class ClientUser extends User {
+export class ClientUser extends User {
   constructor(client: Client, data: SingleUserLookupResponse) {
     super(client, data);
   }

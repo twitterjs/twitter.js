@@ -1,9 +1,9 @@
-import Space from '../structures/Space.js';
-import BaseManager from './BaseManager.js';
-import Collection from '../util/Collection.js';
+import { Space } from '../structures/Space.js';
+import { BaseManager } from './BaseManager.js';
+import { Collection } from '../util/Collection.js';
 import { CustomTypeError } from '../errors/index.js';
 import { RequestData } from '../structures/misc/Misc.js';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type {
   FetchSpaceOptions,
   FetchSpacesByCreatorIdsOptions,
@@ -25,7 +25,7 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
-export default class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
+export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
   constructor(client: Client) {
     super(client, Space);
   }

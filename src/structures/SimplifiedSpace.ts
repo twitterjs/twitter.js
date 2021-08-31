@@ -1,8 +1,8 @@
-import BaseStructure from './BaseStructure.js';
-import type Client from '../client/Client.js';
+import { BaseStructure } from './BaseStructure.js';
+import type { Client } from '../client/Client.js';
 import type { APISpace, Snowflake } from 'twitter-types';
 
-export default class SimplifiedSpace extends BaseStructure {
+export class SimplifiedSpace extends BaseStructure {
   /**
    * The unique identifier of the requested Space
    */

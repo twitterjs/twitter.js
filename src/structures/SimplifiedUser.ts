@@ -1,9 +1,9 @@
-import BaseStructure from './BaseStructure.js';
+import { BaseStructure } from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
-import type Client from '../client/Client.js';
-import type FollowersBook from './books/FollowersBook.js';
-import type FollowingsBook from './books/FollowingsBook.js';
+import type { Client } from '../client/Client.js';
+import type { FollowersBook } from './books/FollowersBook.js';
+import type { FollowingsBook } from './books/FollowingsBook.js';
 import type { APIUser, Snowflake } from 'twitter-types';
 import type {
   UserFollowResponse,
@@ -17,7 +17,7 @@ import type {
 /**
  * A simplified version of {@link User} class
  */
-export default class SimplifiedUser extends BaseStructure {
+export class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of the user
    */

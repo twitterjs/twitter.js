@@ -1,14 +1,14 @@
 import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
+import { BaseStructure } from '../BaseStructure.js';
 import { CustomError } from '../../errors/index.js';
 import { CountTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
-import type Client from '../../client/Client.js';
+import type { Client } from '../../client/Client.js';
 import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
-export default class CountTweetsBook extends BaseStructure {
+export class CountTweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;

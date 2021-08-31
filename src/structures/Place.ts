@@ -1,12 +1,12 @@
 import { PlaceGeo } from './misc/Misc.js';
-import BaseStructure from './BaseStructure.js';
-import type Client from '../client/Client.js';
+import { BaseStructure } from './BaseStructure.js';
+import type { Client } from '../client/Client.js';
 import type { APIPlace, APIPlaceGeo, APIPlaceType } from 'twitter-types';
 
 /**
  * The class that represents a place tagged in a {@link Tweet}
  */
-export default class Place extends BaseStructure {
+export class Place extends BaseStructure {
   fullName: string;
 
   id: string;

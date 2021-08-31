@@ -1,15 +1,15 @@
-import User from '../User.js';
+import { User } from '../User.js';
 import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
+import { BaseStructure } from '../BaseStructure.js';
+import { Collection } from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type Client from '../../client/Client.js';
+import type { Client } from '../../client/Client.js';
 import type { GetUsersFollowersQuery, GetUsersFollowersResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class used for keeping track of followers of a twitter user
  */
-export default class FollowersBook extends BaseStructure {
+export class FollowersBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;

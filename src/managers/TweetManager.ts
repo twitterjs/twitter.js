@@ -1,7 +1,7 @@
-import User from '../structures/User.js';
-import Tweet from '../structures/Tweet.js';
-import BaseManager from './BaseManager.js';
-import Collection from '../util/Collection.js';
+import { User } from '../structures/User.js';
+import { Tweet } from '../structures/Tweet.js';
+import { BaseManager } from './BaseManager.js';
+import { Collection } from '../util/Collection.js';
 import {
   RemovedRetweetResponse,
   RequestData,
@@ -10,9 +10,9 @@ import {
   TweetReplyHideUnhideResponse,
   TweetUnlikeResponse,
 } from '../structures/misc/Misc.js';
-import SimplifiedTweet from '../structures/SimplifiedTweet.js';
+import { SimplifiedTweet } from '../structures/SimplifiedTweet.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type { TweetManagerFetchResult, TweetResolvable } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
@@ -38,7 +38,7 @@ import type {
 /**
  * The manager class that holds API methods for {@link Tweet} objects and stores their cache
  */
-export default class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
+export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
   /**
    * @param client The client this manager belongs to
    */

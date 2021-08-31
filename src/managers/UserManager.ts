@@ -1,13 +1,13 @@
-import User from '../structures/User.js';
-import BaseManager from './BaseManager.js';
-import Collection from '../util/Collection.js';
-import TweetsBook from '../structures/books/TweetsBook.js';
-import SimplifiedUser from '../structures/SimplifiedUser.js';
+import { User } from '../structures/User.js';
+import { BaseManager } from './BaseManager.js';
+import { Collection } from '../util/Collection.js';
+import { TweetsBook } from '../structures/books/TweetsBook.js';
+import { SimplifiedUser } from '../structures/SimplifiedUser.js';
 import MentionsBook from '../structures/books/MentionsBook.js';
-import FollowersBook from '../structures/books/FollowersBook.js';
-import FollowingsBook from '../structures/books/FollowingsBook.js';
+import { FollowersBook } from '../structures/books/FollowersBook.js';
+import { FollowingsBook } from '../structures/books/FollowingsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import LikedTweetsBook from '../structures/books/LikedTweetsBook.js';
+import { LikedTweetsBook } from '../structures/books/LikedTweetsBook.js';
 import {
   RequestData,
   UserBlockResponse,
@@ -17,7 +17,7 @@ import {
   UserUnfollowResponse,
   UserUnmuteResponse,
 } from '../structures/misc/Misc.js';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type { UserManagerFetchByUsernameResult, UserManagerFetchResult, UserResolvable } from '../typings/Types.js';
 import type {
   FetchUserByUsernameOptions,
@@ -49,7 +49,7 @@ import type {
 /**
  * The manager class that holds API methods for {@link User} objects and stores their cache
  */
-export default class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
+export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   /**
    * @param client The client this manager belongs to
    */

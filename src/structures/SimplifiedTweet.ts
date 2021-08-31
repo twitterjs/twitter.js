@@ -1,4 +1,4 @@
-import BaseStructure from './BaseStructure.js';
+import { BaseStructure } from './BaseStructure.js';
 import { TweetEntities } from './misc/TweetEntities.js';
 import { TweetContextAnnotation } from './misc/TweetContextAnnotation.js';
 import { TweetAttachments, TweetGeo, TweetReference } from './misc/Misc.js';
@@ -8,9 +8,9 @@ import {
   TweetPromotedMetrics,
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
-import type User from './User.js';
-import type Client from '../client/Client.js';
-import type Collection from '../util/Collection.js';
+import type { User } from './User.js';
+import type { Client } from '../client/Client.js';
+import type { Collection } from '../util/Collection.js';
 import type {
   TweetLikeResponse,
   TweetUnlikeResponse,
@@ -29,7 +29,7 @@ import type {
 /**
  * A simplified version of {@link Tweet} class
  */
-export default class SimplifiedTweet extends BaseStructure {
+export class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the requested Tweet
    */

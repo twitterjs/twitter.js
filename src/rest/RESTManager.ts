@@ -1,19 +1,19 @@
 import crypto from 'crypto';
 import OAuth from 'oauth-1.0a';
-import APIRequest from './APIRequest.js';
+import { APIRequest } from './APIRequest.js';
 import { buildRoute } from './APIRouter.js';
-import Collection from '../util/Collection.js';
+import { Collection } from '../util/Collection.js';
 import { CustomError } from '../errors/index.js';
-import RequestHandler from './RequestHandler.js';
+import { RequestHandler } from './RequestHandler.js';
 import type { Response } from 'node-fetch';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type { APIProblem } from 'twitter-types';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 
 /**
  * Manager class for the rest API
  */
-export default class RESTManager {
+export class RESTManager {
   /**
    * The client that instantiated this class
    */

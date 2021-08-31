@@ -1,11 +1,11 @@
-import type User from '../structures/User.js';
+import type { User } from '../structures/User.js';
 import type { Snowflake } from 'twitter-types';
-import type Tweet from '../structures/Tweet.js';
-import type Space from '../structures/Space.js';
-import type Collection from '../util/Collection.js';
-import type SimplifiedUser from '../structures/SimplifiedUser.js';
-import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
-import type SimplifiedSpace from '../structures/SimplifiedSpace.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { Space } from '../structures/Space.js';
+import type { Collection } from '../util/Collection.js';
+import type { SimplifiedUser } from '../structures/SimplifiedUser.js';
+import type { SimplifiedTweet } from '../structures/SimplifiedTweet.js';
+import type { SimplifiedSpace } from '../structures/SimplifiedSpace.js';
 import type FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
 import type {
   ClientEventsMapping,

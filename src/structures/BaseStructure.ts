@@ -1,9 +1,9 @@
-import type Client from '../client/Client';
+import type { Client } from '../client/Client';
 
 /**
  * The base class for all structures
  */
-export default class BaseStructure {
+export class BaseStructure {
   /**
    * The client that initialized this class
    */

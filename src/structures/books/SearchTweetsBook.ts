@@ -1,16 +1,16 @@
-import Tweet from '../Tweet.js';
+import { Tweet } from '../Tweet.js';
 import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
+import { BaseStructure } from '../BaseStructure.js';
+import { Collection } from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
 import { SearchTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
-import type Client from '../../client/Client.js';
+import type { Client } from '../../client/Client.js';
 import type { GetTweetSearchQuery, GetTweetSearchResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
-export default class SearchTweetsBook extends BaseStructure {
+export class SearchTweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;

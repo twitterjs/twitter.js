@@ -1,4 +1,4 @@
-import type RESTManager from './RESTManager.js';
+import type { RESTManager } from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 
 /* eslint-disable */

@@ -1,27 +1,24 @@
 // client
-import Client from './client/Client.js';
+export { Client } from './client/Client.js';
 
 // errors
 export * from './errors/index.js';
 
 // managers
-import TweetManager from './managers/TweetManager.js';
-import UserManager from './managers/UserManager.js';
+export { TweetManager } from './managers/TweetManager.js';
+export { UserManager } from './managers/UserManager.js';
 
 // structures
-import SimplifiedTweet from './structures/SimplifiedTweet.js';
-import SimplifiedUser from './structures/SimplifiedUser.js';
-import Tweet from './structures/Tweet.js';
-import User from './structures/User.js';
+export { SimplifiedTweet } from './structures/SimplifiedTweet.js';
+export { SimplifiedUser } from './structures/SimplifiedUser.js';
+export { Tweet } from './structures/Tweet.js';
+export { User } from './structures/User.js';
 
 // typings
-export * from './typings/Interfaces.js';
-export * from './typings/Types.js';
+export * from './typings/index.js';
 export { Snowflake } from 'twitter-types';
 
-import Collection from './util/Collection.js';
+export { Collection } from './util/Collection.js';
 export * from './util/Constants.js';
 export * from './util/QueryParameters.js';
 export * from './util/Utility.js';
-
-export { Client, TweetManager, UserManager, SimplifiedTweet, SimplifiedUser, Tweet, User, Collection };

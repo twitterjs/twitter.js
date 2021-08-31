@@ -1,6 +1,6 @@
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 
-export default class BaseStream {
+export class BaseStream {
   client: Client;
 
   constructor(client: Client) {

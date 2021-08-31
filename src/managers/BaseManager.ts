@@ -1,11 +1,11 @@
-import Collection from '../util/Collection.js';
-import type Client from '../client/Client.js';
+import { Collection } from '../util/Collection.js';
+import type { Client } from '../client/Client.js';
 import type { StructureConstructable } from '../typings/Interfaces.js';
 
 /**
  * The base class for all managers
  */
-export default class BaseManager<K extends string, R, T extends { id: K }> {
+export class BaseManager<K extends string, R, T extends { id: K }> {
   /**
    * The client that initialized this manager
    */

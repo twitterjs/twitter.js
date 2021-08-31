@@ -1,13 +1,13 @@
-import RESTManager from '../rest/RESTManager.js';
+import { RESTManager } from '../rest/RESTManager.js';
 import { ClientEvents } from '../util/Constants.js';
-import UserManager from '../managers/UserManager.js';
+import { UserManager } from '../managers/UserManager.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import TweetManager from '../managers/TweetManager.js';
-import SpaceManager from '../managers/SpaceManager.js';
-import SampleTweetStream from '../streams/SampledTweetStream.js';
-import FilteredTweetStream from '../streams/FilteredTweetStream.js';
-import CountTweetsBook from '../structures/books/CountTweetsBook.js';
-import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
+import { TweetManager } from '../managers/TweetManager.js';
+import { SpaceManager } from '../managers/SpaceManager.js';
+import { SampleTweetStream } from '../streams/SampledTweetStream.js';
+import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
+import { CountTweetsBook } from '../structures/books/CountTweetsBook.js';
+import { SearchTweetsBook } from '../structures/books/SearchTweetsBook.js';
 import type {
   ClientCredentialsInterface,
   ClientEventsMapping,
@@ -15,17 +15,17 @@ import type {
   CountTweetsBookCreateOptions,
   SearchTweetsBookCreateOptions,
 } from '../typings/Interfaces.js';
-import BaseClient from './BaseClient.js';
+import { BaseClient } from './BaseClient.js';
 import { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
 import { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
-import BlocksBook from '../structures/books/BlocksBook.js';
-import ClientUser from '../structures/ClientUser.js';
+import { BlocksBook } from '../structures/books/BlocksBook.js';
+import { ClientUser } from '../structures/ClientUser.js';
 import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
 
 /**
  * The core class that exposes library APIs for making bearer token authorized requests
  */
-export default class Client extends BaseClient {
+export class Client extends BaseClient {
   /**
    * The time at which the client became `ready`
    */

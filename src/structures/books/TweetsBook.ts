@@ -1,15 +1,15 @@
-import Tweet from '../Tweet.js';
+import { Tweet } from '../Tweet.js';
 import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
+import { BaseStructure } from '../BaseStructure.js';
+import { Collection } from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type Client from '../../client/Client.js';
+import type { Client } from '../../client/Client.js';
 import type { GetUsersTweetsQuery, GetUsersTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class used for keeping track of tweets composed by a twitter user
  */
-export default class TweetsBook extends BaseStructure {
+export class TweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;

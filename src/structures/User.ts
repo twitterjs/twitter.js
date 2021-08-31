@@ -1,12 +1,12 @@
-import SimplifiedUser from './SimplifiedUser.js';
-import SimplifiedTweet from './SimplifiedTweet.js';
-import type Client from '../client/Client.js';
+import { SimplifiedUser } from './SimplifiedUser.js';
+import { SimplifiedTweet } from './SimplifiedTweet.js';
+import type { Client } from '../client/Client.js';
 import type { APITweet, SingleUserLookupResponse } from 'twitter-types';
 
 /**
  * The class that represents a Twitter user
  */
-export default class User extends SimplifiedUser {
+export class User extends SimplifiedUser {
   /**
    * The tweet pinned by this user
    */

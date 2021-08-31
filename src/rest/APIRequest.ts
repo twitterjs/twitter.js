@@ -1,14 +1,14 @@
 import https from 'https';
 import fetch from 'node-fetch';
-import type Client from '../client/Client.js';
-import type RESTManager from './RESTManager.js';
+import type { Client } from '../client/Client.js';
+import type { RESTManager } from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
 
 const agent = new https.Agent({ keepAlive: true });
 
-export default class APIRequest {
+export class APIRequest {
   rest: RESTManager;
   method: string;
   path: string;

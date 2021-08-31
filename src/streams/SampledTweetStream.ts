@@ -1,11 +1,11 @@
-import BaseStream from './BaseStream.js';
-import Tweet from '../structures/Tweet.js';
+import { BaseStream } from './BaseStream.js';
+import { Tweet } from '../structures/Tweet.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
-import type Client from '../client/Client.js';
+import type { Client } from '../client/Client.js';
 import type { GetSampledTweetStreamQuery } from 'twitter-types';
 
-export default class SampleTweetStream extends BaseStream {
+export class SampleTweetStream extends BaseStream {
   constructor(client: Client) {
     super(client);
 

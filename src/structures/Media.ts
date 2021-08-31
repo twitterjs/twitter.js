@@ -1,5 +1,5 @@
-import BaseStructure from './BaseStructure.js';
-import type Client from '../client/Client.js';
+import { BaseStructure } from './BaseStructure.js';
+import type { Client } from '../client/Client.js';
 import type { APIMedia, APIMediaType } from 'twitter-types';
 import {
   MediaNonPublicMetrics,
@@ -11,7 +11,7 @@ import {
 /**
  * The class that represents a media content in a {@link Tweet}
  */
-export default class Media extends BaseStructure {
+export class Media extends BaseStructure {
   id: string;
 
   type: APIMediaType;
