@@ -5,9 +5,10 @@ import UserManager from '../managers/UserManager.js';
 import { CustomTypeError } from '../errors/index.js';
 import TweetManager from '../managers/TweetManager.js';
 import SpaceManager from '../managers/SpaceManager.js';
-import { createSampledStream } from '../streams/SampledTweetStream.js';
-import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
+import SampleTweetStream from '../streams/SampledTweetStream.js';
+import FilteredTweetStream from '../streams/FilteredTweetStream.js';
 import CountTweetsBook from '../structures/books/CountTweetsBook.js';
+import SearchTweetsBook from '../structures/books/SearchTweetsBook.js';
 import type {
   ClientOptions,
   CountTweetsBookCreateOptions,
@@ -40,6 +41,10 @@ export default class BearerClient extends CommonClient<BearerClient> {
 
   spaces: SpaceManager<BearerClient>;
 
+  sampledTweets: SampleTweetStream<BearerClient>;
+
+  filteredTweets: FilteredTweetStream<BearerClient>;
+
   /**
    * @param options The options to initialize the client with
    */
@@ -53,6 +58,8 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
     this.spaces = new SpaceManager(this);
+    this.sampledTweets = new SampleTweetStream(this);
+    this.filteredTweets = new FilteredTweetStream(this);
   }
 
   /**
@@ -80,7 +87,6 @@ export default class BearerClient extends CommonClient<BearerClient> {
     this.readyAt = new Date();
 
     this.emit(ClientEvents.READY, this);
-    this.#initSampledStream();
     return this.token;
   }
 
@@ -100,11 +106,5 @@ export default class BearerClient extends CommonClient<BearerClient> {
    */
   createCountTweetsBook(options: CountTweetsBookCreateOptions<BearerClient>): CountTweetsBook<BearerClient> {
     return new CountTweetsBook(this, options);
-  }
-
-  #initSampledStream(): void {
-    if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
-      createSampledStream<BearerClient>(this);
-    }
   }
 }

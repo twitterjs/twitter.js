@@ -57,6 +57,7 @@ export interface ClientEventsMapping<C extends ClientUnionType> {
   partialError: [partialError: Record<string, unknown>];
   ready: [client: ClientInUse<C>];
   sampledTweetCreate: [tweet: Tweet<C>];
+  filteredTweetCreate: [tweet: Tweet<C>];
 }
 
 /**

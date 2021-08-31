@@ -15,6 +15,7 @@ export const ClientEvents = {
   PARTIAL_ERROR: 'partialError',
   READY: 'ready',
   SAMPLED_TWEET_CREATE: 'sampledTweetCreate',
+  FILTERED_TWEET_CREATE: 'filteredTweetCreate',
 };
 
 /**
