@@ -1,6 +1,14 @@
 import BaseStream from './BaseStream.js';
+import Collection from '../util/Collection.js';
+import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
-import type { ClientInUse, ClientUnionType } from '../typings/index.js';
+import FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
+import type {
+  ClientInUse,
+  ClientUnionType,
+  FilteredTweetStreamAddRuleOptions,
+  FilteredTweetStreamRuleResolvable,
+} from '../typings/index.js';
 import type {
   GetFilteredTweetStreamQuery,
   GetFilteredTweetStreamResponse,
@@ -13,7 +21,6 @@ import type {
   PostRemoveFilteredTweetStreamRulesResponse,
   Snowflake,
 } from 'twitter-types';
-import { ClientEvents } from '../util/Constants.js';
 
 export default class FilteredTweetStream<C extends ClientUnionType> extends BaseStream<C> {
   constructor(client: ClientInUse<C>) {
@@ -24,7 +31,15 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     }
   }
 
-  async fetchRules(ids?: Array<Snowflake>): Promise<GetFilteredTweetStreamRulesResponse> {
+  /**
+   * Fetches rules that are currently active
+   * @param rules The rules to fetch, fetches all rules if not provided
+   * @returns A {@link Collection} of {@link FilteredTweetStreamRule} objects
+   */
+  async fetchRules(
+    rules?: Array<FilteredTweetStreamRuleResolvable<C>>,
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
+    const ids = rules?.map(rule => (typeof rule === 'string' ? rule : rule?.id));
     const query: GetFilteredTweetStreamRulesQuery = {
       ids,
     };
@@ -32,10 +47,22 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     const data: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(
       requestData,
     );
-    return data;
+    const fetchedRulesCollection = new Collection<Snowflake, FilteredTweetStreamRule<C>>();
+    if (!data.data || data.data.length === 0) return fetchedRulesCollection;
+    return data.data.reduce((rulesCollection, rawRule) => {
+      const rule = new FilteredTweetStreamRule(this.client, rawRule);
+      return rulesCollection.set(rule.id, rule);
+    }, fetchedRulesCollection);
   }
 
-  async addRules(rules: Array<{ value: string; tag?: string }>): Promise<PostAddFilteredTweetStreamRulesResponse> {
+  /**
+   * Creates new rules for the filtered tweet stream
+   * @param rules The rules to add
+   * @returns A {@link Collection} of {@link FilteredTweetStreamRule} objects
+   */
+  async addRules(
+    rules: Array<FilteredTweetStreamAddRuleOptions>,
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
     const body: PostAddFilteredTweetStreamRulesJSONBody = {
       add: rules,
     };
@@ -43,9 +70,16 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     const data: PostAddFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
-    return data;
+    return data.data.reduce((rulesCollection, rawRule) => {
+      const rule = new FilteredTweetStreamRule(this.client, rawRule);
+      return rulesCollection.set(rule.id, rule);
+    }, new Collection<Snowflake, FilteredTweetStreamRule<C>>());
   }
 
+  /**
+   * Deletes rules for the filtered tweeet stream using their ids
+   * @param ids The ids of the rules to delete
+   */
   async deleteRulesByIds(ids: Array<Snowflake>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
     const body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody = {
       delete: {
@@ -55,6 +89,10 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     return this.#deleteRules(body);
   }
 
+  /**
+   * Deletes rules for the filtered tweet stream using their values
+   * @param values The values of the rules to delete
+   */
   async deleteRulesByValues(values: Array<string>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
     const body: PostRemoveFilteredTweetStreamRulesByValuesJSONBody = {
       delete: {

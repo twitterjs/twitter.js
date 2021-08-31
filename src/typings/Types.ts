@@ -8,6 +8,7 @@ import type SimplifiedUser from '../structures/SimplifiedUser.js';
 import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
 import type SimplifiedSpace from '../structures/SimplifiedSpace.js';
 import type UserContextClient from '../client/UserContextClient.js';
+import type FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
 import type {
   ClientEventsMapping,
   FetchTweetOptions,
@@ -67,3 +68,5 @@ export type SpaceManagerFetchResult<
   C extends ClientUnionType,
   T extends FetchSpaceOptions<C> | FetchSpacesOptions<C>,
 > = T extends FetchSpaceOptions<ClientUnionType> ? Space<C> : Collection<Snowflake, Space<C>>;
+
+export type FilteredTweetStreamRuleResolvable<C extends ClientUnionType> = FilteredTweetStreamRule<C> | Snowflake;

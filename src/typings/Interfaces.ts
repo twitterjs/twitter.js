@@ -230,3 +230,18 @@ export interface CountTweetsBookCreateOptions<C extends ClientUnionType> {
   sinceTweet?: TweetResolvable<C>;
   untilTweet?: TweetResolvable<C>;
 }
+
+/**
+ * The options used to add a new filtered tweet stream rule
+ */
+export interface FilteredTweetStreamAddRuleOptions {
+  /**
+   * The value of the rule
+   */
+  value: string;
+
+  /**
+   * The label of the rule
+   */
+  tag?: string;
+}
