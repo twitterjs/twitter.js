@@ -107,7 +107,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const body: PostTweetsLikeJSONBody = {
       tweet_id: targetTweetID,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
     return new TweetLikeResponse(data);
   }
@@ -122,7 +122,11 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes(targetTweetID).delete();
+    const requestData = new RequestData({ isUserContext: true });
+    const data: DeleteTweetsLikeResponse = await this.client._api
+      .users(loggedInUser.id)
+      .likes(targetTweetID)
+      .delete(requestData);
     return new TweetUnlikeResponse(data);
   }
 
@@ -157,7 +161,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const body: PostUsersRetweetsJSONBody = {
       tweet_id: targetTweetID,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
     return new RetweetResponse(data);
   }
@@ -172,10 +176,11 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersRetweetsResponse = await this.client._api
       .users(loggedInUser.id)
       .retweets(targetTweetID)
-      .delete();
+      .delete(requestData);
     return new RemovedRetweetResponse(data);
   }
 
@@ -293,7 +298,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const body: PutTweetReplyHideUnhideJSONBody = {
       hidden: isHidden,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(targetTweetID).hidden.put(requestData);
     return new TweetReplyHideUnhideResponse(data);
   }

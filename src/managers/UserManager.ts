@@ -3,7 +3,7 @@ import { BaseManager } from './BaseManager.js';
 import { Collection } from '../util/Collection.js';
 import { TweetsBook } from '../structures/books/TweetsBook.js';
 import { SimplifiedUser } from '../structures/SimplifiedUser.js';
-import MentionsBook from '../structures/books/MentionsBook.js';
+import { MentionsBook } from '../structures/books/MentionsBook.js';
 import { FollowersBook } from '../structures/books/FollowersBook.js';
 import { FollowingsBook } from '../structures/books/FollowingsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
@@ -146,7 +146,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const body: PostUsersFollowingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
     return new UserFollowResponse(data);
   }
@@ -161,10 +161,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersFollowingResponse = await this.client._api
       .users(loggedInUser.id)
       .following(targetUserID)
-      .delete();
+      .delete(requestData);
     return new UserUnfollowResponse(data);
   }
 
@@ -181,7 +182,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const body: PostUsersBlockingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
@@ -196,10 +197,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unblock');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersBlockingResponse = await this.client._api
       .users(loggedInUser.id)
       .blocking(targetUserID)
-      .delete();
+      .delete(requestData);
     return new UserUnblockResponse(data);
   }
 
@@ -216,7 +218,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const body: PostUsersMutingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData({ body });
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
     return new UserMuteResponse(data);
   }
@@ -231,7 +233,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unmute');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
+    const requestData = new RequestData({ isUserContext: true });
+    const data: DeleteUsersMutingResponse = await this.client._api
+      .users(loggedInUser.id)
+      .muting(targetUserID)
+      .delete(requestData);
     return new UserUnmuteResponse(data);
   }
 

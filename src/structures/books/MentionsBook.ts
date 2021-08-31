@@ -9,7 +9,7 @@ import type { GetUsersMentionTweetsQuery, GetUsersMentionTweetsResponse, Snowfla
 /**
  * A class used for keeping track of tweets that mention a twitter user
  */
-export default class MentionsBook extends BaseStructure {
+export class MentionsBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;
