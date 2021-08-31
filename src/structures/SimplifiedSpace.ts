@@ -1,8 +1,8 @@
 import BaseStructure from './BaseStructure.js';
+import type Client from '../client/Client.js';
 import type { APISpace, Snowflake } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types';
 
-export default class SimplifiedSpace<C extends ClientUnionType> extends BaseStructure<C> {
+export default class SimplifiedSpace extends BaseStructure {
   /**
    * The unique identifier of the requested Space
    */
@@ -78,7 +78,7 @@ export default class SimplifiedSpace<C extends ClientUnionType> extends BaseStru
    */
   creatorId: Snowflake | null;
 
-  constructor(client: ClientInUse<C>, data: APISpace) {
+  constructor(client: Client, data: APISpace) {
     super(client);
     this.id = data.id;
     this.state = data.state;

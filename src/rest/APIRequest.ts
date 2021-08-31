@@ -1,24 +1,23 @@
 import https from 'https';
 import fetch from 'node-fetch';
-import UserContextClient from '../client/UserContextClient.js';
+import type Client from '../client/Client.js';
 import type RESTManager from './RESTManager.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 import type { Response, HeaderInit, BodyInit } from 'node-fetch';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
 const agent = new https.Agent({ keepAlive: true });
 
-export default class APIRequest<C extends ClientUnionType> {
-  rest: RESTManager<C>;
+export default class APIRequest {
+  rest: RESTManager;
   method: string;
   path: string;
   options: RequestData<unknown, unknown>;
   route: string;
-  client: ClientInUse<C>;
+  client: Client;
   isStreaming?: boolean;
 
-  constructor(rest: RESTManager<C>, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
+  constructor(rest: RESTManager, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
     this.rest = rest;
     this.method = method;
     this.path = path;
@@ -42,10 +41,9 @@ export default class APIRequest<C extends ClientUnionType> {
     const url = baseURL + this.path;
 
     const headers: HeaderInit = {};
-    headers.Authorization =
-      this.client instanceof UserContextClient
-        ? this.rest.getUserContextAuth(this.method, url)
-        : this.rest.getBearerAuth();
+    headers.Authorization = this.options.isUserContext
+      ? this.rest.getUserContextAuth(this.method, url)
+      : this.rest.getBearerAuth();
 
     let body: BodyInit | undefined;
     if (this.method !== 'get' && this.options.body) {

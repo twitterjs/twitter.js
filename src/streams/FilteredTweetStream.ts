@@ -3,12 +3,8 @@ import Collection from '../util/Collection.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
 import FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
-import type {
-  ClientInUse,
-  ClientUnionType,
-  FilteredTweetStreamAddRuleOptions,
-  FilteredTweetStreamRuleResolvable,
-} from '../typings/index.js';
+import type Client from '../client/Client.js';
+import type { FilteredTweetStreamAddRuleOptions, FilteredTweetStreamRuleResolvable } from '../typings/index.js';
 import type {
   GetFilteredTweetStreamQuery,
   GetFilteredTweetStreamResponse,
@@ -22,8 +18,8 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
-export default class FilteredTweetStream<C extends ClientUnionType> extends BaseStream<C> {
-  constructor(client: ClientInUse<C>) {
+export default class FilteredTweetStream extends BaseStream {
+  constructor(client: Client) {
     super(client);
 
     if (this.client.options.events.includes('FILTERED_TWEET_CREATE')) {
@@ -37,8 +33,8 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
    * @returns A {@link Collection} of {@link FilteredTweetStreamRule} objects
    */
   async fetchRules(
-    rules?: Array<FilteredTweetStreamRuleResolvable<C>>,
-  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
+    rules?: Array<FilteredTweetStreamRuleResolvable>,
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule>> {
     const ids = rules?.map(rule => (typeof rule === 'string' ? rule : rule?.id));
     const query: GetFilteredTweetStreamRulesQuery = {
       ids,
@@ -47,7 +43,7 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     const data: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(
       requestData,
     );
-    const fetchedRulesCollection = new Collection<Snowflake, FilteredTweetStreamRule<C>>();
+    const fetchedRulesCollection = new Collection<Snowflake, FilteredTweetStreamRule>();
     if (!data.data || data.data.length === 0) return fetchedRulesCollection;
     return data.data.reduce((rulesCollection, rawRule) => {
       const rule = new FilteredTweetStreamRule(this.client, rawRule);
@@ -62,7 +58,7 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
    */
   async addRules(
     rules: Array<FilteredTweetStreamAddRuleOptions>,
-  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule>> {
     const body: PostAddFilteredTweetStreamRulesJSONBody = {
       add: rules,
     };
@@ -73,7 +69,7 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
     return data.data.reduce((rulesCollection, rawRule) => {
       const rule = new FilteredTweetStreamRule(this.client, rawRule);
       return rulesCollection.set(rule.id, rule);
-    }, new Collection<Snowflake, FilteredTweetStreamRule<C>>());
+    }, new Collection<Snowflake, FilteredTweetStreamRule>());
   }
 
   /**

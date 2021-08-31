@@ -3,13 +3,13 @@ import { RequestData } from '../misc/Misc.js';
 import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
+import type Client from '../../client/Client.js';
 import type { GetUsersLikedTweetsQuery, GetUsersLikedTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class used for keeping track of liked tweets of a twitter user
  */
-export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class LikedTweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -35,7 +35,7 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
    */
   hasMore: boolean;
 
-  constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userID: Snowflake, maxResultsPerPage?: number) {
     super(client);
     this.userID = userID;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
@@ -46,7 +46,7 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
    * Fetches the next page of the book if there is one.
    * @returns A {@link Collection} of tweets liked by the specified user
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -59,15 +59,15 @@ export default class LikedTweetsBook<C extends ClientUnionType> extends BaseStru
    * Fetches the previous page of the book if there is one.
    * @returns A {@link Collection} of tweets liked by the specified user
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
-    const likedTweetsCollection = new Collection<Snowflake, Tweet<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
+    const likedTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersLikedTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,

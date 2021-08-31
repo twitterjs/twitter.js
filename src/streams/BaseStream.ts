@@ -1,9 +1,9 @@
-import type { ClientInUse, ClientUnionType } from '../typings/index.js';
+import type Client from '../client/Client.js';
 
-export default class BaseStream<C extends ClientUnionType> {
-  client: ClientInUse<C>;
+export default class BaseStream {
+  client: Client;
 
-  constructor(client: ClientInUse<C>) {
+  constructor(client: Client) {
     this.client = client;
   }
 }

@@ -1,10 +1,10 @@
 import BaseStructure from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
+import type Client from '../client/Client.js';
 import type FollowersBook from './books/FollowersBook.js';
 import type FollowingsBook from './books/FollowingsBook.js';
 import type { APIUser, Snowflake } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import type {
   UserFollowResponse,
   UserUnfollowResponse,
@@ -17,7 +17,7 @@ import type {
 /**
  * A simplified version of {@link User} class
  */
-export default class SimplifiedUser<C extends ClientUnionType> extends BaseStructure<C> {
+export default class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of the user
    */
@@ -93,7 +93,7 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    */
   withheld?: any; // TODO
 
-  constructor(client: ClientInUse<C>, data: APIUser) {
+  constructor(client: Client, data: APIUser) {
     super(client);
 
     this.id = data.id;
@@ -165,8 +165,8 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
    * @returns A {@link FollowersBook} object
    */
-  createFollowersBook(maxResultsPerPage?: number): FollowersBook<C> {
-    return this.client.users.createFollowersBook(this.id, maxResultsPerPage) as FollowersBook<C>;
+  createFollowersBook(maxResultsPerPage?: number): FollowersBook {
+    return this.client.users.createFollowersBook(this.id, maxResultsPerPage) as FollowersBook;
   }
 
   /**
@@ -174,7 +174,7 @@ export default class SimplifiedUser<C extends ClientUnionType> extends BaseStruc
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
    * @returns A {@link FollowingsBook} object
    */
-  createFollowingBook(maxResultsPerPage?: number): FollowingsBook<C> {
-    return this.client.users.createFollowingBook(this.id, maxResultsPerPage) as FollowingsBook<C>;
+  createFollowingBook(maxResultsPerPage?: number): FollowingsBook {
+    return this.client.users.createFollowingBook(this.id, maxResultsPerPage) as FollowingsBook;
   }
 }

@@ -4,13 +4,13 @@ import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
 import { SearchTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
+import type Client from '../../client/Client.js';
 import type { GetTweetSearchQuery, GetTweetSearchResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
-export default class SearchTweetsBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class SearchTweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;
@@ -42,22 +42,22 @@ export default class SearchTweetsBook<C extends ClientUnionType> extends BaseStr
 
   untilTweetId: Snowflake | null;
 
-  constructor(client: ClientInUse<C>, options: SearchTweetsBookCreateOptions<C>) {
+  constructor(client: Client, options: SearchTweetsBookCreateOptions) {
     super(client);
     this.hasMore = true;
     this.maxResultsPerPage = options.maxResultsPerPage ?? null;
     this.query = options.query;
     this.startTime = options.startTime ?? null;
     this.endTime = options.endTime ?? null;
-    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable<ClientUnionType>);
-    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable<ClientUnionType>);
+    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable);
+    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable);
   }
 
   /**
    * Fetches the next page of the book if there is one.
    * @returns A {@link Collection} of tweets matching the query
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -68,8 +68,8 @@ export default class SearchTweetsBook<C extends ClientUnionType> extends BaseStr
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
-    const fetchedTweetsCollection = new Collection<Snowflake, Tweet<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
+    const fetchedTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetTweetSearchQuery = {
       expansions: queryParameters?.tweetExpansions,

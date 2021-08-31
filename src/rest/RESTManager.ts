@@ -5,28 +5,26 @@ import { buildRoute } from './APIRouter.js';
 import Collection from '../util/Collection.js';
 import { CustomError } from '../errors/index.js';
 import RequestHandler from './RequestHandler.js';
-import BearerClient from '../client/BearerClient.js';
-import UserContextClient from '../client/UserContextClient.js';
 import type { Response } from 'node-fetch';
+import type Client from '../client/Client.js';
 import type { APIProblem } from 'twitter-types';
 import type { ExtendedRequestData } from '../typings/Interfaces.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 
 /**
  * Manager class for the rest API
  */
-export default class RESTManager<C extends ClientUnionType> {
+export default class RESTManager {
   /**
    * The client that instantiated this class
    */
-  client: ClientInUse<C>;
+  client: Client;
 
   /**
    * The collection of request handlers
    */
-  requestHandlers: Collection<string, RequestHandler<C>>;
+  requestHandlers: Collection<string, RequestHandler>;
 
-  constructor(client: ClientInUse<C>) {
+  constructor(client: Client) {
     this.client = client;
     this.requestHandlers = new Collection();
   }
@@ -42,14 +40,12 @@ export default class RESTManager<C extends ClientUnionType> {
 
   getBearerAuth(): string {
     const client = this.client;
-    if (!(client instanceof BearerClient)) throw new CustomError('NOT_BEARER_CLIENT');
     if (!client.token) throw new CustomError('NO_BEARER_TOKEN');
     return `Bearer ${client.token}`;
   }
 
   getUserContextAuth(method: string, url: string): string {
     const client = this.client;
-    if (!(client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
     const clientCredentials = client.credentials;
     if (!clientCredentials) throw new CustomError('NO_CLIENT_CREDENTIALS');
 

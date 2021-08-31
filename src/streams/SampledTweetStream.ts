@@ -2,11 +2,11 @@ import BaseStream from './BaseStream.js';
 import Tweet from '../structures/Tweet.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
+import type Client from '../client/Client.js';
 import type { GetSampledTweetStreamQuery } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types';
 
-export default class SampleTweetStream<C extends ClientUnionType> extends BaseStream<C> {
-  constructor(client: ClientInUse<C>) {
+export default class SampleTweetStream extends BaseStream {
+  constructor(client: Client) {
     super(client);
 
     if (this.client.options.events.includes('SAMPLED_TWEET_CREATE')) {

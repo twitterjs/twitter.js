@@ -3,13 +3,13 @@ import { RequestData } from '../misc/Misc.js';
 import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
+import type Client from '../../client/Client.js';
 import type { GetUsersBlockingQuery, GetUsersBlockingResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class used for keeping track of users blocked by the authorized user
  */
-export default class BlocksBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class BlocksBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -35,7 +35,7 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
    */
   hasMore: boolean;
 
-  constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userID: Snowflake, maxResultsPerPage?: number) {
     super(client);
     this.userID = userID;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
@@ -46,7 +46,7 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
    * Fetches the next page of the book if there is one.
    * @returns A {@link Collection} of users that are blocked by the authorized user
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -59,15 +59,15 @@ export default class BlocksBook<C extends ClientUnionType> extends BaseStructure
    * Fetches the previous page of the book if there is one.
    * @returns A {@link Collection} of users that are blocked by the authorized user
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
-    const blockedUsersCollection = new Collection<Snowflake, User<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
+    const blockedUsersCollection = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersBlockingQuery = {
       expansions: queryParameters?.userExpansions,

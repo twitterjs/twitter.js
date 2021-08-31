@@ -1,7 +1,7 @@
 import type Tweet from '../structures/Tweet.js';
 import type { ClientEvents } from '../util/Constants.js';
 import type { RequestData } from '../structures/misc/Misc.js';
-import type { ClientInUse, ClientUnionType, TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
+import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
 import type {
   Granularity,
   MediaFieldsParameter,
@@ -14,6 +14,7 @@ import type {
   UserExpansionsParameter,
   UserFieldsParameter,
 } from 'twitter-types';
+import Client from '../client/Client.js';
 
 /**
  * The options for the API in use
@@ -51,13 +52,14 @@ export interface ClientCredentialsInterface {
   accessToken: string;
   accessTokenSecret: string;
   username: string;
+  bearerToken: string;
 }
 
-export interface ClientEventsMapping<C extends ClientUnionType> {
+export interface ClientEventsMapping {
   partialError: [partialError: Record<string, unknown>];
-  ready: [client: ClientInUse<C>];
-  sampledTweetCreate: [tweet: Tweet<C>];
-  filteredTweetCreate: [tweet: Tweet<C>];
+  ready: [client: Client];
+  sampledTweetCreate: [tweet: Tweet];
+  filteredTweetCreate: [tweet: Tweet];
 }
 
 /**
@@ -110,72 +112,71 @@ export interface FetchUsersByUsernamesOptions extends Omit<BaseFetchOptions, 'sk
 /**
  * Options used to fetch a single user
  */
-export interface FetchUserOptions<C extends ClientUnionType> extends BaseFetchOptions {
+export interface FetchUserOptions extends BaseFetchOptions {
   /**
    * The user to fetch
    */
-  user: UserResolvable<C>;
+  user: UserResolvable;
 }
 
 /**
  * Options used to fetch multiple users
  */
-export interface FetchUsersOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchUsersOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The users to fetch
    */
-  users: Array<UserResolvable<C>>;
+  users: Array<UserResolvable>;
 }
 
 /**
  * Options used to feth a single tweet
  */
-export interface FetchTweetOptions<C extends ClientUnionType> extends BaseFetchOptions {
+export interface FetchTweetOptions extends BaseFetchOptions {
   /**
    * The tweet to fetch
    */
-  tweet: TweetResolvable<C>;
+  tweet: TweetResolvable;
 }
 
 /**
  * Options used to feth multiple tweets
  */
-export interface FetchTweetsOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The tweets to fetch
    */
-  tweets: Array<TweetResolvable<C>>;
+  tweets: Array<TweetResolvable>;
 }
 
 /**
  * Options used to fetch a single space
  */
-export interface FetchSpaceOptions<C extends ClientUnionType> extends BaseFetchOptions {
+export interface FetchSpaceOptions extends BaseFetchOptions {
   /**
    * The space to fetch
    */
-  space: SpaceResolvable<C>;
+  space: SpaceResolvable;
 }
 
 /**
  * Options used to fetch multiple spaces
  */
-export interface FetchSpacesOptions<C extends ClientUnionType> extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The spaces to fetch
    */
-  spaces: Array<SpaceResolvable<C>>;
+  spaces: Array<SpaceResolvable>;
 }
 
 /**
  * Options used to fetch spaces using creator ids
  */
-export interface FetchSpacesByCreatorIdsOptions<C extends ClientUnionType>
-  extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+export interface FetchSpacesByCreatorIdsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
   /**
    * The creators whose spaces are to be fetched
    */
-  users: Array<UserResolvable<C>>;
+  users: Array<UserResolvable>;
 }
 
 /**
@@ -209,7 +210,7 @@ export interface TwitterjsErrorConstructor {
   new(key: string, ...args: Array<unknown>): Error;
 }
 
-export interface SearchTweetsBookCreateOptions<C extends ClientUnionType> {
+export interface SearchTweetsBookCreateOptions {
   query: string;
 
   /**
@@ -218,17 +219,17 @@ export interface SearchTweetsBookCreateOptions<C extends ClientUnionType> {
   maxResultsPerPage?: number;
   startTime?: Date;
   endTime?: Date;
-  sinceTweet?: TweetResolvable<C>;
-  untilTweet?: TweetResolvable<C>;
+  sinceTweet?: TweetResolvable;
+  untilTweet?: TweetResolvable;
 }
 
-export interface CountTweetsBookCreateOptions<C extends ClientUnionType> {
+export interface CountTweetsBookCreateOptions {
   query: string;
   startTime?: Date;
   endTime?: Date;
   granularity?: Granularity;
-  sinceTweet?: TweetResolvable<C>;
-  untilTweet?: TweetResolvable<C>;
+  sinceTweet?: TweetResolvable;
+  untilTweet?: TweetResolvable;
 }
 
 /**

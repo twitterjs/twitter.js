@@ -4,7 +4,7 @@ import Media from './Media.js';
 import Collection from '../util/Collection.js';
 import SimplifiedUser from './SimplifiedUser.js';
 import SimplifiedTweet from './SimplifiedTweet.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type Client from '../client/Client.js';
 import type {
   APIMedia,
   APIPlace,
@@ -18,43 +18,43 @@ import type {
 /**
  * The class that represents a tweet on Twitter
  */
-export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C> {
+export default class Tweet extends SimplifiedTweet {
   /**
    * The author of the tweet
    */
-  author: SimplifiedUser<C> | null;
+  author: SimplifiedUser | null;
 
   /**
    * The users mentioned in the tweet
    */
-  mentions: Collection<string, SimplifiedUser<C>>;
+  mentions: Collection<string, SimplifiedUser>;
 
   /**
    * The original tweet if this tweet is a reply
    */
-  repliedTo: SimplifiedTweet<C> | null;
+  repliedTo: SimplifiedTweet | null;
 
   /**
    * The original tweet if this tweet is a quote
    */
-  quoted: SimplifiedTweet<C> | null;
+  quoted: SimplifiedTweet | null;
 
   /**
    * The polls in the tweet
    */
-  polls: Collection<string, Poll<C>>;
+  polls: Collection<string, Poll>;
 
   /**
    * The places tagged in the tweet
    */
-  places: Collection<string, Place<C>>;
+  places: Collection<string, Place>;
 
   /**
    * The media contents in the tweet
    */
-  media: Collection<string, Media<C>>;
+  media: Collection<string, Media>;
 
-  constructor(client: ClientInUse<C>, data: GetSingleTweetByIdResponse) {
+  constructor(client: Client, data: GetSingleTweetByIdResponse) {
     super(client, data.data);
 
     this.author = this.#patchAuthor(data.includes?.users) ?? null;
@@ -68,15 +68,15 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  #patchAuthor(users?: Array<APIUser>): SimplifiedUser<C> | undefined {
+  #patchAuthor(users?: Array<APIUser>): SimplifiedUser | undefined {
     if (!users) return;
     const rawAuthor = users.find(user => user.id === this.authorID);
     if (!rawAuthor) return;
     return new SimplifiedUser(this.client, rawAuthor);
   }
 
-  #patchMentions(users?: Array<APIUser>): Collection<string, SimplifiedUser<C>> {
-    const mentionedUsersCollection = new Collection<string, SimplifiedUser<C>>();
+  #patchMentions(users?: Array<APIUser>): Collection<string, SimplifiedUser> {
+    const mentionedUsersCollection = new Collection<string, SimplifiedUser>();
     const mentions = this.entities?.mentions;
     if (!users || !mentions) return mentionedUsersCollection;
     for (const mention of mentions) {
@@ -91,7 +91,7 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
   #patchTweetReferences(
     referenceType: APITweetReferencedTweetType,
     tweets?: Array<APITweet>,
-  ): SimplifiedTweet<C> | undefined {
+  ): SimplifiedTweet | undefined {
     const originalTweetID = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
     if (!originalTweetID || !tweets) return;
     const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetID);
@@ -99,8 +99,8 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
     return new SimplifiedTweet(this.client, rawOriginalTweet);
   }
 
-  #patchPolls(rawPolls?: Array<APIPoll>): Collection<string, Poll<C>> {
-    const pollsCollection = new Collection<string, Poll<C>>();
+  #patchPolls(rawPolls?: Array<APIPoll>): Collection<string, Poll> {
+    const pollsCollection = new Collection<string, Poll>();
     if (!rawPolls) return pollsCollection;
     for (const rawPoll of rawPolls) {
       const poll = new Poll(this.client, rawPoll);
@@ -109,8 +109,8 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
     return pollsCollection;
   }
 
-  #patchPlaces(rawPlaces?: Array<APIPlace>): Collection<string, Place<C>> {
-    const placesCollection = new Collection<string, Place<C>>();
+  #patchPlaces(rawPlaces?: Array<APIPlace>): Collection<string, Place> {
+    const placesCollection = new Collection<string, Place>();
     if (!rawPlaces) return placesCollection;
     for (const rawPlace of rawPlaces) {
       const place = new Place(this.client, rawPlace);
@@ -119,8 +119,8 @@ export default class Tweet<C extends ClientUnionType> extends SimplifiedTweet<C>
     return placesCollection;
   }
 
-  #patchMedia(rawMediaContents?: Array<APIMedia>): Collection<string, Media<C>> {
-    const mediaCollection = new Collection<string, Media<C>>();
+  #patchMedia(rawMediaContents?: Array<APIMedia>): Collection<string, Media> {
+    const mediaCollection = new Collection<string, Media>();
     if (!rawMediaContents) return mediaCollection;
     for (const rawMediaContent of rawMediaContents) {
       const mediaContent = new Media(this.client, rawMediaContent);

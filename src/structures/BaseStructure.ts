@@ -1,18 +1,18 @@
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type Client from '../client/Client';
 
 /**
  * The base class for all structures
  */
-export default class BaseStructure<C extends ClientUnionType> {
+export default class BaseStructure {
   /**
    * The client that initialized this class
    */
-  client: ClientInUse<C>;
+  client: Client;
 
   /**
    * @param client The client this structure belongs to
    */
-  constructor(client: ClientInUse<C>) {
+  constructor(client: Client) {
     Object.defineProperty(this, 'client', { writable: true });
     this.client = client;
   }

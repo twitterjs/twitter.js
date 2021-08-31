@@ -1,13 +1,14 @@
 import { RequestData } from '../misc/Misc.js';
 import BaseStructure from '../BaseStructure.js';
 import { CustomError } from '../../errors/index.js';
-import { CountTweetsBookCreateOptions, TweetResolvable, ClientInUse, ClientUnionType } from '../../typings/index.js';
+import { CountTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
+import type Client from '../../client/Client.js';
 import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
-export default class CountTweetsBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class CountTweetsBook extends BaseStructure {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;
@@ -34,15 +35,15 @@ export default class CountTweetsBook<C extends ClientUnionType> extends BaseStru
 
   untilTweetId: Snowflake | null;
 
-  constructor(client: ClientInUse<C>, options: CountTweetsBookCreateOptions<C>) {
+  constructor(client: Client, options: CountTweetsBookCreateOptions) {
     super(client);
     this.hasMore = true;
     this.query = options.query;
     this.startTime = options.startTime ?? null;
     this.endTime = options.endTime ?? null;
     this.granularity = options.granularity ?? null;
-    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable<ClientUnionType>);
-    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable<ClientUnionType>);
+    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable);
+    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable);
   }
 
   /**

@@ -1,6 +1,5 @@
 // client
-import BearerClient from './client/BearerClient.js';
-import UserContextClient from './client/UserContextClient.js';
+import Client from './client/Client.js';
 
 // errors
 export * from './errors/index.js';
@@ -25,14 +24,4 @@ export * from './util/Constants.js';
 export * from './util/QueryParameters.js';
 export * from './util/Utility.js';
 
-export {
-  BearerClient,
-  UserContextClient,
-  TweetManager,
-  UserManager,
-  SimplifiedTweet,
-  SimplifiedUser,
-  Tweet,
-  User,
-  Collection,
-};
+export { Client, TweetManager, UserManager, SimplifiedTweet, SimplifiedUser, Tweet, User, Collection };

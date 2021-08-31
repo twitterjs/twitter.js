@@ -11,9 +11,9 @@ import {
   TweetUnlikeResponse,
 } from '../structures/misc/Misc.js';
 import SimplifiedTweet from '../structures/SimplifiedTweet.js';
-import UserContextClient from '../client/UserContextClient.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import type { TweetManagerFetchResult, TweetResolvable, ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type Client from '../client/Client.js';
+import type { TweetManagerFetchResult, TweetResolvable } from '../typings/Types.js';
 import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
 import type {
   DeleteTweetsLikeResponse,
@@ -38,16 +38,11 @@ import type {
 /**
  * The manager class that holds API methods for {@link Tweet} objects and stores their cache
  */
-export default class TweetManager<C extends ClientUnionType> extends BaseManager<
-  Snowflake,
-  TweetResolvable<C>,
-  Tweet<C>,
-  C
-> {
+export default class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
   /**
    * @param client The client this manager belongs to
    */
-  constructor(client: ClientInUse<C>) {
+  constructor(client: Client) {
     super(client, Tweet);
   }
 
@@ -56,7 +51,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param tweetResolvable An ID or instance that can be resolved to a tweet object
    * @returns The resolved tweet object
    */
-  override resolve(tweetResolvable: TweetResolvable<C>): Tweet<C> | null {
+  override resolve(tweetResolvable: TweetResolvable): Tweet | null {
     const tweet = super.resolve(tweetResolvable);
     if (tweet) return tweet;
     if (tweetResolvable instanceof SimplifiedTweet) return super.resolve(tweetResolvable.id);
@@ -68,7 +63,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param tweetResolvable An ID or instance that can be resolved to a tweet object
    * @returns The id of the resolved tweet object
    */
-  override resolveID(tweetResolvable: TweetResolvable<C>): Snowflake | null {
+  override resolveID(tweetResolvable: TweetResolvable): Snowflake | null {
     const tweetID = super.resolveID(tweetResolvable);
     if (typeof tweetID === 'string') return tweetID;
     if (tweetResolvable instanceof SimplifiedTweet) return tweetResolvable.id;
@@ -80,14 +75,12 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param options The options for fetching tweets
    * @returns A {@link Tweet} or a {@link Collection} of them as a `Promise`
    */
-  async fetch<T extends FetchTweetOptions<C> | FetchTweetsOptions<C>>(
-    options: T,
-  ): Promise<TweetManagerFetchResult<T, C>> {
+  async fetch<T extends FetchTweetOptions | FetchTweetsOptions>(options: T): Promise<TweetManagerFetchResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('tweet' in options) {
       const tweetID = this.resolveID(options.tweet);
       if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
-      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T, C>>;
+      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
     }
     if ('tweets' in options) {
       if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
@@ -96,7 +89,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
         if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
         return tweetID;
       });
-      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T, C>>;
+      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -106,8 +99,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet to like
    * @returns A {@link TweetLikeResponse} object
    */
-  async like(targetTweet: TweetResolvable<C>): Promise<TweetLikeResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async like(targetTweet: TweetResolvable): Promise<TweetLikeResponse> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'like');
     const loggedInUser = this.client.me;
@@ -125,8 +117,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet to unlike
    * @returns A {@link TweetUnlikeResponse} object
    */
-  async unlike(targetTweet: TweetResolvable<C>): Promise<TweetUnlikeResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async unlike(targetTweet: TweetResolvable): Promise<TweetUnlikeResponse> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
     const loggedInUser = this.client.me;
@@ -140,7 +131,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The reply to hide. This should be a tweet reply to a tweet of the authorized user
    * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async hide(targetTweet: TweetResolvable<C>): Promise<TweetReplyHideUnhideResponse> {
+  async hide(targetTweet: TweetResolvable): Promise<TweetReplyHideUnhideResponse> {
     return this.#editTweetReplyVisibility(targetTweet, true);
   }
 
@@ -149,7 +140,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The reply to unhide. This should be a tweet reply to one of the tweets of the authorized user
    * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async unhide(targetTweet: TweetResolvable<C>): Promise<TweetReplyHideUnhideResponse> {
+  async unhide(targetTweet: TweetResolvable): Promise<TweetReplyHideUnhideResponse> {
     return this.#editTweetReplyVisibility(targetTweet, false);
   }
 
@@ -158,8 +149,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet to retweet
    * @returns A {@link RetweetResponse} object
    */
-  async retweet(targetTweet: TweetResolvable<C>): Promise<RetweetResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async retweet(targetTweet: TweetResolvable): Promise<RetweetResponse> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
     const loggedInUser = this.client.me;
@@ -177,8 +167,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet whose retweet is to be removed
    * @returns A {@link RemovedRetweetResponse} object
    */
-  async unRetweet(targetTweet: TweetResolvable<C>): Promise<RemovedRetweetResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async unRetweet(targetTweet: TweetResolvable): Promise<RemovedRetweetResponse> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const loggedInUser = this.client.me;
@@ -195,7 +184,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet whose retweeters are to be fetched
    * @returns A {@link Collection} of {@link User} objects
    */
-  async fetchRetweetedBy(targetTweet: TweetResolvable<C>): Promise<Collection<Snowflake, User<C>>> {
+  async fetchRetweetedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const queryParameters = this.client.options.queryParameters;
@@ -208,7 +197,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     const data: GetTweetsRetweetingUsersResponse = await this.client._api
       .tweets(targetTweetID)
       .retweeted_by.get(requestData);
-    const retweetedByUsersCollection = new Collection<Snowflake, User<C>>();
+    const retweetedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return retweetedByUsersCollection;
     const rawUsers = data.data;
     const rawIncludes = data.includes;
@@ -224,7 +213,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
    * @param targetTweet The tweet whose liking users are to be fetched
    * @returns A {@link Collection} of {@link User} objects who liked the specified tweet
    */
-  async fetchLikedBy(targetTweet: TweetResolvable<C>): Promise<Collection<Snowflake, User<C>>> {
+  async fetchLikedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
     const queryParameters = this.client.options.queryParameters;
@@ -237,7 +226,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
     const data: GetTweetsLikingUsersResponse = await this.client._api
       .tweets(targetTweetID)
       .liking_users.get(requestData);
-    const likedByUsersCollection = new Collection<Snowflake, User<C>>();
+    const likedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return likedByUsersCollection;
     const rawUsers = data.data;
     const rawIncludes = data.includes;
@@ -250,7 +239,7 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions<C>): Promise<Tweet<C>> {
+  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
       const cachedTweet = this.cache.get(tweetID);
       if (cachedTweet) return cachedTweet;
@@ -271,9 +260,9 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
 
   async #fetchMultipleTweets(
     tweetIDs: Array<Snowflake>,
-    options: FetchTweetsOptions<C>,
-  ): Promise<Collection<Snowflake, Tweet<C>>> {
-    const fetchedTweetCollection = new Collection<Snowflake, Tweet<C>>();
+    options: FetchTweetsOptions,
+  ): Promise<Collection<Snowflake, Tweet>> {
+    const fetchedTweetCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleTweetsByIdsQuery = {
       ids: tweetIDs,
@@ -296,10 +285,9 @@ export default class TweetManager<C extends ClientUnionType> extends BaseManager
   }
 
   async #editTweetReplyVisibility(
-    targetTweet: TweetResolvable<C>,
+    targetTweet: TweetResolvable,
     isHidden: boolean,
   ): Promise<TweetReplyHideUnhideResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
     const targetTweetID = this.resolveID(targetTweet);
     if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
     const body: PutTweetReplyHideUnhideJSONBody = {

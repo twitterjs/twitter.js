@@ -3,13 +3,13 @@ import { RequestData } from '../misc/Misc.js';
 import BaseStructure from '../BaseStructure.js';
 import Collection from '../../util/Collection.js';
 import { CustomError } from '../../errors/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
+import type Client from '../../client/Client.js';
 import type { GetUsersFollowersQuery, GetUsersFollowersResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class used for keeping track of followers of a twitter user
  */
-export default class FollowersBook<C extends ClientUnionType> extends BaseStructure<C> {
+export default class FollowersBook extends BaseStructure {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -35,7 +35,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
    */
   hasMore: boolean;
 
-  constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userID: Snowflake, maxResultsPerPage?: number) {
     super(client);
     this.userID = userID;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
@@ -46,7 +46,7 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
    * Fetches the next page of the book if there is one.
    * @returns A {@link Collection} of users that are following the specified user
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -59,15 +59,15 @@ export default class FollowersBook<C extends ClientUnionType> extends BaseStruct
    * Fetches the previous page of the book if there is one.
    * @returns A {@link Collection} of users that are following the specified user
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, User<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, User<C>>> {
-    const followersCollection = new Collection<Snowflake, User<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
+    const followersCollection = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersFollowersQuery = {
       expansions: queryParameters?.userExpansions,

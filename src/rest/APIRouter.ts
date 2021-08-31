@@ -1,5 +1,4 @@
 import type RESTManager from './RESTManager.js';
-import type { ClientUnionType } from '../typings/Types.js';
 import type { RequestData } from '../structures/misc/Misc.js';
 
 /* eslint-disable */
@@ -7,7 +6,7 @@ const noop = () => { };
 const methods = ['get', 'post', 'delete', 'patch', 'put'];
 const reflectors = ['toString'];
 
-export function buildRoute<C extends ClientUnionType>(manager: RESTManager<C>): any {
+export function buildRoute(manager: RESTManager): any {
   const path = [''];
   const handler = {
     get(target: any, property: string): any {

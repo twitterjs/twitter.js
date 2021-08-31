@@ -8,25 +8,24 @@ import type { Response } from 'node-fetch';
 import type APIRequest from './APIRequest.js';
 import type RESTManager from './RESTManager.js';
 import type { APIProblem } from 'twitter-types';
-import type { ClientUnionType } from '../typings/Types.js';
 
-export default class RequestHandler<C extends ClientUnionType> {
+export default class RequestHandler {
   /**
    * The manager of that initiated this class
    */
-  manager: RESTManager<C>;
+  manager: RESTManager;
 
   /**
    * The queue for the requests
    */
   queue: AsyncQueue;
 
-  constructor(manager: RESTManager<C>) {
+  constructor(manager: RESTManager) {
     this.manager = manager;
     this.queue = new AsyncQueue();
   }
 
-  async push(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
+  async push(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
     await this.queue.wait();
     try {
       return await this.execute(request);
@@ -35,7 +34,7 @@ export default class RequestHandler<C extends ClientUnionType> {
     }
   }
 
-  async execute(request: APIRequest<C>): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
+  async execute(request: APIRequest): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
     let res: Response;
     try {
       res = await request.make();
