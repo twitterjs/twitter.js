@@ -18,6 +18,7 @@ import {
   UserUnmuteResponse,
 } from '../structures/misc/Misc.js';
 import type { Client } from '../client/Client.js';
+import type { Tweet } from '../structures/Tweet.js';
 import type { UserManagerFetchByUsernameResult, UserManagerFetchResult, UserResolvable } from '../typings/Types.js';
 import type {
   FetchUserByUsernameOptions,
@@ -259,55 +260,71 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   }
 
   /**
-   * Creates a {@link FollowingsBook} object for fetching users followed by a user.
+   * Creates a {@link FollowingsBook} object for fetching users followed by a given user.
    * @param targetUser The user whose following users are to be fetched
    * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowingsBook} object
+   * @returns A tuple containing {@link FollowingsBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowingBook(targetUser: UserResolvable, maxResultsPerPage?: number): FollowingsBook {
+  async fetchFollowingBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create following book for');
     const followingBook = new FollowingsBook(this.client, targetUserID, maxResultsPerPage);
-    return followingBook;
+    const firstPage = await followingBook.fetchNextPage();
+    return [followingBook, firstPage];
   }
 
   /**
-   * Creates a {@link LikedTweetsBook} object for fetching liked tweet of a user.
+   * Creates a {@link LikedTweetsBook} object for fetching tweets liked by a user
    * @param targetUser The user whose liked tweet are to be fetched
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link LikedTweetsBook} object
+   * @returns A tuple containing {@link LikedTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createLikedTweetsBook(targetUser: UserResolvable, maxResultsPerPage?: number): LikedTweetsBook {
+  async fetchLikedTweetsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[LikedTweetsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create liked book for');
     const likedTweetBook = new LikedTweetsBook(this.client, targetUserID, maxResultsPerPage);
-    return likedTweetBook;
+    const firstPage = await likedTweetBook.fetchNextPage();
+    return [likedTweetBook, firstPage];
   }
 
   /**
-   * Creates a {@link TweetsBook} object for fetching tweets composed by a user.
+   * Creates a {@link ComposedTweetsBook} object for fetching tweets composed by a user.
    * @param targetUser The user whose tweets are to be fetched
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link TweetsBook} object
+   * @returns A tuple containing {@link ComposedTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createTweetsBook(targetUser: UserResolvable, maxResultsPerPage?: number): ComposedTweetsBook {
+  async fetchTweetsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[ComposedTweetsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
     const tweetsBook = new ComposedTweetsBook(this.client, targetUserID, maxResultsPerPage);
-    return tweetsBook;
+    const firstPage = await tweetsBook.fetchNextPage();
+    return [tweetsBook, firstPage];
   }
 
   /**
    * Creates a {@link MentionsBook} object for fetching tweets mentioning a user.
    * @param targetUser The mentioned user in the tweets
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link MentionsBook} object
+   * @returns A tuple containing {@link MentionsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createMentionsBook(targetUser: UserResolvable, maxResultsPerPage?: number): MentionsBook {
+  async fetchMentionsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[MentionsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create mentions book for');
     const mentionsBook = new MentionsBook(this.client, targetUserID, maxResultsPerPage);
-    return mentionsBook;
+    const firstPage = await mentionsBook.fetchNextPage();
+    return [mentionsBook, firstPage];
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

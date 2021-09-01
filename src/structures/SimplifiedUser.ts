@@ -174,9 +174,9 @@ export class SimplifiedUser extends BaseStructure {
   /**
    * Creates a {@link FollowingsBook} object for fetching users followed by this user.
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
-   * @returns A {@link FollowingsBook} object
+   * @returns A tuple containing {@link FollowingsBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowingBook(maxResultsPerPage?: number): FollowingsBook {
-    return this.client.users.createFollowingBook(this.id, maxResultsPerPage);
+  async fetchFollowingBook(maxResultsPerPage?: number): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
+    return this.client.users.fetchFollowingBook(this.id, maxResultsPerPage);
   }
 }

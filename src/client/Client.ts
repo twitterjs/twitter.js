@@ -13,8 +13,14 @@ import { SampleTweetStream } from '../streams/SampledTweetStream.js';
 import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
 import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
 import type { User } from '../structures/User.js';
+import type { Tweet } from '../structures/Tweet.js';
 import type { Collection } from '../util/Collection.js';
-import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse, Snowflake } from 'twitter-types';
+import type {
+  GetSingleUserByUsernameQuery,
+  GetSingleUserByUsernameResponse,
+  GetTweetCountsResponse,
+  Snowflake,
+} from 'twitter-types';
 import type { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
 import type {
   ClientCredentialsInterface,
@@ -147,19 +153,27 @@ export class Client extends BaseClient {
   /**
    * Creates a {@link SearchTweetsBook} object for fetching tweets using search query.
    * @param options The options for creating the book
-   * @returns A {@link SearchTweetsBook} object
+   * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createSearchTweetsBook(options: SearchTweetsBookCreateOptions): SearchTweetsBook {
-    return new SearchTweetsBook(this, options);
+  async fetchSearchTweetsBook(
+    options: SearchTweetsBookCreateOptions,
+  ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
+    const searchTweetsBook = new SearchTweetsBook(this, options);
+    const firstPage = await searchTweetsBook.fetchNextPage();
+    return [searchTweetsBook, firstPage];
   }
 
   /**
-   * Creates a {@link CountTweetsBook} object for fetching number of tweets matching a query
+   * Creates a {@link CountTweetsBook} object for fetching number of tweets matching a query.
    * @param options The options for creating the book
-   * @returns
+   * @returns TODO
    */
-  createCountTweetsBook(options: CountTweetsBookCreateOptions): CountTweetsBook {
-    return new CountTweetsBook(this, options);
+  async fetchCountTweetsBook(
+    options: CountTweetsBookCreateOptions,
+  ): Promise<[CountTweetsBook, GetTweetCountsResponse]> {
+    const countTweetsBook = new CountTweetsBook(this, options);
+    const firstPage = await countTweetsBook.fetchNextPage();
+    return [countTweetsBook, firstPage];
   }
 
   /**
