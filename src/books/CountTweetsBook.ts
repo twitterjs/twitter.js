@@ -1,20 +1,20 @@
-import { RequestData } from '../misc/Misc.js';
-import { BaseStructure } from '../BaseStructure.js';
-import { CustomError } from '../../errors/index.js';
-import { CountTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
-import type { Client } from '../../client/Client.js';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client/Client.js';
+import type { CountTweetsBookCreateOptions } from '../typings/index.js';
 import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
 
 /**
- * A class for fetching tweets using search query
+ * A class for fetching number of tweets matching a search query
  */
-export class CountTweetsBook extends BaseStructure {
+export class CountTweetsBook extends BaseBook {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;
 
   /**
-   * Whether there are more pages of tweets to be fetched
+   * Whether there are more pages to be fetched
    *
    * **Note:** Use this as a check for deciding whether to fetch more pages
    */
@@ -42,8 +42,8 @@ export class CountTweetsBook extends BaseStructure {
     this.startTime = options.startTime ?? null;
     this.endTime = options.endTime ?? null;
     this.granularity = options.granularity ?? null;
-    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable);
-    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable);
+    this.sinceTweetId = typeof options.sinceTweet !== 'undefined' ? client.tweets.resolveID(options.sinceTweet) : null;
+    this.untilTweetId = typeof options.untilTweet !== 'undefined' ? client.tweets.resolveID(options.untilTweet) : null;
   }
 
   /**

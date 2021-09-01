@@ -1,13 +1,13 @@
 import { User } from '../structures/User.js';
 import { BaseManager } from './BaseManager.js';
 import { Collection } from '../util/Collection.js';
-import { TweetsBook } from '../structures/books/TweetsBook.js';
+import { MentionsBook } from '../books/MentionsBook.js';
+import { FollowersBook } from '../books/FollowersBook.js';
+import { FollowingsBook } from '../books/FollowingsBook.js';
+import { LikedTweetsBook } from '../books/LikedTweetsBook.js';
 import { SimplifiedUser } from '../structures/SimplifiedUser.js';
-import { MentionsBook } from '../structures/books/MentionsBook.js';
-import { FollowersBook } from '../structures/books/FollowersBook.js';
-import { FollowingsBook } from '../structures/books/FollowingsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import { LikedTweetsBook } from '../structures/books/LikedTweetsBook.js';
+import { ComposedTweetsBook } from '../books/ComposedTweetsBook.js';
 import {
   RequestData,
   UserBlockResponse,
@@ -245,13 +245,17 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * Creates a {@link FollowersBook} object for fetching followers of a user.
    * @param targetUser The user whose followers are to be fetched
    * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowersBook} object
+   * @returns A tuple containing {@link FollowersBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowersBook(targetUser: UserResolvable, maxResultsPerPage?: number): FollowersBook {
+  async fetchFollowersBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[FollowersBook, Collection<Snowflake, User>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create followers book for');
     const followersBook = new FollowersBook(this.client, targetUserID, maxResultsPerPage);
-    return followersBook;
+    const firstPage = await followersBook.fetchNextPage();
+    return [followersBook, firstPage];
   }
 
   /**
@@ -286,10 +290,10 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
    * @returns A {@link TweetsBook} object
    */
-  createTweetsBook(targetUser: UserResolvable, maxResultsPerPage?: number): TweetsBook {
+  createTweetsBook(targetUser: UserResolvable, maxResultsPerPage?: number): ComposedTweetsBook {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
-    const tweetsBook = new TweetsBook(this.client, targetUserID, maxResultsPerPage);
+    const tweetsBook = new ComposedTweetsBook(this.client, targetUserID, maxResultsPerPage);
     return tweetsBook;
   }
 

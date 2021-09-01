@@ -1,13 +1,21 @@
-import { RESTManager } from '../rest/RESTManager.js';
+import { BaseClient } from './BaseClient.js';
+import { BlocksBook } from '../books/BlocksBook.js';
 import { ClientEvents } from '../util/Constants.js';
+import { RESTManager } from '../rest/RESTManager.js';
+import { ClientUser } from '../structures/ClientUser.js';
 import { UserManager } from '../managers/UserManager.js';
-import { CustomError, CustomTypeError } from '../errors/index.js';
 import { TweetManager } from '../managers/TweetManager.js';
 import { SpaceManager } from '../managers/SpaceManager.js';
+import { CountTweetsBook } from '../books/CountTweetsBook.js';
+import { SearchTweetsBook } from '../books/SearchTweetsBook.js';
+import { CustomError, CustomTypeError } from '../errors/index.js';
 import { SampleTweetStream } from '../streams/SampledTweetStream.js';
 import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
-import { CountTweetsBook } from '../structures/books/CountTweetsBook.js';
-import { SearchTweetsBook } from '../structures/books/SearchTweetsBook.js';
+import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
+import type { User } from '../structures/User.js';
+import type { Collection } from '../util/Collection.js';
+import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse, Snowflake } from 'twitter-types';
+import type { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
 import type {
   ClientCredentialsInterface,
   ClientEventsMapping,
@@ -15,12 +23,6 @@ import type {
   CountTweetsBookCreateOptions,
   SearchTweetsBookCreateOptions,
 } from '../typings/Interfaces.js';
-import { BaseClient } from './BaseClient.js';
-import { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
-import { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
-import { BlocksBook } from '../structures/books/BlocksBook.js';
-import { ClientUser } from '../structures/ClientUser.js';
-import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
 
 /**
  * The core class that exposes library APIs for making bearer token authorized requests
@@ -163,13 +165,14 @@ export class Client extends BaseClient {
   /**
    * Creates a {@link BlocksBook} object for fetching users blocked by the authorized user.
    * @param maxResultsPerPage The maximum amount of users to fetch per page
-   * @returns A {@link BlocksBook} object
+   * @returns A tuple containing {@link BlocksBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createBlocksBook(maxResultsPerPage?: number): BlocksBook {
+  async fetchBlocksBook(maxResultsPerPage?: number): Promise<[BlocksBook, Collection<Snowflake, User>]> {
     const userID = this.me?.id;
     if (!userID) throw new CustomError('USER_RESOLVE_ID', 'create blocks book for');
     const blocksBook = new BlocksBook(this, userID, maxResultsPerPage);
-    return blocksBook;
+    const firstPage = await blocksBook.fetchNextPage();
+    return [blocksBook, firstPage];
   }
 
   override on<K extends keyof ClientEventsMapping | symbol>(

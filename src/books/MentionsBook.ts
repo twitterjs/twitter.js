@@ -1,15 +1,15 @@
-import { Tweet } from '../Tweet.js';
-import { RequestData } from '../misc/Misc.js';
-import { BaseStructure } from '../BaseStructure.js';
-import { Collection } from '../../util/Collection.js';
-import { CustomError } from '../../errors/index.js';
-import type { Client } from '../../client/Client.js';
-import type { GetUsersLikedTweetsQuery, GetUsersLikedTweetsResponse, Snowflake } from 'twitter-types';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { Collection } from '../util/Collection.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client/Client.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { GetUsersMentionTweetsQuery, GetUsersMentionTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of liked tweets of a twitter user
+ * A class for fetching tweets that mention a twitter user
  */
-export class LikedTweetsBook extends BaseStructure {
+export class MentionsBook extends BaseBook {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -19,7 +19,7 @@ export class LikedTweetsBook extends BaseStructure {
   /**
    * The ID of the user this book belongs to
    */
-  userID: Snowflake;
+  userId: Snowflake;
 
   /**
    * The maximum amount of tweets that will be fetched per page.
@@ -35,16 +35,16 @@ export class LikedTweetsBook extends BaseStructure {
    */
   hasMore: boolean;
 
-  constructor(client: Client, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
     super(client);
-    this.userID = userID;
+    this.userId = userId;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of tweets liked by the specified user
+   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
@@ -57,7 +57,7 @@ export class LikedTweetsBook extends BaseStructure {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of tweets liked by the specified user
+   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
@@ -67,9 +67,9 @@ export class LikedTweetsBook extends BaseStructure {
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const likedTweetsCollection = new Collection<Snowflake, Tweet>();
+    const mentioningTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersLikedTweetsQuery = {
+    const query: GetUsersMentionTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       pagination_token: token,
@@ -80,16 +80,16 @@ export class LikedTweetsBook extends BaseStructure {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
-    const data: GetUsersLikedTweetsResponse = await this.client._api.users(this.userID).liked_tweets.get(requestData);
+    const data: GetUsersMentionTweetsResponse = await this.client._api.users(this.userId).mentions.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
-      likedTweetsCollection.set(tweet.id, tweet);
+      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
+      mentioningTweetsCollection.set(tweet.id, tweet);
     }
-    return likedTweetsCollection;
+    return mentioningTweetsCollection;
   }
 }

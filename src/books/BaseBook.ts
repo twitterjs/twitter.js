@@ -1,9 +1,9 @@
 import type { Client } from '../client/Client.js';
 
 /**
- * The base class for all streams
+ * The base class for all books
  */
-export class BaseStream {
+export class BaseBook {
   /**
    * The client that initialized this class
    */

@@ -1,16 +1,16 @@
-import { Tweet } from '../Tweet.js';
-import { RequestData } from '../misc/Misc.js';
-import { BaseStructure } from '../BaseStructure.js';
-import { Collection } from '../../util/Collection.js';
-import { CustomError } from '../../errors/index.js';
-import { SearchTweetsBookCreateOptions, TweetResolvable } from '../../typings/index.js';
-import type { Client } from '../../client/Client.js';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { Collection } from '../util/Collection.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { Client } from '../client/Client.js';
+import type { SearchTweetsBookCreateOptions } from '../typings/Interfaces.js';
 import type { GetTweetSearchQuery, GetTweetSearchResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
-export class SearchTweetsBook extends BaseStructure {
+export class SearchTweetsBook extends BaseBook {
   #nextToken?: string;
 
   #hasBeenInitialized?: boolean;
@@ -49,13 +49,13 @@ export class SearchTweetsBook extends BaseStructure {
     this.query = options.query;
     this.startTime = options.startTime ?? null;
     this.endTime = options.endTime ?? null;
-    this.sinceTweetId = this.client.tweets.resolveID(options.sinceTweet as TweetResolvable);
-    this.untilTweetId = this.client.tweets.resolveID(options.untilTweet as TweetResolvable);
+    this.sinceTweetId = typeof options.sinceTweet !== 'undefined' ? client.tweets.resolveID(options.sinceTweet) : null;
+    this.untilTweetId = typeof options.untilTweet !== 'undefined' ? client.tweets.resolveID(options.untilTweet) : null;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of tweets matching the query
+   * @returns A {@link Collection} of {@link Tweet} objects matching the search query
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
@@ -94,7 +94,7 @@ export class SearchTweetsBook extends BaseStructure {
     if (!rawTweets) return fetchedTweetsCollection;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
+      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
       fetchedTweetsCollection.set(tweet.id, tweet);
     }
     return fetchedTweetsCollection;

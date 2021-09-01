@@ -1,9 +1,11 @@
 import { BaseStructure } from './BaseStructure.js';
 import { UserPublicMetrics } from './misc/Misc.js';
 import { UserEntities } from './misc/UserEntities.js';
+import { FollowersBook } from '../books/FollowersBook.js';
+import { FollowingsBook } from '../books/FollowingsBook.js';
+import type { User } from './User.js';
 import type { Client } from '../client/Client.js';
-import type { FollowersBook } from './books/FollowersBook.js';
-import type { FollowingsBook } from './books/FollowingsBook.js';
+import type { Collection } from '../util/Collection.js';
 import type { APIUser, Snowflake } from 'twitter-types';
 import type {
   UserFollowResponse,
@@ -163,10 +165,10 @@ export class SimplifiedUser extends BaseStructure {
   /**
    * Creates a {@link FollowersBook} object for fetching followers of this user.
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
-   * @returns A {@link FollowersBook} object
+   * @returns A tuple containing {@link FollowersBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowersBook(maxResultsPerPage?: number): FollowersBook {
-    return this.client.users.createFollowersBook(this.id, maxResultsPerPage) as FollowersBook;
+  async fetchFollowersBook(maxResultsPerPage?: number): Promise<[FollowersBook, Collection<Snowflake, User>]> {
+    return this.client.users.fetchFollowersBook(this.id, maxResultsPerPage);
   }
 
   /**
@@ -175,6 +177,6 @@ export class SimplifiedUser extends BaseStructure {
    * @returns A {@link FollowingsBook} object
    */
   createFollowingBook(maxResultsPerPage?: number): FollowingsBook {
-    return this.client.users.createFollowingBook(this.id, maxResultsPerPage) as FollowingsBook;
+    return this.client.users.createFollowingBook(this.id, maxResultsPerPage);
   }
 }

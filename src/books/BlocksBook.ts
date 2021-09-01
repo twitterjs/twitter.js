@@ -1,15 +1,15 @@
-import { User } from '../User.js';
-import { RequestData } from '../misc/Misc.js';
-import { BaseStructure } from '../BaseStructure.js';
-import { Collection } from '../../util/Collection.js';
-import { CustomError } from '../../errors/index.js';
-import type { Client } from '../../client/Client.js';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { Collection } from '../util/Collection.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { User } from '../structures/User.js';
+import type { Client } from '../client/Client.js';
 import type { GetUsersBlockingQuery, GetUsersBlockingResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of users blocked by the authorized user
+ * A class for fetching users blocked by the authorized user
  */
-export class BlocksBook extends BaseStructure {
+export class BlocksBook extends BaseBook {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -19,10 +19,10 @@ export class BlocksBook extends BaseStructure {
   /**
    * The ID of the user this book belongs to
    */
-  userID: Snowflake;
+  userId: Snowflake;
 
   /**
-   * The maximum amount of users that will be fetched per page.
+   * The maximum amount of users that will be fetched per page
    *
    * **Note:** This is the max count and will **not** always be equal to the number of users fetched in a page
    */
@@ -35,16 +35,16 @@ export class BlocksBook extends BaseStructure {
    */
   hasMore: boolean;
 
-  constructor(client: Client, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
     super(client);
-    this.userID = userID;
+    this.userId = userId;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of users that are blocked by the authorized user
+   * @returns A {@link Collection} of {@link User} objects that have been blocked by the authorized user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#hasBeenInitialized) {
@@ -57,7 +57,7 @@ export class BlocksBook extends BaseStructure {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of users that are blocked by the authorized user
+   * @returns A {@link Collection} of {@link User} objects that have been blocked by the authorized user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
@@ -74,10 +74,10 @@ export class BlocksBook extends BaseStructure {
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
       pagination_token: token,
+      max_results: this.maxResultsPerPage ?? undefined,
     };
-    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
-    const data: GetUsersBlockingResponse = await this.client._api.users(this.userID).blocking.get(requestData);
+    const data: GetUsersBlockingResponse = await this.client._api.users(this.userId).blocking.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
@@ -85,7 +85,7 @@ export class BlocksBook extends BaseStructure {
     if (!rawUsers) return blockedUsersCollection;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
+      const user = this.client.users.add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
       blockedUsersCollection.set(user.id, user);
     }
     return blockedUsersCollection;
