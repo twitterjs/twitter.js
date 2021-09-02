@@ -9,7 +9,7 @@ import { SpaceManager } from '../managers/SpaceManager.js';
 import { CountTweetsBook } from '../books/CountTweetsBook.js';
 import { SearchTweetsBook } from '../books/SearchTweetsBook.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import { SampleTweetStream } from '../streams/SampledTweetStream.js';
+import { SampledTweetStream } from '../streams/SampledTweetStream.js';
 import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
 import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
 import type { User } from '../structures/User.js';
@@ -71,7 +71,7 @@ export class Client extends BaseClient {
 
   spaces: SpaceManager;
 
-  sampledTweets: SampleTweetStream;
+  sampledTweets: SampledTweetStream;
 
   filteredTweets: FilteredTweetStream;
 
@@ -93,7 +93,7 @@ export class Client extends BaseClient {
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
     this.spaces = new SpaceManager(this);
-    this.sampledTweets = new SampleTweetStream(this);
+    this.sampledTweets = new SampledTweetStream(this);
     this.filteredTweets = new FilteredTweetStream(this);
   }
 

@@ -5,7 +5,7 @@ import { RequestData } from '../structures/misc/Misc.js';
 import type { Client } from '../client/Client.js';
 import type { GetSampledTweetStreamQuery } from 'twitter-types';
 
-export class SampleTweetStream extends BaseStream {
+export class SampledTweetStream extends BaseStream {
   constructor(client: Client) {
     super(client);
 

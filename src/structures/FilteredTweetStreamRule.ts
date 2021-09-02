@@ -2,7 +2,7 @@ import { BaseStructure } from './BaseStructure.js';
 import type { Client } from '../client/Client.js';
 import type { APIFilteredTweetStreamRule, Snowflake } from 'twitter-types';
 
-export default class FilteredTweetStreamRule extends BaseStructure {
+export class FilteredTweetStreamRule extends BaseStructure {
   /**
    * The id of the rule
    */
