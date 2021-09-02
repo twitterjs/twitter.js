@@ -62,7 +62,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
    * @param data The raw data returned by the API for this structure
    * @param cacheAfterFetching Whether to store the structure in the manager's cache
    */
-  add(id: K, data: unknown, cacheAfterFetching = true): T {
+  add<RawData>(id: K, data: RawData, cacheAfterFetching = true): T {
     const entry = new this._holds(this.client, data);
     if (cacheAfterFetching) this.cache.set(id, entry);
     return entry;
