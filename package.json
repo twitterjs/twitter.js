@@ -6,8 +6,7 @@
   "scripts": {
     "dev:build": "tsc -w",
     "build": "tsc",
-    "docs": "typedoc",
-    "test": "node test/test.js"
+    "docs": "typedoc"
   },
   "repository": {
     "type": "git",
@@ -16,7 +15,10 @@
   "keywords": [
     "twitter.js",
     "twitter",
-    "tjs"
+    "tjs",
+    "typescript",
+    "bots",
+    "api"
   ],
   "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
   "license": "Apache-2.0",
