@@ -1,5 +1,5 @@
 import { CustomError } from '../../errors/index.js';
-import type { ClientCredentialsInterface } from '../../typings/Interfaces';
+import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings/Interfaces';
 import type {
   APIPlaceGeo,
   APIPlaceGeoBoundingBox,
@@ -27,26 +27,32 @@ import type {
 /**
  * The class for storing data required for generating an API request
  */
-export class RequestData<Q, B> {
+export class RequestData<Q = undefined, B = undefined> {
   /**
    * The query for the request
    */
-  query: Q;
+  query?: Q;
 
   /**
    * The body of the request
    */
-  body: B;
+  body?: B;
 
   /**
    * Whether the endpoint responds with a stream of data over persisent http connection
    */
   isStreaming?: boolean;
 
-  constructor(query: Q, body: B, isStreaming?: boolean) {
-    this.query = query;
-    this.body = body;
-    this.isStreaming = isStreaming;
+  /**
+   * Whether the endpoint need user context authorization
+   */
+  isUserContext?: boolean;
+
+  constructor(data: RequestDataOptions<Q, B>) {
+    this.query = data.query;
+    this.body = data.body;
+    this.isStreaming = data.isStreaming;
+    this.isUserContext = data.isUserContext;
   }
 }
 
@@ -297,6 +303,7 @@ export class ClientCredentials {
   accessToken: string;
   accessTokenSecret: string;
   username: string;
+  bearerToken: string;
 
   constructor(data: ClientCredentialsInterface) {
     this.#validate(data);
@@ -305,6 +312,7 @@ export class ClientCredentials {
     this.accessToken = data.accessToken;
     this.accessTokenSecret = data.accessTokenSecret;
     this.username = data.username;
+    this.bearerToken = data.bearerToken;
   }
 
   #validate({
@@ -313,13 +321,15 @@ export class ClientCredentials {
     accessToken,
     accessTokenSecret,
     username,
+    bearerToken,
   }: ClientCredentialsInterface): void {
     if (
       typeof consumerKey !== 'string' ||
       typeof consumerSecret !== 'string' ||
       typeof accessToken !== 'string' ||
       typeof accessTokenSecret !== 'string' ||
-      typeof username !== 'string'
+      typeof username !== 'string' ||
+      typeof bearerToken !== 'string'
     ) {
       throw new CustomError('CREDENTIALS_NOT_STRING');
     }

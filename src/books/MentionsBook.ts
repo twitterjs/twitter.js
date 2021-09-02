@@ -1,15 +1,15 @@
-import Tweet from '../Tweet.js';
-import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
-import { CustomError } from '../../errors/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { Collection } from '../util/Collection.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client/Client.js';
+import type { Tweet } from '../structures/Tweet.js';
 import type { GetUsersMentionTweetsQuery, GetUsersMentionTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of tweets that mention a twitter user
+ * A class for fetching tweets that mention a twitter user
  */
-export default class MentionsBook<C extends ClientUnionType> extends BaseStructure<C> {
+export class MentionsBook extends BaseBook {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -19,7 +19,7 @@ export default class MentionsBook<C extends ClientUnionType> extends BaseStructu
   /**
    * The ID of the user this book belongs to
    */
-  userID: Snowflake;
+  userId: Snowflake;
 
   /**
    * The maximum amount of tweets that will be fetched per page.
@@ -35,18 +35,18 @@ export default class MentionsBook<C extends ClientUnionType> extends BaseStructu
    */
   hasMore: boolean;
 
-  constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
     super(client);
-    this.userID = userID;
+    this.userId = userId;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of tweets mentioning the specified user
+   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -57,17 +57,17 @@ export default class MentionsBook<C extends ClientUnionType> extends BaseStructu
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of tweets mentioning the specified user
+   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
-    const mentioningTweetsCollection = new Collection<Snowflake, Tweet<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
+    const mentioningTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetUsersMentionTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -79,15 +79,15 @@ export default class MentionsBook<C extends ClientUnionType> extends BaseStructu
       'user.fields': queryParameters?.userFields,
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    const requestData = new RequestData(query, null);
-    const data: GetUsersMentionTweetsResponse = await this.client._api.users(this.userID).mentions.get(requestData);
+    const requestData = new RequestData({ query });
+    const data: GetUsersMentionTweetsResponse = await this.client._api.users(this.userId).mentions.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
+      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
       mentioningTweetsCollection.set(tweet.id, tweet);
     }
     return mentioningTweetsCollection;

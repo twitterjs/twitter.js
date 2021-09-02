@@ -1,14 +1,13 @@
-import User from '../structures/User.js';
-import BaseManager from './BaseManager.js';
-import Collection from '../util/Collection.js';
-import TweetsBook from '../structures/books/TweetsBook.js';
-import SimplifiedUser from '../structures/SimplifiedUser.js';
-import UserContextClient from '../client/UserContextClient.js';
-import MentionsBook from '../structures/books/MentionsBook.js';
-import FollowersBook from '../structures/books/FollowersBook.js';
-import FollowingsBook from '../structures/books/FollowingsBook.js';
+import { User } from '../structures/User.js';
+import { BaseManager } from './BaseManager.js';
+import { Collection } from '../util/Collection.js';
+import { MentionsBook } from '../books/MentionsBook.js';
+import { FollowersBook } from '../books/FollowersBook.js';
+import { FollowingsBook } from '../books/FollowingsBook.js';
+import { LikedTweetsBook } from '../books/LikedTweetsBook.js';
+import { SimplifiedUser } from '../structures/SimplifiedUser.js';
 import { CustomError, CustomTypeError } from '../errors/index.js';
-import LikedTweetsBook from '../structures/books/LikedTweetsBook.js';
+import { ComposedTweetsBook } from '../books/ComposedTweetsBook.js';
 import {
   RequestData,
   UserBlockResponse,
@@ -18,13 +17,9 @@ import {
   UserUnfollowResponse,
   UserUnmuteResponse,
 } from '../structures/misc/Misc.js';
-import type {
-  ClientInUse,
-  ClientUnionType,
-  UserManagerFetchByUsernameResult,
-  UserManagerFetchResult,
-  UserResolvable,
-} from '../typings/Types.js';
+import type { Client } from '../client/Client.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { UserManagerFetchByUsernameResult, UserManagerFetchResult, UserResolvable } from '../typings/Types.js';
 import type {
   FetchUserByUsernameOptions,
   FetchUserOptions,
@@ -55,16 +50,11 @@ import type {
 /**
  * The manager class that holds API methods for {@link User} objects and stores their cache
  */
-export default class UserManager<C extends ClientUnionType> extends BaseManager<
-  Snowflake,
-  UserResolvable<C>,
-  User<C>,
-  C
-> {
+export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   /**
    * @param client The client this manager belongs to
    */
-  constructor(client: ClientInUse<C>) {
+  constructor(client: Client) {
     super(client, User);
   }
 
@@ -73,7 +63,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param userResolvable An ID or instance that can be resolved to a user object
    * @returns The resolved user object
    */
-  override resolve(userResolvable: UserResolvable<C>): User<C> | null {
+  override resolve(userResolvable: UserResolvable): User | null {
     const user = super.resolve(userResolvable);
     if (user) return user;
     if (userResolvable instanceof SimplifiedUser) return super.resolve(userResolvable.id);
@@ -85,7 +75,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param userResolvable An ID or instance that can be resolved to a user object
    * @returns The id of the resolved user object
    */
-  override resolveID(userResolvable: UserResolvable<C>): Snowflake | null {
+  override resolveID(userResolvable: UserResolvable): Snowflake | null {
     const userID = super.resolveID(userResolvable);
     if (typeof userID === 'string') return userID;
     if (userResolvable instanceof SimplifiedUser) return userResolvable.id;
@@ -97,12 +87,12 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param options The options for fetching users
    * @returns A {@link User} or a {@link Collection} of them as a `Promise`
    */
-  async fetch<T extends FetchUserOptions<C> | FetchUsersOptions<C>>(options: T): Promise<UserManagerFetchResult<T, C>> {
+  async fetch<T extends FetchUserOptions | FetchUsersOptions>(options: T): Promise<UserManagerFetchResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('user' in options) {
       const userID = this.resolveID(options.user);
       if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
-      return this.#fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T, C>>;
+      return this.#fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T>>;
     }
     if ('users' in options) {
       if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
@@ -111,7 +101,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
         if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
         return userID;
       });
-      return this.#fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T, C>>;
+      return this.#fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -125,12 +115,12 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    */
   async fetchByUsername<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions>(
     options: T,
-  ): Promise<UserManagerFetchByUsernameResult<T, C>> {
+  ): Promise<UserManagerFetchByUsernameResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('username' in options) {
       const { username } = options;
       if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
-      return this.#fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T, C>>;
+      return this.#fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
     if ('usernames' in options) {
       if (!Array.isArray(options.usernames)) throw new CustomTypeError('INVALID_TYPE', 'usernames', 'array', true);
@@ -139,7 +129,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
           throw new CustomTypeError('INVALID_TYPE', 'username in the usernames array', 'string', false);
         return username;
       });
-      return this.#fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T, C>>;
+      return this.#fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -149,8 +139,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to follow
    * @returns A {@link UserFollowResponse} object
    */
-  async follow(targetUser: UserResolvable<C>): Promise<UserFollowResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async follow(targetUser: UserResolvable): Promise<UserFollowResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
@@ -158,7 +147,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     const body: PostUsersFollowingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
     return new UserFollowResponse(data);
   }
@@ -168,16 +157,16 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to unfollow
    * @returns A {@link UserUnfollowResponse} object
    */
-  async unfollow(targetUser: UserResolvable<C>): Promise<UserUnfollowResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async unfollow(targetUser: UserResolvable): Promise<UserUnfollowResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersFollowingResponse = await this.client._api
       .users(loggedInUser.id)
       .following(targetUserID)
-      .delete();
+      .delete(requestData);
     return new UserUnfollowResponse(data);
   }
 
@@ -186,8 +175,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to block
    * @returns A {@link UserBlockResponse} object
    */
-  async block(targetUser: UserResolvable<C>): Promise<UserBlockResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async block(targetUser: UserResolvable): Promise<UserBlockResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'block');
     const loggedInUser = this.client.me;
@@ -195,7 +183,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     const body: PostUsersBlockingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
@@ -205,16 +193,16 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to unblock
    * @returns A {@link UserUnblockResponse} object
    */
-  async unblock(targetUser: UserResolvable<C>): Promise<UserUnblockResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async unblock(targetUser: UserResolvable): Promise<UserUnblockResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unblock');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersBlockingResponse = await this.client._api
       .users(loggedInUser.id)
       .blocking(targetUserID)
-      .delete();
+      .delete(requestData);
     return new UserUnblockResponse(data);
   }
 
@@ -223,8 +211,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to mute
    * @returns A {@link UserMuteResponse} object
    */
-  async mute(targetUser: UserResolvable<C>): Promise<UserMuteResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async mute(targetUser: UserResolvable): Promise<UserMuteResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'mute');
     const loggedInUser = this.client.me;
@@ -232,7 +219,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     const body: PostUsersMutingJSONBody = {
       target_user_id: targetUserID,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
     return new UserMuteResponse(data);
   }
@@ -242,13 +229,16 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * @param targetUser The user to unmute
    * @returns A {@link UserUnmuteResponse} object
    */
-  async unmute(targetUser: UserResolvable<C>): Promise<UserUnmuteResponse> {
-    if (!(this.client instanceof UserContextClient)) throw new CustomError('NOT_USER_CONTEXT_CLIENT');
+  async unmute(targetUser: UserResolvable): Promise<UserUnmuteResponse> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unmute');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const data: DeleteUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting(targetUserID).delete();
+    const requestData = new RequestData({ isUserContext: true });
+    const data: DeleteUsersMutingResponse = await this.client._api
+      .users(loggedInUser.id)
+      .muting(targetUserID)
+      .delete(requestData);
     return new UserUnmuteResponse(data);
   }
 
@@ -256,70 +246,90 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
    * Creates a {@link FollowersBook} object for fetching followers of a user.
    * @param targetUser The user whose followers are to be fetched
    * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowersBook} object
+   * @returns A tuple containing {@link FollowersBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowersBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): FollowersBook<C> {
+  async fetchFollowersBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[FollowersBook, Collection<Snowflake, User>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create followers book for');
     const followersBook = new FollowersBook(this.client, targetUserID, maxResultsPerPage);
-    return followersBook;
+    const firstPage = await followersBook.fetchNextPage();
+    return [followersBook, firstPage];
   }
 
   /**
-   * Creates a {@link FollowingsBook} object for fetching users followed by a user.
+   * Creates a {@link FollowingsBook} object for fetching users followed by a given user.
    * @param targetUser The user whose following users are to be fetched
    * @param maxResultsPerPage The maximum amount of users to fetch per page. The API will default this to `100` if not provided
-   * @returns A {@link FollowingsBook} object
+   * @returns A tuple containing {@link FollowingsBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  createFollowingBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): FollowingsBook<C> {
+  async fetchFollowingBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create following book for');
     const followingBook = new FollowingsBook(this.client, targetUserID, maxResultsPerPage);
-    return followingBook;
+    const firstPage = await followingBook.fetchNextPage();
+    return [followingBook, firstPage];
   }
 
   /**
-   * Creates a {@link LikedTweetsBook} object for fetching liked tweet of a user.
+   * Creates a {@link LikedTweetsBook} object for fetching tweets liked by a user
    * @param targetUser The user whose liked tweet are to be fetched
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link LikedTweetsBook} object
+   * @returns A tuple containing {@link LikedTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createLikedTweetsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): LikedTweetsBook<C> {
+  async fetchLikedTweetsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[LikedTweetsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create liked book for');
     const likedTweetBook = new LikedTweetsBook(this.client, targetUserID, maxResultsPerPage);
-    return likedTweetBook;
+    const firstPage = await likedTweetBook.fetchNextPage();
+    return [likedTweetBook, firstPage];
   }
 
   /**
-   * Creates a {@link TweetsBook} object for fetching tweets composed by a user.
+   * Creates a {@link ComposedTweetsBook} object for fetching tweets composed by a user.
    * @param targetUser The user whose tweets are to be fetched
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link TweetsBook} object
+   * @returns A tuple containing {@link ComposedTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createTweetsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): TweetsBook<C> {
+  async fetchTweetsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[ComposedTweetsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
-    const tweetsBook = new TweetsBook(this.client, targetUserID, maxResultsPerPage);
-    return tweetsBook;
+    const tweetsBook = new ComposedTweetsBook(this.client, targetUserID, maxResultsPerPage);
+    const firstPage = await tweetsBook.fetchNextPage();
+    return [tweetsBook, firstPage];
   }
 
   /**
    * Creates a {@link MentionsBook} object for fetching tweets mentioning a user.
    * @param targetUser The mentioned user in the tweets
    * @param maxResultsPerPage The maximum amount of tweets to fetch per page
-   * @returns A {@link MentionsBook} object
+   * @returns A tuple containing {@link MentionsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  createMentionsBook(targetUser: UserResolvable<C>, maxResultsPerPage?: number): MentionsBook<C> {
+  async fetchMentionsBook(
+    targetUser: UserResolvable,
+    maxResultsPerPage?: number,
+  ): Promise<[MentionsBook, Collection<Snowflake, Tweet>]> {
     const targetUserID = this.resolveID(targetUser);
     if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create mentions book for');
     const mentionsBook = new MentionsBook(this.client, targetUserID, maxResultsPerPage);
-    return mentionsBook;
+    const firstPage = await mentionsBook.fetchNextPage();
+    return [mentionsBook, firstPage];
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleUser(userID: Snowflake, options: FetchUserOptions<C>): Promise<User<C>> {
+  async #fetchSingleUser(userID: Snowflake, options: FetchUserOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.get(userID);
       if (cachedUser) return cachedUser;
@@ -330,16 +340,13 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleUserByIdResponse = await this.client._api.users(userID).get(requestData);
     return new User(this.client, data);
   }
 
-  async #fetchMultipleUsers(
-    userIDs: Array<Snowflake>,
-    options: FetchUsersOptions<C>,
-  ): Promise<Collection<string, User<C>>> {
-    const fetchedUserCollection = new Collection<string, User<C>>();
+  async #fetchMultipleUsers(userIDs: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
+    const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleUsersByIdsQuery = {
       ids: userIDs,
@@ -347,7 +354,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleUsersByIdsResponse = await this.client._api.users.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
@@ -358,7 +365,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
     return fetchedUserCollection;
   }
 
-  async #fetchSingleUserByUsername(username: string, options: FetchUserByUsernameOptions): Promise<User<C>> {
+  async #fetchSingleUserByUsername(username: string, options: FetchUserByUsernameOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.find(user => user.username === username);
       if (cachedUser) return cachedUser;
@@ -369,7 +376,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetSingleUserByUsernameResponse = await this.client._api.users.by.username(username).get(requestData);
     return new User(this.client, data);
   }
@@ -377,8 +384,8 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
   async #fetchMultipleUsersByUsernames(
     usernames: Array<string>,
     options: FetchUsersByUsernamesOptions,
-  ): Promise<Collection<string, User<C>>> {
-    const fetchedUserCollection = new Collection<string, User<C>>();
+  ): Promise<Collection<string, User>> {
+    const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleUsersByUsernamesQuery = {
       usernames,
@@ -386,7 +393,7 @@ export default class UserManager<C extends ClientUnionType> extends BaseManager<
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetMultipleUsersByUsernamesResponse = await this.client._api.users.by.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;

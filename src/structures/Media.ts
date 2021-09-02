@@ -1,6 +1,6 @@
-import BaseStructure from './BaseStructure.js';
+import { BaseStructure } from './BaseStructure.js';
+import type { Client } from '../client/Client.js';
 import type { APIMedia, APIMediaType } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
 import {
   MediaNonPublicMetrics,
   MediaOrganicMetrics,
@@ -11,7 +11,7 @@ import {
 /**
  * The class that represents a media content in a {@link Tweet}
  */
-export default class Media<C extends ClientUnionType> extends BaseStructure<C> {
+export class Media extends BaseStructure {
   id: string;
 
   type: APIMediaType;
@@ -34,7 +34,7 @@ export default class Media<C extends ClientUnionType> extends BaseStructure<C> {
 
   width: number | null;
 
-  constructor(client: ClientInUse<C>, data: APIMedia) {
+  constructor(client: Client, data: APIMedia) {
     super(client);
 
     this.id = data.media_key;

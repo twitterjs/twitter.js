@@ -1,14 +1,10 @@
-import BaseStream from './BaseStream.js';
-import Collection from '../util/Collection.js';
+import { BaseStream } from './BaseStream.js';
+import { Collection } from '../util/Collection.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
 import FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
-import type {
-  ClientInUse,
-  ClientUnionType,
-  FilteredTweetStreamAddRuleOptions,
-  FilteredTweetStreamRuleResolvable,
-} from '../typings/index.js';
+import type { Client } from '../client/Client.js';
+import type { FilteredTweetStreamAddRuleOptions, FilteredTweetStreamRuleResolvable } from '../typings/index.js';
 import type {
   GetFilteredTweetStreamQuery,
   GetFilteredTweetStreamResponse,
@@ -22,8 +18,8 @@ import type {
   Snowflake,
 } from 'twitter-types';
 
-export default class FilteredTweetStream<C extends ClientUnionType> extends BaseStream<C> {
-  constructor(client: ClientInUse<C>) {
+export class FilteredTweetStream extends BaseStream {
+  constructor(client: Client) {
     super(client);
 
     if (this.client.options.events.includes('FILTERED_TWEET_CREATE')) {
@@ -37,17 +33,17 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
    * @returns A {@link Collection} of {@link FilteredTweetStreamRule} objects
    */
   async fetchRules(
-    rules?: Array<FilteredTweetStreamRuleResolvable<C>>,
-  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
+    rules?: Array<FilteredTweetStreamRuleResolvable>,
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule>> {
     const ids = rules?.map(rule => (typeof rule === 'string' ? rule : rule?.id));
     const query: GetFilteredTweetStreamRulesQuery = {
       ids,
     };
-    const requestData = new RequestData(query, null);
+    const requestData = new RequestData({ query });
     const data: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(
       requestData,
     );
-    const fetchedRulesCollection = new Collection<Snowflake, FilteredTweetStreamRule<C>>();
+    const fetchedRulesCollection = new Collection<Snowflake, FilteredTweetStreamRule>();
     if (!data.data || data.data.length === 0) return fetchedRulesCollection;
     return data.data.reduce((rulesCollection, rawRule) => {
       const rule = new FilteredTweetStreamRule(this.client, rawRule);
@@ -62,18 +58,18 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
    */
   async addRules(
     rules: Array<FilteredTweetStreamAddRuleOptions>,
-  ): Promise<Collection<Snowflake, FilteredTweetStreamRule<C>>> {
+  ): Promise<Collection<Snowflake, FilteredTweetStreamRule>> {
     const body: PostAddFilteredTweetStreamRulesJSONBody = {
       add: rules,
     };
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostAddFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
     return data.data.reduce((rulesCollection, rawRule) => {
       const rule = new FilteredTweetStreamRule(this.client, rawRule);
       return rulesCollection.set(rule.id, rule);
-    }, new Collection<Snowflake, FilteredTweetStreamRule<C>>());
+    }, new Collection<Snowflake, FilteredTweetStreamRule>());
   }
 
   /**
@@ -107,7 +103,7 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
   async #deleteRules(
     body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody | PostRemoveFilteredTweetStreamRulesByValuesJSONBody,
   ): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
-    const requestData = new RequestData(null, body);
+    const requestData = new RequestData({ body });
     const data: PostRemoveFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
@@ -124,7 +120,7 @@ export default class FilteredTweetStream<C extends ClientUnionType> extends Base
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, true);
+    const requestData = new RequestData({ query, isStreaming: true });
     const filteredTweetStreamResponse = await this.client._api.tweets.search.stream.get(requestData);
     try {
       for await (const chunk of filteredTweetStreamResponse.body) {

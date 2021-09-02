@@ -1,12 +1,12 @@
 import { PlaceGeo } from './misc/Misc.js';
-import BaseStructure from './BaseStructure.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import { BaseStructure } from './BaseStructure.js';
+import type { Client } from '../client/Client.js';
 import type { APIPlace, APIPlaceGeo, APIPlaceType } from 'twitter-types';
 
 /**
  * The class that represents a place tagged in a {@link Tweet}
  */
-export default class Place<C extends ClientUnionType> extends BaseStructure<C> {
+export class Place extends BaseStructure {
   fullName: string;
 
   id: string;
@@ -23,7 +23,7 @@ export default class Place<C extends ClientUnionType> extends BaseStructure<C> {
 
   placeType: APIPlaceType | null;
 
-  constructor(client: ClientInUse<C>, data: APIPlace) {
+  constructor(client: Client, data: APIPlace) {
     super(client);
 
     this.fullName = data.full_name;

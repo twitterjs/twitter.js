@@ -6,7 +6,7 @@ import type { ClientOptions } from '../typings/Interfaces.js';
 /**
  * The base class for all clients
  */
-export default class BaseClient extends EventEmitter {
+export class BaseClient extends EventEmitter {
   /**
    * The options to pass when initiating the client
    */

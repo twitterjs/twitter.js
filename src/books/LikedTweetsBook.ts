@@ -1,15 +1,15 @@
-import Tweet from '../Tweet.js';
-import { RequestData } from '../misc/Misc.js';
-import BaseStructure from '../BaseStructure.js';
-import Collection from '../../util/Collection.js';
-import { CustomError } from '../../errors/index.js';
-import type { ClientInUse, ClientUnionType } from '../../typings/Types.js';
-import type { GetUsersTweetsQuery, GetUsersTweetsResponse, Snowflake } from 'twitter-types';
+import { BaseBook } from './BaseBook.js';
+import { CustomError } from '../errors/index.js';
+import { Collection } from '../util/Collection.js';
+import { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client/Client.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { GetUsersLikedTweetsQuery, GetUsersLikedTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class used for keeping track of tweets composed by a twitter user
+ * A class for fetching tweets liked by a twitter user
  */
-export default class TweetsBook<C extends ClientUnionType> extends BaseStructure<C> {
+export class LikedTweetsBook extends BaseBook {
   #nextToken?: string;
 
   #previousToken?: string;
@@ -19,7 +19,7 @@ export default class TweetsBook<C extends ClientUnionType> extends BaseStructure
   /**
    * The ID of the user this book belongs to
    */
-  userID: Snowflake;
+  userId: Snowflake;
 
   /**
    * The maximum amount of tweets that will be fetched per page.
@@ -35,18 +35,18 @@ export default class TweetsBook<C extends ClientUnionType> extends BaseStructure
    */
   hasMore: boolean;
 
-  constructor(client: ClientInUse<C>, userID: Snowflake, maxResultsPerPage?: number) {
+  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
     super(client);
-    this.userID = userID;
+    this.userId = userId;
     this.maxResultsPerPage = maxResultsPerPage ?? null;
     this.hasMore = true;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of tweets composed by the specified user
+   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
    */
-  async fetchNextPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#hasBeenInitialized) {
       this.#hasBeenInitialized = true;
       return this.#fetchPages(this.#nextToken);
@@ -57,19 +57,19 @@ export default class TweetsBook<C extends ClientUnionType> extends BaseStructure
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of tweets composed by the specified user
+   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
    */
-  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet<C>>> {
+  async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this.#previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet<C>>> {
-    const tweetsCollection = new Collection<Snowflake, Tweet<C>>();
+  async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
+    const likedTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersTweetsQuery = {
+    const query: GetUsersLikedTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       pagination_token: token,
@@ -77,19 +77,19 @@ export default class TweetsBook<C extends ClientUnionType> extends BaseStructure
       'poll.fields': queryParameters?.pollFields,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
+      max_results: this.maxResultsPerPage ?? undefined,
     };
-    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    const requestData = new RequestData(query, null);
-    const data: GetUsersTweetsResponse = await this.client._api.users(this.userID).tweets.get(requestData);
+    const requestData = new RequestData({ query });
+    const data: GetUsersLikedTweetsResponse = await this.client._api.users(this.userId).liked_tweets.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = new Tweet(this.client, { data: rawTweet, includes: rawIncludes });
-      tweetsCollection.set(tweet.id, tweet);
+      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
+      likedTweetsCollection.set(tweet.id, tweet);
     }
-    return tweetsCollection;
+    return likedTweetsCollection;
   }
 }

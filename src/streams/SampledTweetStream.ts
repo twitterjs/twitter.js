@@ -1,12 +1,12 @@
-import BaseStream from './BaseStream.js';
-import Tweet from '../structures/Tweet.js';
+import { BaseStream } from './BaseStream.js';
+import { Tweet } from '../structures/Tweet.js';
 import { ClientEvents } from '../util/Constants.js';
 import { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client/Client.js';
 import type { GetSampledTweetStreamQuery } from 'twitter-types';
-import type { ClientInUse, ClientUnionType } from '../typings/Types';
 
-export default class SampleTweetStream<C extends ClientUnionType> extends BaseStream<C> {
-  constructor(client: ClientInUse<C>) {
+export class SampleTweetStream extends BaseStream {
+  constructor(client: Client) {
     super(client);
 
     if (this.client.options.events.includes('SAMPLED_TWEET_CREATE')) {
@@ -26,7 +26,7 @@ export default class SampleTweetStream<C extends ClientUnionType> extends BaseSt
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData(query, null, true);
+    const requestData = new RequestData({ query, isStreaming: true });
     const sampledTweetStreamResponse = await this.client._api.tweets.sample.stream.get(requestData);
     try {
       for await (const chunk of sampledTweetStreamResponse.body) {

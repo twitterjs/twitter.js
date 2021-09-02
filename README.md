@@ -12,29 +12,27 @@
   </p>
 </div>
 
-# twitter.js (WIP)
+# Twitter.js
 
-An object-oriented TypeScript library for interacting with Twitter API v2.
+An object-oriented Node.js and TypeScript library for interacting with Twitter API v2.
 
 ## Sample Code:
 
-Here is a sample code to get a user from twitter using their username:
+Using `twitter.js` fetching details about a twitter user is as easy as this:
 
 ```js
-import { BearerClient } from 'twitter.js';
+import { Client } from 'twitter.js';
 
-const client = new BearerClient();
+const client = new Client();
 
 client.on('ready', async () => {
   const user = await client.users.fetchByUsername({
     username: 'iShiibi',
   });
-  console.log(user);
+  console.log(user.description);  // Contributing to open-source 🌐
 });
 
 const token = 'your-bearer-token';
 
-client.login(token);
+client.loginWithBearerToken(token)
 ```
-
-You can do a lot more than that using twitter.js library. The lib and documentation for it is still in devlopment. Contributions are welcome and so are the stars 🌟

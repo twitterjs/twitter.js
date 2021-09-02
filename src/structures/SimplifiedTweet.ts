@@ -1,4 +1,4 @@
-import BaseStructure from './BaseStructure.js';
+import { BaseStructure } from './BaseStructure.js';
 import { TweetEntities } from './misc/TweetEntities.js';
 import { TweetContextAnnotation } from './misc/TweetContextAnnotation.js';
 import { TweetAttachments, TweetGeo, TweetReference } from './misc/Misc.js';
@@ -8,9 +8,9 @@ import {
   TweetPromotedMetrics,
   TweetPublicMetrics,
 } from './misc/TweetMetrics.js';
-import type User from './User.js';
-import type Collection from '../util/Collection.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import type { User } from './User.js';
+import type { Client } from '../client/Client.js';
+import type { Collection } from '../util/Collection.js';
 import type {
   TweetLikeResponse,
   TweetUnlikeResponse,
@@ -29,7 +29,7 @@ import type {
 /**
  * A simplified version of {@link Tweet} class
  */
-export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStructure<C> {
+export class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the requested Tweet
    */
@@ -138,7 +138,7 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
    */
   withheld?: any; // TODO
 
-  constructor(client: ClientInUse<C>, data: APITweet) {
+  constructor(client: Client, data: APITweet) {
     super(client);
 
     this.id = data.id;
@@ -221,8 +221,8 @@ export default class SimplifiedTweet<C extends ClientUnionType> extends BaseStru
    * Fetches users who have retweeted this tweet.
    * @returns A {@link Collection} of {@link User} objects
    */
-  async fetchRetweetedBy(): Promise<Collection<Snowflake, User<C>>> {
-    return this.client.tweets.fetchRetweetedBy(this.id) as Promise<Collection<Snowflake, User<C>>>;
+  async fetchRetweetedBy(): Promise<Collection<Snowflake, User>> {
+    return this.client.tweets.fetchRetweetedBy(this.id) as Promise<Collection<Snowflake, User>>;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

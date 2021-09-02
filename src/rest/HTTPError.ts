@@ -1,7 +1,7 @@
 /**
  * Represents an HTTP error from a request
  */
-export default class HTTPError extends Error {
+export class HTTPError extends Error {
   /**
    * The HTTP method used for the request
    */

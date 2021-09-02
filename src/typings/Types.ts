@@ -1,13 +1,11 @@
-import type User from '../structures/User.js';
+import type { User } from '../structures/User.js';
 import type { Snowflake } from 'twitter-types';
-import type Tweet from '../structures/Tweet.js';
-import type Space from '../structures/Space.js';
-import type Collection from '../util/Collection.js';
-import type BearerClient from '../client/BearerClient.js';
-import type SimplifiedUser from '../structures/SimplifiedUser.js';
-import type SimplifiedTweet from '../structures/SimplifiedTweet.js';
-import type SimplifiedSpace from '../structures/SimplifiedSpace.js';
-import type UserContextClient from '../client/UserContextClient.js';
+import type { Tweet } from '../structures/Tweet.js';
+import type { Space } from '../structures/Space.js';
+import type { Collection } from '../util/Collection.js';
+import type { SimplifiedUser } from '../structures/SimplifiedUser.js';
+import type { SimplifiedTweet } from '../structures/SimplifiedTweet.js';
+import type { SimplifiedSpace } from '../structures/SimplifiedSpace.js';
 import type FilteredTweetStreamRule from '../structures/FilteredTweetStreamRule.js';
 import type {
   ClientEventsMapping,
@@ -21,52 +19,41 @@ import type {
   FetchSpacesOptions,
 } from './Interfaces.js';
 
-export type ClientEventArgsType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
-  ? ClientEventsMapping<C>[K]
+export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping
+  ? ClientEventsMapping[K]
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
   any[];
 
-export type ClientEventKeyType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
+export type ClientEventKeyType<K> = K extends keyof ClientEventsMapping
   ? LiteralUnion<K>
-  : Exclude<K, keyof ClientEventsMapping<C>>;
+  : Exclude<K, keyof ClientEventsMapping>;
 
-export type ClientEventListenerType<K, C extends ClientUnionType> = K extends keyof ClientEventsMapping<C>
-  ? ClientEventsMapping<C>[K]
+export type ClientEventListenerType<K> = K extends keyof ClientEventsMapping
+  ? ClientEventsMapping[K]
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
   any[];
-
-export type ClientInUse<T extends UserContextClient | BearerClient> = T extends UserContextClient
-  ? UserContextClient
-  : BearerClient;
-
-export type ClientUnionType = UserContextClient | BearerClient;
 
 export type LiteralUnion<K extends T, T = string> = K | (T & { zz_ignore_me?: never });
 
-export type UserManagerFetchResult<
-  T extends FetchUserOptions<ClientUnionType> | FetchUsersOptions<ClientUnionType>,
-  C extends ClientUnionType,
-> = T extends FetchUserOptions<ClientUnionType> ? User<C> : Collection<Snowflake, User<C>>;
+export type UserManagerFetchResult<T extends FetchUserOptions | FetchUsersOptions> = T extends FetchUserOptions
+  ? User
+  : Collection<Snowflake, User>;
 
-export type UserManagerFetchByUsernameResult<
-  T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions,
-  C extends ClientUnionType,
-> = T extends FetchUserByUsernameOptions ? User<C> : Collection<Snowflake, User<C>>;
+export type UserManagerFetchByUsernameResult<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions> =
+  T extends FetchUserByUsernameOptions ? User : Collection<Snowflake, User>;
 
-export type UserResolvable<C extends ClientUnionType> = User<C> | SimplifiedUser<C> | Snowflake;
+export type UserResolvable = User | SimplifiedUser | Snowflake;
 
-export type TweetManagerFetchResult<
-  T extends FetchTweetOptions<ClientUnionType> | FetchTweetsOptions<ClientUnionType>,
-  C extends ClientUnionType,
-> = T extends FetchTweetOptions<ClientUnionType> ? Tweet<C> : Collection<Snowflake, Tweet<C>>;
+export type TweetManagerFetchResult<T extends FetchTweetOptions | FetchTweetsOptions> = T extends FetchTweetOptions
+  ? Tweet
+  : Collection<Snowflake, Tweet>;
 
-export type TweetResolvable<C extends ClientUnionType> = Tweet<C> | SimplifiedTweet<C> | Snowflake;
+export type TweetResolvable = Tweet | SimplifiedTweet | Snowflake;
 
-export type SpaceResolvable<C extends ClientUnionType> = Space<C> | SimplifiedSpace<C> | Snowflake;
+export type SpaceResolvable = Space | SimplifiedSpace | Snowflake;
 
-export type SpaceManagerFetchResult<
-  C extends ClientUnionType,
-  T extends FetchSpaceOptions<C> | FetchSpacesOptions<C>,
-> = T extends FetchSpaceOptions<ClientUnionType> ? Space<C> : Collection<Snowflake, Space<C>>;
+export type SpaceManagerFetchResult<T extends FetchSpaceOptions | FetchSpacesOptions> = T extends FetchSpaceOptions
+  ? Space
+  : Collection<Snowflake, Space>;
 
-export type FilteredTweetStreamRuleResolvable<C extends ClientUnionType> = FilteredTweetStreamRule<C> | Snowflake;
+export type FilteredTweetStreamRuleResolvable = FilteredTweetStreamRule | Snowflake;

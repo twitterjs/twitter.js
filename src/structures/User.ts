@@ -1,18 +1,18 @@
-import SimplifiedUser from './SimplifiedUser.js';
-import SimplifiedTweet from './SimplifiedTweet.js';
-import type { ClientInUse, ClientUnionType } from '../typings/Types.js';
+import { SimplifiedUser } from './SimplifiedUser.js';
+import { SimplifiedTweet } from './SimplifiedTweet.js';
+import type { Client } from '../client/Client.js';
 import type { APITweet, SingleUserLookupResponse } from 'twitter-types';
 
 /**
  * The class that represents a Twitter user
  */
-export default class User<C extends ClientUnionType> extends SimplifiedUser<C> {
+export class User extends SimplifiedUser {
   /**
    * The tweet pinned by this user
    */
-  pinnedTweet: SimplifiedTweet<C> | null;
+  pinnedTweet: SimplifiedTweet | null;
 
-  constructor(client: ClientInUse<C>, data: SingleUserLookupResponse) {
+  constructor(client: Client, data: SingleUserLookupResponse) {
     super(client, data.data);
 
     this.pinnedTweet = this.#patchPinnedTweet(data.includes?.tweets) ?? null;
@@ -20,7 +20,7 @@ export default class User<C extends ClientUnionType> extends SimplifiedUser<C> {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  #patchPinnedTweet(tweets?: Array<APITweet>): SimplifiedTweet<C> | undefined {
+  #patchPinnedTweet(tweets?: Array<APITweet>): SimplifiedTweet | undefined {
     if (!tweets) return;
     const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetID);
     if (!rawPinnedTweet) return;
