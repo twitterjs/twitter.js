@@ -21,7 +21,4 @@ export * from './typings/index.js';
 export { Snowflake } from 'twitter-types';
 
 // util
-export { Collection } from './util/Collection.js';
-export * from './util/Constants.js';
-export * from './util/QueryParameters.js';
-export * from './util/Utility.js';
+export * from './util/index.js';
