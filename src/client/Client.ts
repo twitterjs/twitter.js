@@ -31,7 +31,7 @@ import type {
 } from '../typings/Interfaces.js';
 
 /**
- * The core class that exposes library APIs for making bearer token authorized requests
+ * The core class that exposes library APIs
  */
 export class Client extends BaseClient {
   /**
