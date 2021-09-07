@@ -4,9 +4,10 @@
   "description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
   "main": "dist/index.js",
   "scripts": {
-    "dev:build": "tsc -w",
     "build": "tsc",
-    "docs": "typedoc"
+    "build:dev": "tsc -w",
+    "doc": "typedoc",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -33,13 +34,19 @@
     "oauth-1.0a": "^2.2.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.4",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.1",
     "@types/node": "^15.12.4",
     "@types/node-fetch": "^2.5.10",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
+    "babel-jest": "^27.1.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.1.0",
     "prettier": "^2.3.1",
     "twitter-types": "^0.13.0",
     "typedoc": "^0.21.6",
