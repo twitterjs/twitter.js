@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { mergeDefault } from '../util/Utility.js';
-import { DefaultClientOptions } from '../util/Constants.js';
+import { defaultClientOptions } from '../util/Constants.js';
 import type { ClientOptions } from '../typings/Interfaces.js';
 
 /**
@@ -18,6 +18,6 @@ export class BaseClient extends EventEmitter {
   constructor(options = {}) {
     super();
 
-    this.options = mergeDefault(DefaultClientOptions, options);
+    this.options = mergeDefault(defaultClientOptions, options);
   }
 }
