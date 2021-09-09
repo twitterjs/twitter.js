@@ -7,7 +7,8 @@
     "build": "tsc",
     "build:dev": "tsc -w",
     "doc": "typedoc",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.2",
     "jest": "^27.1.0",
     "prettier": "^2.3.1",
     "twitter-types": "^0.13.0",
