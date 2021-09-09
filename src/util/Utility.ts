@@ -1,6 +1,6 @@
 import type { Response } from 'node-fetch';
 import type { APIProblem } from 'twitter-types';
-import type { ClientOptions } from '../typings/Interfaces.js';
+import type { ClientOptions } from '../typings';
 
 /**
  * Checks whether a given key is present in a given object.

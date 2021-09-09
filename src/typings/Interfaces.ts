@@ -1,7 +1,7 @@
-import type { Tweet } from '../structures/Tweet.js';
-import type { ClientEvents } from '../util/Constants.js';
-import type { RequestData } from '../structures/misc/Misc.js';
-import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
+import type { Client } from '../client';
+import type { ClientEvents } from '../util';
+import type { Tweet, RequestData } from '../structures';
+import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
 import type {
   Granularity,
   MediaFieldsParameter,
@@ -14,7 +14,6 @@ import type {
   UserExpansionsParameter,
   UserFieldsParameter,
 } from 'twitter-types';
-import { Client } from '../client/Client.js';
 
 /**
  * The options for the API in use

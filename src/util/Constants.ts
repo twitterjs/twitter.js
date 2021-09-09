@@ -1,4 +1,4 @@
-import type { ClientOptions } from '../typings/Interfaces.js';
+import type { ClientOptions } from '../typings';
 import type {
   MediaFieldsParameter,
   PlaceFieldsParameter,

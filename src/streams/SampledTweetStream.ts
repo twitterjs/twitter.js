@@ -1,8 +1,7 @@
-import { BaseStream } from './BaseStream.js';
-import { Tweet } from '../structures/Tweet.js';
-import { ClientEvents } from '../util/Constants.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { Client } from '../client/Client.js';
+import { ClientEvents } from '../util';
+import { BaseStream } from './BaseStream';
+import { Tweet, RequestData } from '../structures';
+import type { Client } from '../client';
 import type { GetSampledTweetStreamQuery } from 'twitter-types';
 
 export class SampledTweetStream extends BaseStream {

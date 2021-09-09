@@ -1,14 +1,14 @@
 import crypto from 'crypto';
 import OAuth from 'oauth-1.0a';
-import { APIRequest } from './APIRequest.js';
-import { buildRoute } from './APIRouter.js';
-import { Collection } from '../util/Collection.js';
-import { CustomError } from '../errors/index.js';
-import { RequestHandler } from './RequestHandler.js';
+import { Collection } from '../util';
+import { CustomError } from '../errors';
+import { buildRoute } from './APIRouter';
+import { APIRequest } from './APIRequest';
+import { RequestHandler } from './RequestHandler';
+import type { Client } from '../client';
 import type { Response } from 'node-fetch';
-import type { Client } from '../client/Client.js';
 import type { APIProblem } from 'twitter-types';
-import type { ExtendedRequestData } from '../typings/Interfaces.js';
+import type { ExtendedRequestData } from '../typings';
 
 /**
  * Manager class for the rest API

@@ -1,10 +1,10 @@
-import { BaseBook } from './BaseBook.js';
-import { CustomError } from '../errors/index.js';
-import { Collection } from '../util/Collection.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { Tweet } from '../structures/Tweet.js';
-import type { Client } from '../client/Client.js';
-import type { SearchTweetsBookCreateOptions } from '../typings/Interfaces.js';
+import { Collection } from '../util';
+import { BaseBook } from './BaseBook';
+import { CustomError } from '../errors';
+import { RequestData } from '../structures';
+import type { Client } from '../client';
+import type { Tweet } from '../structures';
+import type { SearchTweetsBookCreateOptions } from '../typings';
 import type { GetTweetSearchQuery, GetTweetSearchResponse, Snowflake } from 'twitter-types';
 
 /**

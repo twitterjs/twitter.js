@@ -1,13 +1,12 @@
-import { HTTPError } from './HTTPError.js';
+import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';
-import { TwitterAPIError } from './TwitterAPIError.js';
+import { TwitterAPIError } from './TwitterAPIError';
 import { AsyncQueue } from '@sapphire/async-queue';
-import { parseResponse } from '../util/Utility.js';
-import { ClientEvents } from '../util/Constants.js';
+import { parseResponse, ClientEvents } from '../util';
 import type { Response } from 'node-fetch';
-import type { APIRequest } from './APIRequest.js';
-import type { RESTManager } from './RESTManager.js';
+import type { APIRequest } from './APIRequest';
 import type { APIProblem } from 'twitter-types';
+import type { RESTManager } from './RESTManager';
 
 export class RequestHandler {
   /**

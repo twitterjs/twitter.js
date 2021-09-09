@@ -1,9 +1,8 @@
-import { Space } from '../structures/Space.js';
-import { BaseManager } from './BaseManager.js';
-import { Collection } from '../util/Collection.js';
-import { CustomTypeError } from '../errors/index.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { Client } from '../client/Client.js';
+import { Collection } from '../util';
+import { BaseManager } from './BaseManager';
+import { CustomTypeError } from '../errors';
+import { RequestData, Space } from '../structures';
+import type { Client } from '../client';
 import type {
   FetchSpaceOptions,
   FetchSpacesByCreatorIdsOptions,

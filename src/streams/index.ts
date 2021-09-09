@@ -1,3 +1,3 @@
-export * from './BaseStream.js';
-export * from './FilteredTweetStream.js';
-export * from './SampledTweetStream.js';
+export * from './BaseStream';
+export * from './FilteredTweetStream';
+export * from './SampledTweetStream';

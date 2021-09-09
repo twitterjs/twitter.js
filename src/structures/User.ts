@@ -1,6 +1,6 @@
-import { SimplifiedUser } from './SimplifiedUser.js';
-import { SimplifiedTweet } from './SimplifiedTweet.js';
-import type { Client } from '../client/Client.js';
+import { SimplifiedUser } from './SimplifiedUser';
+import { SimplifiedTweet } from './SimplifiedTweet';
+import type { Client } from '../client';
 import type { APITweet, SingleUserLookupResponse } from 'twitter-types';
 
 /**

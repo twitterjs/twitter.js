@@ -1,6 +1,6 @@
-import { PollOption } from './misc/Misc.js';
-import { BaseStructure } from './BaseStructure.js';
-import type { Client } from '../client/Client.js';
+import { PollOption } from './misc';
+import { BaseStructure } from './BaseStructure';
+import type { Client } from '../client';
 import type { APIPoll, APIPollVotingStatus } from 'twitter-types';
 
 /**

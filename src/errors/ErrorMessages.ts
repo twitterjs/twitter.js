@@ -1,4 +1,4 @@
-import { regsiterErrorMessage } from './TwitterjsError.js';
+import { regsiterErrorMessage } from './TwitterjsError';
 
 const messages = {
   INVALID_TYPE: (name: string, expected: string, an = false) =>

@@ -1,11 +1,9 @@
-import { BaseStructure } from './BaseStructure.js';
-import { UserPublicMetrics } from './misc/Misc.js';
-import { UserEntities } from './misc/UserEntities.js';
-import { FollowersBook } from '../books/FollowersBook.js';
-import { FollowingsBook } from '../books/FollowingsBook.js';
-import type { User } from './User.js';
-import type { Client } from '../client/Client.js';
-import type { Collection } from '../util/Collection.js';
+import { BaseStructure } from './BaseStructure';
+import { UserPublicMetrics, UserEntities } from './misc';
+import { FollowersBook, FollowingsBook } from '../books';
+import type { User } from './User';
+import type { Client } from '../client';
+import type { Collection } from '../util';
 import type { APIUser, Snowflake } from 'twitter-types';
 import type {
   UserFollowResponse,
@@ -14,7 +12,7 @@ import type {
   UserUnblockResponse,
   UserMuteResponse,
   UserUnmuteResponse,
-} from './misc/Misc.js';
+} from './misc';
 
 /**
  * A simplified version of {@link User} class

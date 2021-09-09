@@ -1,13 +1,7 @@
-import { User } from '../structures/User.js';
-import { BaseManager } from './BaseManager.js';
-import { Collection } from '../util/Collection.js';
-import { MentionsBook } from '../books/MentionsBook.js';
-import { FollowersBook } from '../books/FollowersBook.js';
-import { FollowingsBook } from '../books/FollowingsBook.js';
-import { LikedTweetsBook } from '../books/LikedTweetsBook.js';
-import { SimplifiedUser } from '../structures/SimplifiedUser.js';
-import { CustomError, CustomTypeError } from '../errors/index.js';
-import { ComposedTweetsBook } from '../books/ComposedTweetsBook.js';
+import { Collection } from '../util';
+import { BaseManager } from './BaseManager';
+import { CustomError, CustomTypeError } from '../errors';
+import { MentionsBook, FollowersBook, FollowingsBook, LikedTweetsBook, ComposedTweetsBook } from '../books';
 import {
   RequestData,
   UserBlockResponse,
@@ -16,16 +10,20 @@ import {
   UserUnblockResponse,
   UserUnfollowResponse,
   UserUnmuteResponse,
-} from '../structures/misc/Misc.js';
-import type { Client } from '../client/Client.js';
-import type { Tweet } from '../structures/Tweet.js';
-import type { UserManagerFetchByUsernameResult, UserManagerFetchResult, UserResolvable } from '../typings/Types.js';
+  User,
+  SimplifiedUser,
+} from '../structures';
+import type { Client } from '../client';
+import type { Tweet } from '../structures';
 import type {
+  UserManagerFetchByUsernameResult,
+  UserManagerFetchResult,
+  UserResolvable,
   FetchUserByUsernameOptions,
   FetchUserOptions,
   FetchUsersByUsernamesOptions,
   FetchUsersOptions,
-} from '../typings/Interfaces.js';
+} from '../typings';
 import type {
   DeleteUsersBlockingResponse,
   DeleteUsersFollowingResponse,

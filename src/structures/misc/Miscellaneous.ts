@@ -1,5 +1,5 @@
-import { CustomError } from '../../errors/index.js';
-import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings/Interfaces';
+import { CustomError } from '../../errors';
+import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings';
 import type {
   APIPlaceGeo,
   APIPlaceGeoBoundingBox,

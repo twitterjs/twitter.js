@@ -1,6 +1,6 @@
-import { Collection } from '../util/Collection.js';
-import type { Client } from '../client/Client.js';
-import type { StructureConstructable } from '../typings/Interfaces.js';
+import { Collection } from '../util';
+import type { Client } from '../client';
+import type { StructureConstructable } from '../typings';
 
 /**
  * The base class for all managers

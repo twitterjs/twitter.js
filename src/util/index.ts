@@ -1,3 +1,3 @@
-export * from './Collection.js';
-export * from './Constants.js';
-export * from './Utility.js';
+export * from './Collection';
+export * from './Constants';
+export * from './Utility';

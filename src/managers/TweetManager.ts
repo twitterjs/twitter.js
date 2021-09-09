@@ -1,7 +1,5 @@
-import { User } from '../structures/User.js';
-import { Tweet } from '../structures/Tweet.js';
-import { BaseManager } from './BaseManager.js';
-import { Collection } from '../util/Collection.js';
+import { Collection } from '../util';
+import { BaseManager } from './BaseManager';
 import {
   RemovedRetweetResponse,
   RequestData,
@@ -9,12 +7,13 @@ import {
   TweetLikeResponse,
   TweetReplyHideUnhideResponse,
   TweetUnlikeResponse,
-} from '../structures/misc/Misc.js';
-import { SimplifiedTweet } from '../structures/SimplifiedTweet.js';
-import { CustomError, CustomTypeError } from '../errors/index.js';
-import type { Client } from '../client/Client.js';
-import type { TweetManagerFetchResult, TweetResolvable } from '../typings/Types.js';
-import type { FetchTweetOptions, FetchTweetsOptions } from '../typings/Interfaces.js';
+  SimplifiedTweet,
+  User,
+  Tweet,
+} from '../structures';
+import { CustomError, CustomTypeError } from '../errors';
+import type { Client } from '../client';
+import type { TweetManagerFetchResult, TweetResolvable, FetchTweetOptions, FetchTweetsOptions } from '../typings';
 import type {
   DeleteTweetsLikeResponse,
   DeleteUsersRetweetsResponse,

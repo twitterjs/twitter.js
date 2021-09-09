@@ -1,10 +1,10 @@
-import { Poll } from './Poll.js';
-import { Place } from './Place.js';
-import { Media } from './Media.js';
-import { Collection } from '../util/Collection.js';
-import { SimplifiedUser } from './SimplifiedUser.js';
-import { SimplifiedTweet } from './SimplifiedTweet.js';
-import type { Client } from '../client/Client.js';
+import { Poll } from './Poll';
+import { Place } from './Place';
+import { Media } from './Media';
+import { Collection } from '../util';
+import { SimplifiedUser } from './SimplifiedUser';
+import { SimplifiedTweet } from './SimplifiedTweet';
+import type { Client } from '../client';
 import type {
   APIMedia,
   APIPlace,

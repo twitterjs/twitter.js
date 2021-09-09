@@ -1,8 +1,8 @@
-import { BaseBook } from './BaseBook.js';
-import { CustomError } from '../errors/index.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { Client } from '../client/Client.js';
-import type { CountTweetsBookCreateOptions } from '../typings/index.js';
+import { BaseBook } from './BaseBook';
+import { CustomError } from '../errors';
+import { RequestData } from '../structures';
+import type { Client } from '../client';
+import type { CountTweetsBookCreateOptions } from '../typings';
 import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
 
 /**

@@ -1,6 +1,6 @@
-import { PlaceGeo } from './misc/Misc.js';
-import { BaseStructure } from './BaseStructure.js';
-import type { Client } from '../client/Client.js';
+import { PlaceGeo } from './misc';
+import { BaseStructure } from './BaseStructure';
+import type { Client } from '../client';
 import type { APIPlace, APIPlaceGeo, APIPlaceType } from 'twitter-types';
 
 /**

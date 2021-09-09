@@ -1,34 +1,28 @@
-import { BaseClient } from './BaseClient.js';
-import { BlocksBook } from '../books/BlocksBook.js';
-import { ClientEvents } from '../util/Constants.js';
-import { RESTManager } from '../rest/RESTManager.js';
-import { ClientUser } from '../structures/ClientUser.js';
-import { UserManager } from '../managers/UserManager.js';
-import { TweetManager } from '../managers/TweetManager.js';
-import { SpaceManager } from '../managers/SpaceManager.js';
-import { CountTweetsBook } from '../books/CountTweetsBook.js';
-import { SearchTweetsBook } from '../books/SearchTweetsBook.js';
-import { CustomError, CustomTypeError } from '../errors/index.js';
-import { SampledTweetStream } from '../streams/SampledTweetStream.js';
-import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
-import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
-import type { User } from '../structures/User.js';
-import type { Tweet } from '../structures/Tweet.js';
-import type { Collection } from '../util/Collection.js';
+import { BaseClient } from './BaseClient';
+import { RESTManager } from '../rest/RESTManager';
+import { ClientEvents, Collection } from '../util';
+import { CustomError, CustomTypeError } from '../errors';
+import { SampledTweetStream, FilteredTweetStream } from '../streams';
+import { UserManager, TweetManager, SpaceManager } from '../managers';
+import { ClientCredentials, RequestData, ClientUser } from '../structures';
+import { BlocksBook, CountTweetsBook, SearchTweetsBook } from '../books';
+import type { User, Tweet } from '../structures';
 import type {
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
   GetTweetCountsResponse,
   Snowflake,
 } from 'twitter-types';
-import type { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
 import type {
   ClientCredentialsInterface,
   ClientEventsMapping,
   ClientOptions,
   CountTweetsBookCreateOptions,
   SearchTweetsBookCreateOptions,
-} from '../typings/Interfaces.js';
+  ClientEventKeyType,
+  ClientEventArgsType,
+  ClientEventListenerType,
+} from '../typings';
 
 /**
  * The core class that exposes library APIs

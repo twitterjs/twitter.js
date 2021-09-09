@@ -1,4 +1,4 @@
-import type { Client } from '../client/Client';
+import type { Client } from '../client';
 
 /**
  * The base class for all structures

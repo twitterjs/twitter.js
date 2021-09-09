@@ -1,9 +1,9 @@
-import { BaseBook } from './BaseBook.js';
-import { CustomError } from '../errors/index.js';
-import { Collection } from '../util/Collection.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { User } from '../structures/User.js';
-import type { Client } from '../client/Client.js';
+import { Collection } from '../util';
+import { BaseBook } from './BaseBook';
+import { CustomError } from '../errors';
+import { RequestData } from '../structures';
+import type { Client } from '../client';
+import type { User } from '../structures';
 import type { GetUsersFollowingQuery, GetUsersFollowingResponse, Snowflake } from 'twitter-types';
 
 /**

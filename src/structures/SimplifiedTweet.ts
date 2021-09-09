@@ -1,23 +1,25 @@
-import { BaseStructure } from './BaseStructure.js';
-import { TweetEntities } from './misc/TweetEntities.js';
-import { TweetContextAnnotation } from './misc/TweetContextAnnotation.js';
-import { TweetAttachments, TweetGeo, TweetReference } from './misc/Misc.js';
+import { BaseStructure } from './BaseStructure';
 import {
   TweetNonPublicMetrics,
   TweetOrganicMetrics,
   TweetPromotedMetrics,
   TweetPublicMetrics,
-} from './misc/TweetMetrics.js';
-import type { User } from './User.js';
-import type { Client } from '../client/Client.js';
-import type { Collection } from '../util/Collection.js';
+  TweetContextAnnotation,
+  TweetAttachments,
+  TweetGeo,
+  TweetReference,
+  TweetEntities,
+} from './misc';
+import type { User } from './User';
+import type { Client } from '../client';
+import type { Collection } from '../util';
 import type {
   TweetLikeResponse,
   TweetUnlikeResponse,
   TweetReplyHideUnhideResponse,
   RetweetResponse,
   RemovedRetweetResponse,
-} from './misc/Misc.js';
+} from './misc';
 import type {
   APITweet,
   APITweetContextAnnotation,

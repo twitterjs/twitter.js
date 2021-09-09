@@ -1,7 +1,7 @@
-import { User } from './User.js';
-import type { Client } from '../client/Client.js';
-import type { Collection } from '../util/Collection.js';
-import type { BlocksBook } from '../books/BlocksBook.js';
+import { User } from './User';
+import type { Client } from '../client';
+import type { Collection } from '../util';
+import type { BlocksBook } from '../books';
 import type { SingleUserLookupResponse, Snowflake } from 'twitter-types';
 
 export class ClientUser extends User {
