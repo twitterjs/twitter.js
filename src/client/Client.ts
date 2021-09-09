@@ -25,7 +25,7 @@ import type {
 } from '../typings';
 
 /**
- * The core class that exposes library APIs
+ * The core class that exposes all the functionalities available in twitter.js
  */
 export class Client extends BaseClient {
   /**
@@ -34,39 +34,52 @@ export class Client extends BaseClient {
   readyAt: Date | null;
 
   /**
-   * The bearer token that was provided for the client
+   * The bearer token that was provided to the client during login
    */
   token: string | null;
 
   /**
-   * The credentials that were provided to the client
+   * The credentials that were provided to the client during login
+   *
+   * **Note**: This will be available only if the client was logged in using {@link Client.login}
    */
   credentials: ClientCredentials | null;
 
   /**
-   * The twitter user this client represents and authorized with
+   * The twitter user this client represents
+   *
+   * **Note**: This will be available only if the client was logged in using {@link Client.login}
    */
   me: ClientUser | null;
 
   /**
-   * The class that manages and forwards API requests made by the client
+   * The manager for twitter API requests made by the client
    */
   rest: RESTManager;
 
   /**
-   * The tweet manager class of the client
+   * The manager for {@link Tweet} objects
    */
   tweets: TweetManager;
 
   /**
-   * The user manager class of the client
+   * The manager for {@link User} objects
    */
   users: UserManager;
 
+  /**
+   * The manager for {@link Space} objects
+   */
   spaces: SpaceManager;
 
+  /**
+   * The class for working with sampled tweet stream
+   */
   sampledTweets: SampledTweetStream;
 
+  /**
+   * The class for working with filtered tweet stream
+   */
   filteredTweets: FilteredTweetStream;
 
   /**
@@ -92,7 +105,11 @@ export class Client extends BaseClient {
   }
 
   /**
-   * A getter that returns the buildRoute function from {@link APIRouter}
+   * A getter that returns the `routeBuilder` method of {@link RESTManager}
+   * for making API requests
+   *
+   * **Note**: This is a shortcut made available for internal use only, users of the library need not to
+   * use it and should treat it as a private field
    * @private
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,7 +118,7 @@ export class Client extends BaseClient {
   }
 
   /**
-   * Makes the client ready for use and stores the provided token in memory.
+   * Sets the client ready to make bearer token authorized API requests.
    * Emits a `ready` event on success.
    * @param token The bearer token for the client
    * @returns The provided bearer token as a `Promise`
@@ -120,7 +137,7 @@ export class Client extends BaseClient {
   }
 
   /**
-   * Makes the client ready for use and stores the provided credentials in memory.
+   * Sets the client ready to make both bearer token and user context authorized API requests.
    * Emits a `ready` event on success.
    * @param credentials The credentials for the client
    * @returns The provided credentials as a `Promise`
