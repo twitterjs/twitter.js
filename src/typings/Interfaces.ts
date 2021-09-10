@@ -7,6 +7,7 @@ import type {
   MediaFieldsParameter,
   PlaceFieldsParameter,
   PollFieldsParameter,
+  Snowflake,
   SpaceExpansionsParameter,
   SpaceFieldsParameter,
   TweetExpansionsParameter,
@@ -266,4 +267,29 @@ export interface RequestDataOptions<Q, B> {
    * Whether the request should be authorized with user context authorization
    */
   isUserContext?: boolean;
+}
+
+/**
+ * The options used to create a {@link BlocksBook} object for a user
+ */
+export interface CreateBlocksBookOptions {
+  /**
+   * The ID of the user to create blocks book for
+   */
+  userId: Snowflake;
+
+  /**
+   * The maximum number of users to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to fetch users blocked by the authorized user
+ */
+export interface FetchBlocksOptions {
+  /**
+   * The maximum number of users to fetch per page
+   */
+  maxResultsPerPage?: number;
 }

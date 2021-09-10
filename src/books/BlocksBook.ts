@@ -4,17 +4,29 @@ import { CustomError } from '../errors';
 import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { User } from '../structures';
+import type { CreateBlocksBookOptions } from '../typings';
 import type { GetUsersBlockingQuery, GetUsersBlockingResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching users blocked by the authorized user
  */
 export class BlocksBook extends BaseBook {
+  /**
+   * The token for fetching next page
+   */
   #nextToken?: string;
 
+  /**
+   * The token for fetching previous page
+   */
   #previousToken?: string;
 
-  #hasBeenInitialized?: boolean;
+  /**
+   * Whether an initial request for fetching the first page has already been made
+   *
+   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link BlocksBook.fetchNextPage}
+   */
+  #hasMadeInitialRequest?: boolean;
 
   /**
    * The ID of the user this book belongs to
@@ -35,10 +47,14 @@ export class BlocksBook extends BaseBook {
    */
   hasMore: boolean;
 
-  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
+  /**
+   * @param client The logged in {@link Client} instance
+   * @param options The options to initialize the blocks book with
+   */
+  constructor(client: Client, options: CreateBlocksBookOptions) {
     super(client);
-    this.userId = userId;
-    this.maxResultsPerPage = maxResultsPerPage ?? null;
+    this.userId = options.userId;
+    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
     this.hasMore = true;
   }
 
@@ -47,9 +63,9 @@ export class BlocksBook extends BaseBook {
    * @returns A {@link Collection} of {@link User} objects that have been blocked by the authorized user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
-    if (!this.#hasBeenInitialized) {
-      this.#hasBeenInitialized = true;
-      return this.#fetchPages(this.#nextToken);
+    if (!this.#hasMadeInitialRequest) {
+      this.#hasMadeInitialRequest = true;
+      return this.#fetchPages();
     }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
     return this.#fetchPages(this.#nextToken);
@@ -76,7 +92,7 @@ export class BlocksBook extends BaseBook {
       pagination_token: token,
       max_results: this.maxResultsPerPage ?? undefined,
     };
-    const requestData = new RequestData({ query });
+    const requestData = new RequestData({ query, isUserContext: true });
     const data: GetUsersBlockingResponse = await this.client._api.users(this.userId).blocking.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;

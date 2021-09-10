@@ -5,8 +5,8 @@ import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser } from '../structures';
-import { BlocksBook, CountTweetsBook, SearchTweetsBook } from '../books';
-import type { User, Tweet } from '../structures';
+import { CountTweetsBook, SearchTweetsBook } from '../books';
+import type { Tweet } from '../structures';
 import type {
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
@@ -185,19 +185,6 @@ export class Client extends BaseClient {
     const countTweetsBook = new CountTweetsBook(this, options);
     const firstPage = await countTweetsBook.fetchNextPage();
     return [countTweetsBook, firstPage];
-  }
-
-  /**
-   * Creates a {@link BlocksBook} object for fetching users blocked by the authorized user.
-   * @param maxResultsPerPage The maximum amount of users to fetch per page
-   * @returns A tuple containing {@link BlocksBook} object and a {@link Collection} of {@link User} objects representing the first page
-   */
-  async fetchBlocksBook(maxResultsPerPage?: number): Promise<[BlocksBook, Collection<Snowflake, User>]> {
-    const userID = this.me?.id;
-    if (!userID) throw new CustomError('USER_RESOLVE_ID', 'create blocks book for');
-    const blocksBook = new BlocksBook(this, userID, maxResultsPerPage);
-    const firstPage = await blocksBook.fetchNextPage();
-    return [blocksBook, firstPage];
   }
 
   override on<K extends keyof ClientEventsMapping | symbol>(
