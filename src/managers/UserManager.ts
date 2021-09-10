@@ -23,6 +23,8 @@ import type {
   FetchUserOptions,
   FetchUsersByUsernamesOptions,
   FetchUsersOptions,
+  FetchComposedTweetsOptions,
+  CreateComposedTweetsBookOptions,
 } from '../typings';
 import type {
   DeleteUsersBlockingResponse,
@@ -292,18 +294,31 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   }
 
   /**
-   * Creates a {@link ComposedTweetsBook} object for fetching tweets composed by a user.
+   * Fetches tweets composed by a twitter user.
    * @param targetUser The user whose tweets are to be fetched
-   * @param maxResultsPerPage The maximum amount of tweets to fetch per page
+   * @param options The options for fetching tweets
    * @returns A tuple containing {@link ComposedTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  async fetchTweetsBook(
+  async fetchComposedTweets(
     targetUser: UserResolvable,
-    maxResultsPerPage?: number,
+    options?: FetchComposedTweetsOptions,
   ): Promise<[ComposedTweetsBook, Collection<Snowflake, Tweet>]> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
-    const tweetsBook = new ComposedTweetsBook(this.client, targetUserID, maxResultsPerPage);
+    const userId = this.resolveID(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
+    const createOptions: CreateComposedTweetsBookOptions = { userId };
+    if (options?.endTime) createOptions.endTime = options.endTime;
+    if (options?.exclude) createOptions.exclude = options.exclude;
+    if (options?.maxResultsPerPage) createOptions.maxResultsPerPage = options.maxResultsPerPage;
+    if (options?.sinceTweet) {
+      const sinceId = this.client.tweets.resolveID(options.sinceTweet);
+      if (sinceId) createOptions.sinceId = sinceId;
+    }
+    if (options?.startTime) createOptions.startTime = options.startTime;
+    if (options?.untilTweet) {
+      const untilId = this.client.tweets.resolveID(options.untilTweet);
+      if (untilId) createOptions.untilId = untilId;
+    }
+    const tweetsBook = new ComposedTweetsBook(this.client, createOptions);
     const firstPage = await tweetsBook.fetchNextPage();
     return [tweetsBook, firstPage];
   }

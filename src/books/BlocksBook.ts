@@ -97,8 +97,8 @@ export class BlocksBook extends BaseBook {
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
+    if (data.meta.result_count === 0) return blockedUsersCollection;
     const rawUsers = data.data;
-    if (!rawUsers) return blockedUsersCollection;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
       const user = this.client.users.add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);

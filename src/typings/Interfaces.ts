@@ -12,6 +12,7 @@ import type {
   SpaceFieldsParameter,
   TweetExpansionsParameter,
   TweetFieldsParameter,
+  TweetTypeExcludesRequestParameter,
   UserExpansionsParameter,
   UserFieldsParameter,
 } from 'twitter-types';
@@ -270,21 +271,6 @@ export interface RequestDataOptions<Q, B> {
 }
 
 /**
- * The options used to create a {@link BlocksBook} object for a user
- */
-export interface CreateBlocksBookOptions {
-  /**
-   * The ID of the user to create blocks book for
-   */
-  userId: Snowflake;
-
-  /**
-   * The maximum number of users to fetch per page
-   */
-  maxResultsPerPage?: number;
-}
-
-/**
  * The options used to fetch users blocked by the authorized user
  */
 export interface FetchBlocksOptions {
@@ -292,4 +278,39 @@ export interface FetchBlocksOptions {
    * The maximum number of users to fetch per page
    */
   maxResultsPerPage?: number;
+}
+
+export interface BaseCreateBookOptions {
+  /**
+   * The ID of the user to create the book for
+   */
+  userId: Snowflake;
+
+  /**
+   * The maximum number of results to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to fetch tweets composed by a twitter user
+ */
+export interface FetchComposedTweetsOptions {
+  startTime?: Date;
+  endTime?: Date;
+  sinceTweet?: TweetResolvable;
+  untilTweet?: TweetResolvable;
+  exclude?: Array<TweetTypeExcludesRequestParameter>;
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to create a {@link ComposedTweetsBook} object for a user
+ */
+export interface CreateComposedTweetsBookOptions extends BaseCreateBookOptions {
+  endTime?: Date;
+  exclude?: Array<TweetTypeExcludesRequestParameter>;
+  sinceId?: Snowflake;
+  startTime?: Date;
+  untilId?: Snowflake;
 }
