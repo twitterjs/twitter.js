@@ -80,12 +80,12 @@ export class SearchTweetsBook extends BaseBook {
       'poll.fields': queryParameters?.pollFields,
       query: this.query,
       max_results: this.maxResultsPerPage ?? undefined,
-      start_time: this.startTime ?? undefined,
-      end_time: this.endTime ?? undefined,
       since_id: this.sinceTweetId ?? undefined,
       until_id: this.untilTweetId ?? undefined,
       next_token: token,
     };
+    if (this.startTime) query.start_time = new Date(this.startTime).toISOString();
+    if (this.endTime) query.end_time = new Date(this.endTime).toISOString();
     const requestData = new RequestData({ query });
     const data: GetTweetSearchResponse = await this.client._api.tweets.search.recent.get(requestData);
     this.#nextToken = data.meta.next_token;

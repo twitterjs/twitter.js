@@ -296,11 +296,34 @@ export interface BaseCreateBookOptions {
  * The options used to fetch tweets composed by a twitter user
  */
 export interface FetchComposedTweetsOptions {
-  startTime?: Date;
-  endTime?: Date;
-  sinceTweet?: TweetResolvable;
-  untilTweet?: TweetResolvable;
+  /**
+   * Fetch tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Fetch tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The types of tweet to exclude from fetching
+   */
   exclude?: Array<TweetTypeExcludesRequestParameter>;
+
+  /**
+   * The maximum number of tweets to fetch per page
+   */
   maxResultsPerPage?: number;
 }
 
@@ -308,9 +331,28 @@ export interface FetchComposedTweetsOptions {
  * The options used to create a {@link ComposedTweetsBook} object for a user
  */
 export interface CreateComposedTweetsBookOptions extends BaseCreateBookOptions {
-  endTime?: Date;
+  /**
+   * Return tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Return tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * The types of tweets to exclude
+   */
   exclude?: Array<TweetTypeExcludesRequestParameter>;
-  sinceId?: Snowflake;
-  startTime?: Date;
-  untilId?: Snowflake;
+
+  /**
+   * Return tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Return tweets that were created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
 }

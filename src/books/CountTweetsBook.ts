@@ -65,12 +65,12 @@ export class CountTweetsBook extends BaseBook {
     const query: GetTweetCountsQuery = {
       query: this.query,
       granularity: this.granularity ?? undefined,
-      start_time: this.startTime ?? undefined,
-      end_time: this.endTime ?? undefined,
       since_id: this.sinceTweetId ?? undefined,
       until_id: this.untilTweetId ?? undefined,
       next_token: token,
     };
+    if (this.startTime) query.start_time = new Date(this.startTime).toISOString();
+    if (this.endTime) query.end_time = new Date(this.endTime).toISOString();
     const requestData = new RequestData({ query });
     const data: GetTweetCountsResponse = await this.client._api.tweets.counts.recent.get(requestData);
     this.#nextToken = data.meta.next_token;

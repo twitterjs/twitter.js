@@ -82,17 +82,17 @@ export class SimplifiedSpace extends BaseStructure {
     super(client);
     this.id = data.id;
     this.state = data.state;
-    this.createdAt = data.created_at ?? null;
+    this.createdAt = data.created_at ? new Date(data.created_at) : null;
     this.creatorId = data.creator_id ?? null;
     this.hostIds = data.host_ids ?? [];
     this.invitedUserIds = data.invited_user_ids ?? [];
     this.isTicketed = data.is_ticketed ?? null;
     this.lang = data.lang ?? null;
     this.participantCount = data.participant_count ?? null;
-    this.scheduledStart = data.scheduled_start ?? null;
+    this.scheduledStart = data.scheduled_start ? new Date(data.scheduled_start) : null;
     this.speakerIds = data.speaker_ids ?? [];
-    this.startedAt = data.started_at ?? null;
+    this.startedAt = data.started_at ? new Date(data.started_at) : null;
     this.title = data.title ?? null;
-    this.updatedAt = data.updated_at ?? null;
+    this.updatedAt = data.updated_at ? new Date(data.updated_at) : null;
   }
 }

@@ -149,7 +149,7 @@ export class SimplifiedTweet extends BaseStructure {
     this.authorID = data.author_id ?? null;
     this.contextAnnotations = this.#patchTweetContextAnnotations(data.context_annotations);
     this.conversationID = data.conversation_id ?? null;
-    this.createdAt = data.created_at ?? null;
+    this.createdAt = data.created_at ? new Date(data.created_at) : null;
     this.entities = data.entities ? new TweetEntities(data.entities) : null;
     this.geo = data.geo ? new TweetGeo(data.geo) : null;
     this.inReplyToUserID = data.in_reply_to_user_id ?? null;

@@ -52,14 +52,29 @@ export class ComposedTweetsBook extends BaseBook {
    */
   hasMore: boolean;
 
-  sinceId: Snowflake | null;
+  /**
+   * The book will fetch tweets that were created after this tweet ID
+   */
+  afterTweetId: Snowflake | null;
 
-  untilId: Snowflake | null;
+  /**
+   * The book will fetch tweets that were created before this tweet ID
+   */
+  beforeTweetId: Snowflake | null;
 
-  startTime: Date | null;
+  /**
+   * The book will fetch tweets that were created after this timestamp
+   */
+  afterTimestamp: number | null;
 
-  endTime: Date | null;
+  /**
+   * The book will fetch tweets that were created before this timestamp
+   */
+  beforeTimestamp: number | null;
 
+  /**
+   * The types of tweets that the book will not fetch
+   */
   exclude: Array<TweetTypeExcludesRequestParameter> | null;
 
   /**
@@ -68,14 +83,14 @@ export class ComposedTweetsBook extends BaseBook {
    */
   constructor(client: Client, options: CreateComposedTweetsBookOptions) {
     super(client);
-    this.userId = options.userId;
-    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
     this.hasMore = true;
-    this.sinceId = options.sinceId ?? null;
-    this.untilId = options.untilId ?? null;
-    this.startTime = options.startTime ?? null;
-    this.endTime = options.endTime ?? null;
+    this.userId = options.userId;
     this.exclude = options.exclude ?? null;
+    this.afterTweetId = options.afterTweetId ?? null;
+    this.beforeTweetId = options.beforeTweetId ?? null;
+    this.afterTimestamp = options.afterTimestamp ?? null;
+    this.beforeTimestamp = options.beforeTimestamp ?? null;
+    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
   }
 
   /**
@@ -112,14 +127,14 @@ export class ComposedTweetsBook extends BaseBook {
       'poll.fields': queryParameters?.pollFields,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
-      max_results: this.maxResultsPerPage ?? undefined,
-      since_id: this.sinceId ?? undefined,
-      until_id: this.untilId ?? undefined,
-      start_time: this.startTime ?? undefined,
-      end_time: this.endTime ?? undefined,
-      exclude: this.exclude ?? undefined,
       pagination_token: token,
     };
+    if (this.exclude) query.exclude = this.exclude;
+    if (this.afterTweetId) query.since_id = this.afterTweetId;
+    if (this.beforeTweetId) query.until_id = this.beforeTweetId;
+    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
+    if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
+    if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
     const data: GetUsersTweetsResponse = await this.client._api.users(this.userId).tweets.get(requestData);
     this.#nextToken = data.meta.next_token;

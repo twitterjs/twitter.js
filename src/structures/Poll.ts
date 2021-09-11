@@ -23,7 +23,7 @@ export class Poll extends BaseStructure {
     this.id = data.id;
     this.options = data.options.map(option => new PollOption(option));
     this.durationMinutes = data.duration_minutes ?? null;
-    this.endDatetime = data.end_datetime ?? null;
+    this.endDatetime = data.end_datetime ? new Date(data.end_datetime) : null;
     this.votingStatus = data.voting_status ?? null;
   }
 }

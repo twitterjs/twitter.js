@@ -305,22 +305,32 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   ): Promise<[ComposedTweetsBook, Collection<Snowflake, Tweet>]> {
     const userId = this.resolveID(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
-    const createOptions: CreateComposedTweetsBookOptions = { userId };
-    if (options?.endTime) createOptions.endTime = options.endTime;
-    if (options?.exclude) createOptions.exclude = options.exclude;
-    if (options?.maxResultsPerPage) createOptions.maxResultsPerPage = options.maxResultsPerPage;
-    if (options?.sinceTweet) {
-      const sinceId = this.client.tweets.resolveID(options.sinceTweet);
-      if (sinceId) createOptions.sinceId = sinceId;
+    const bookData: CreateComposedTweetsBookOptions = { userId };
+    if (options?.afterTweet) {
+      const afterTweetId = this.client.tweets.resolveID(options.afterTweet);
+      if (afterTweetId) bookData.afterTweetId = afterTweetId;
     }
-    if (options?.startTime) createOptions.startTime = options.startTime;
-    if (options?.untilTweet) {
-      const untilId = this.client.tweets.resolveID(options.untilTweet);
-      if (untilId) createOptions.untilId = untilId;
+    if (options?.beforeTweet) {
+      const beforeTweetId = this.client.tweets.resolveID(options.beforeTweet);
+      if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
     }
-    const tweetsBook = new ComposedTweetsBook(this.client, createOptions);
-    const firstPage = await tweetsBook.fetchNextPage();
-    return [tweetsBook, firstPage];
+    if (options?.afterTime) {
+      const afterTimestamp = new Date(options.afterTime).getTime();
+      if (afterTimestamp) bookData.afterTimestamp = afterTimestamp;
+    }
+    if (options?.beforeTime) {
+      const beforeTimestamp = new Date(options.beforeTime).getTime();
+      if (beforeTimestamp) bookData.beforeTimestamp = beforeTimestamp;
+    }
+    if (options?.exclude) {
+      bookData.exclude = options.exclude;
+    }
+    if (options?.maxResultsPerPage) {
+      bookData.maxResultsPerPage = options.maxResultsPerPage;
+    }
+    const composedTweetsBook = new ComposedTweetsBook(this.client, bookData);
+    const firstPage = await composedTweetsBook.fetchNextPage();
+    return [composedTweetsBook, firstPage];
   }
 
   /**
