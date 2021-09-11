@@ -15,12 +15,14 @@ import type {
   DeleteUsersFollowingResponse,
   DeleteUsersMutingResponse,
   DeleteUsersRetweetsResponse,
+  Granularity,
   PostTweetsLikeResponse,
   PostUsersBlockingResponse,
   PostUsersFollowingResponse,
   PostUsersMutingResponse,
   PostUsersRetweetsResponse,
   PutTweetReplyHideUnhideResponse,
+  SearchCount,
   Snowflake,
 } from 'twitter-types';
 
@@ -333,5 +335,34 @@ export class ClientCredentials {
     ) {
       throw new CustomError('CREDENTIALS_NOT_STRING');
     }
+  }
+}
+
+export class TweetCountBucket {
+  /**
+   * The start time of the bucket
+   */
+  start: Date;
+
+  /**
+   * The end time of the bucket
+   */
+  end: Date;
+
+  /**
+   * The number of tweets created between start and end time that matched with the query
+   */
+  count: number;
+
+  /**
+   * The timespan between start and end time of this bucket
+   */
+  granularity: Granularity;
+
+  constructor(data: SearchCount, granularity: Granularity | null) {
+    this.start = new Date(data.start);
+    this.end = new Date(data.end);
+    this.count = data.tweet_count;
+    this.granularity = granularity ?? 'hour';
   }
 }

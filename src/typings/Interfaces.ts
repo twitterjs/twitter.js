@@ -224,13 +224,39 @@ export interface SearchTweetsBookCreateOptions {
   untilTweet?: TweetResolvable;
 }
 
-export interface CountTweetsBookCreateOptions {
+/**
+ * The options used to create a {@link CountTweetsBook} object
+ */
+export interface CreateCountTweetsBookOptions {
+  /**
+   * The query for matching tweets
+   */
   query: string;
-  startTime?: Date;
-  endTime?: Date;
+
+  /**
+   * Match tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Match tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * The granularity of the {@link TweetCountBucket}
+   */
   granularity?: Granularity;
-  sinceTweet?: TweetResolvable;
-  untilTweet?: TweetResolvable;
+
+  /**
+   * Match tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Match tweets that weere created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
 }
 
 /**

@@ -1,24 +1,15 @@
 import { BaseClient } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
-import { ClientEvents, Collection } from '../util';
+import { ClientEvents } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser } from '../structures';
-import { CountTweetsBook, SearchTweetsBook } from '../books';
-import type { Tweet } from '../structures';
-import type {
-  GetSingleUserByUsernameQuery,
-  GetSingleUserByUsernameResponse,
-  GetTweetCountsResponse,
-  Snowflake,
-} from 'twitter-types';
+import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
 import type {
   ClientCredentialsInterface,
   ClientEventsMapping,
   ClientOptions,
-  CountTweetsBookCreateOptions,
-  SearchTweetsBookCreateOptions,
   ClientEventKeyType,
   ClientEventArgsType,
   ClientEventListenerType,
@@ -159,32 +150,6 @@ export class Client extends BaseClient {
 
     this.emit(ClientEvents.READY, this);
     return this.credentials;
-  }
-
-  /**
-   * Creates a {@link SearchTweetsBook} object for fetching tweets using search query.
-   * @param options The options for creating the book
-   * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
-   */
-  async fetchSearchTweetsBook(
-    options: SearchTweetsBookCreateOptions,
-  ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
-    const searchTweetsBook = new SearchTweetsBook(this, options);
-    const firstPage = await searchTweetsBook.fetchNextPage();
-    return [searchTweetsBook, firstPage];
-  }
-
-  /**
-   * Creates a {@link CountTweetsBook} object for fetching number of tweets matching a query.
-   * @param options The options for creating the book
-   * @returns TODO
-   */
-  async fetchCountTweetsBook(
-    options: CountTweetsBookCreateOptions,
-  ): Promise<[CountTweetsBook, GetTweetCountsResponse]> {
-    const countTweetsBook = new CountTweetsBook(this, options);
-    const firstPage = await countTweetsBook.fetchNextPage();
-    return [countTweetsBook, firstPage];
   }
 
   override on<K extends keyof ClientEventsMapping | symbol>(

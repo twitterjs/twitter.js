@@ -90,8 +90,8 @@ export class BlocksBook extends BaseBook {
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
       pagination_token: token,
-      max_results: this.maxResultsPerPage ?? undefined,
     };
+    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query, isUserContext: true });
     const data: GetUsersBlockingResponse = await this.client._api.users(this.userId).blocking.get(requestData);
     this.#nextToken = data.meta.next_token;
