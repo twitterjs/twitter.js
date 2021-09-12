@@ -19,7 +19,7 @@ import type {
   FetchUsersOptions,
   FetchSpaceOptions,
   FetchSpacesOptions,
-  BaseCreateBookOptions,
+  BookOptions,
 } from './Interfaces';
 
 export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping
@@ -62,6 +62,21 @@ export type SpaceManagerFetchResult<T extends FetchSpaceOptions | FetchSpacesOpt
 export type FilteredTweetStreamRuleResolvable = FilteredTweetStreamRule | Snowflake;
 
 /**
- * The options used to create a {@link BlocksBook} object for a user
+ * The options used to create a {@link BlocksBook} object
  */
-export type CreateBlocksBookOptions = BaseCreateBookOptions;
+export type BlocksBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link FollowersBook} object
+ */
+export type FollowersBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link FollowingsBook} object
+ */
+export type FollowingsBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link LikedTweetsBook} object
+ */
+export type LikedTweetsBookOptions = BookOptions;

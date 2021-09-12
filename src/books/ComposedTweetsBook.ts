@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
-import type { CreateComposedTweetsBookOptions } from '../typings';
+import type { ComposedTweetsBookOptions } from '../typings';
 import type {
   GetUsersTweetsQuery,
   GetUsersTweetsResponse,
@@ -81,7 +81,7 @@ export class ComposedTweetsBook extends BaseBook {
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the composed tweets book with
    */
-  constructor(client: Client, options: CreateComposedTweetsBookOptions) {
+  constructor(client: Client, options: ComposedTweetsBookOptions) {
     super(client);
     this.hasMore = true;
     this.userId = options.userId;

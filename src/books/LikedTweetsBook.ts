@@ -4,17 +4,29 @@ import { CustomError } from '../errors';
 import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
+import type { LikedTweetsBookOptions } from '../typings';
 import type { GetUsersLikedTweetsQuery, GetUsersLikedTweetsResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets liked by a twitter user
  */
 export class LikedTweetsBook extends BaseBook {
+  /**
+   * The token for fetching next page
+   */
   #nextToken?: string;
 
+  /**
+   * The token for fetching previous page
+   */
   #previousToken?: string;
 
-  #hasBeenInitialized?: boolean;
+  /**
+   * Whether an initial request for fetching the first page has already been made
+   *
+   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link FollowersBook.fetchNextPage}
+   */
+  #hasMadeInitialRequest?: boolean;
 
   /**
    * The ID of the user this book belongs to
@@ -35,11 +47,16 @@ export class LikedTweetsBook extends BaseBook {
    */
   hasMore: boolean;
 
-  constructor(client: Client, userId: Snowflake, maxResultsPerPage?: number) {
+  /**
+   * @param client The logged in {@link Client} instance
+   * @param options The options to initialize the liked tweets book with
+   */
+  constructor(client: Client, options: LikedTweetsBookOptions) {
     super(client);
-    this.userId = userId;
-    this.maxResultsPerPage = maxResultsPerPage ?? null;
+
     this.hasMore = true;
+    this.userId = options.userId;
+    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
   }
 
   /**
@@ -47,9 +64,9 @@ export class LikedTweetsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#hasBeenInitialized) {
-      this.#hasBeenInitialized = true;
-      return this.#fetchPages(this.#nextToken);
+    if (!this.#hasMadeInitialRequest) {
+      this.#hasMadeInitialRequest = true;
+      return this.#fetchPages();
     }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
     return this.#fetchPages(this.#nextToken);
@@ -72,18 +89,19 @@ export class LikedTweetsBook extends BaseBook {
     const query: GetUsersLikedTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
-      pagination_token: token,
       'place.fields': queryParameters?.placeFields,
       'poll.fields': queryParameters?.pollFields,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
-      max_results: this.maxResultsPerPage ?? undefined,
+      pagination_token: token,
     };
+    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
     const data: GetUsersLikedTweetsResponse = await this.client._api.users(this.userId).liked_tweets.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
+    if (data.meta.result_count === 0) return likedTweetsCollection;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {

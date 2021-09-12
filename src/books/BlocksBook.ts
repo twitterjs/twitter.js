@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { User } from '../structures';
-import type { CreateBlocksBookOptions } from '../typings';
+import type { BlocksBookOptions } from '../typings';
 import type { GetUsersBlockingQuery, GetUsersBlockingResponse, Snowflake } from 'twitter-types';
 
 /**
@@ -51,7 +51,7 @@ export class BlocksBook extends BaseBook {
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the blocks book with
    */
-  constructor(client: Client, options: CreateBlocksBookOptions) {
+  constructor(client: Client, options: BlocksBookOptions) {
     super(client);
     this.userId = options.userId;
     this.maxResultsPerPage = options.maxResultsPerPage ?? null;

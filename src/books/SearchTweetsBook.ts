@@ -4,16 +4,24 @@ import { CustomError } from '../errors';
 import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
-import type { SearchTweetsBookCreateOptions } from '../typings';
+import type { SearchTweetsBookOptions } from '../typings';
 import type { GetTweetSearchQuery, GetTweetSearchResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
  */
 export class SearchTweetsBook extends BaseBook {
+  /**
+   * The token for fetching next page
+   */
   #nextToken?: string;
 
-  #hasBeenInitialized?: boolean;
+  /**
+   * Whether an initial request for fetching the first page has already been made
+   *
+   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link FollowingsBook.fetchNextPage}
+   */
+  #hasMadeInitialRequest?: boolean;
 
   /**
    * The maximum amount of tweets that will be fetched per page.
@@ -34,23 +42,39 @@ export class SearchTweetsBook extends BaseBook {
    */
   query: string;
 
-  startTime: Date | null;
+  /**
+   * The book will fetch tweets that were created after this tweet ID
+   */
+  afterTweetId: Snowflake | null;
 
-  endTime: Date | null;
+  /**
+   * The book will fetch tweets that were created before this tweet ID
+   */
+  beforeTweetId: Snowflake | null;
 
-  sinceTweetId: Snowflake | null;
+  /**
+   * The book will fetch tweets that were created after this timestamp
+   */
+  afterTimestamp: number | null;
 
-  untilTweetId: Snowflake | null;
+  /**
+   * The book will fetch tweets that were created before this timestamp
+   */
+  beforeTimestamp: number | null;
 
-  constructor(client: Client, options: SearchTweetsBookCreateOptions) {
+  /**
+   * @param client The logged in {@link Client} instance
+   * @param options The options to initialize the search tweets book with
+   */
+  constructor(client: Client, options: SearchTweetsBookOptions) {
     super(client);
     this.hasMore = true;
-    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
     this.query = options.query;
-    this.startTime = options.startTime ?? null;
-    this.endTime = options.endTime ?? null;
-    this.sinceTweetId = typeof options.sinceTweet !== 'undefined' ? client.tweets.resolveID(options.sinceTweet) : null;
-    this.untilTweetId = typeof options.untilTweet !== 'undefined' ? client.tweets.resolveID(options.untilTweet) : null;
+    this.afterTweetId = options.afterTweetId ?? null;
+    this.beforeTweetId = options.beforeTweetId ?? null;
+    this.afterTimestamp = options.afterTimestamp ?? null;
+    this.beforeTimestamp = options.beforeTimestamp ?? null;
+    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
   }
 
   /**
@@ -58,9 +82,9 @@ export class SearchTweetsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweet} objects matching the search query
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#hasBeenInitialized) {
-      this.#hasBeenInitialized = true;
-      return this.#fetchPages(this.#nextToken);
+    if (!this.#hasMadeInitialRequest) {
+      this.#hasMadeInitialRequest = true;
+      return this.#fetchPages();
     }
     if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
     return this.#fetchPages(this.#nextToken);
@@ -69,7 +93,7 @@ export class SearchTweetsBook extends BaseBook {
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const fetchedTweetsCollection = new Collection<Snowflake, Tweet>();
+    const tweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetTweetSearchQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -79,24 +103,24 @@ export class SearchTweetsBook extends BaseBook {
       'place.fields': queryParameters?.placeFields,
       'poll.fields': queryParameters?.pollFields,
       query: this.query,
-      max_results: this.maxResultsPerPage ?? undefined,
-      since_id: this.sinceTweetId ?? undefined,
-      until_id: this.untilTweetId ?? undefined,
       next_token: token,
     };
-    if (this.startTime) query.start_time = new Date(this.startTime).toISOString();
-    if (this.endTime) query.end_time = new Date(this.endTime).toISOString();
+    if (this.afterTweetId) query.since_id = this.afterTweetId;
+    if (this.beforeTweetId) query.until_id = this.beforeTweetId;
+    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
+    if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
+    if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
     const data: GetTweetSearchResponse = await this.client._api.tweets.search.recent.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.hasMore = data.meta.next_token ? true : false;
+    if (data.meta.result_count === 0) return tweetsCollection;
     const rawTweets = data.data;
-    if (!rawTweets) return fetchedTweetsCollection;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
       const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
-      fetchedTweetsCollection.set(tweet.id, tweet);
+      tweetsCollection.set(tweet.id, tweet);
     }
-    return fetchedTweetsCollection;
+    return tweetsCollection;
   }
 }

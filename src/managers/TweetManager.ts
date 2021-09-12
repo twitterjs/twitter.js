@@ -1,5 +1,6 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
+import { SearchTweetsBook } from '../books';
 import {
   RemovedRetweetResponse,
   RequestData,
@@ -13,7 +14,14 @@ import {
 } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
-import type { TweetManagerFetchResult, TweetResolvable, FetchTweetOptions, FetchTweetsOptions } from '../typings';
+import type {
+  TweetManagerFetchResult,
+  TweetResolvable,
+  FetchTweetOptions,
+  FetchTweetsOptions,
+  SearchTweetsOptions,
+  SearchTweetsBookOptions,
+} from '../typings';
 import type {
   DeleteTweetsLikeResponse,
   DeleteUsersRetweetsResponse,
@@ -239,6 +247,41 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       likedByUsersCollection.set(user.id, user);
     }
     return likedByUsersCollection;
+  }
+
+  /**
+   * Fetches tweets using a search query.
+   * @param query The query to match tweets with
+   * @param options The options for searching tweets
+   * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
+   */
+  async searchTweets(
+    query: string,
+    options?: SearchTweetsOptions,
+  ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
+    const bookData: SearchTweetsBookOptions = { query };
+    if (options?.afterTweet) {
+      const afterTweetId = this.client.tweets.resolveID(options.afterTweet);
+      if (afterTweetId) bookData.afterTweetId = afterTweetId;
+    }
+    if (options?.beforeTweet) {
+      const beforeTweetId = this.client.tweets.resolveID(options.beforeTweet);
+      if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
+    }
+    if (options?.afterTime) {
+      const afterTimestamp = new Date(options.afterTime).getTime();
+      if (afterTimestamp) bookData.afterTimestamp = afterTimestamp;
+    }
+    if (options?.beforeTime) {
+      const beforeTimestamp = new Date(options.beforeTime).getTime();
+      if (beforeTimestamp) bookData.beforeTimestamp = beforeTimestamp;
+    }
+    if (options?.maxResultsPerPage) {
+      bookData.maxResultsPerPage = options.maxResultsPerPage;
+    }
+    const searchTweetsBook = new SearchTweetsBook(this.client, bookData);
+    const firstPage = await searchTweetsBook.fetchNextPage();
+    return [searchTweetsBook, firstPage];
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
