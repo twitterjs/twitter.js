@@ -2,13 +2,13 @@ import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, TweetCountBucket } from '../structures';
 import type { Client } from '../client';
-import type { CreateCountTweetsBookOptions } from '../typings';
+import type { TweetsCountBookOptions } from '../typings';
 import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching number of tweets matching a search query
  */
-export class CountTweetsBook extends BaseBook {
+export class TweetsCountBook extends BaseBook {
   /**
    * The token for fetching next page
    */
@@ -33,21 +33,36 @@ export class CountTweetsBook extends BaseBook {
    */
   query: string;
 
+  /**
+   * The book will group buckets according to this granularity
+   */
   granularity: Granularity | null;
 
-  afterTimestamp: number | null;
-
-  beforeTimestamp: number | null;
-
+  /**
+   * The book will fetch tweets that were created after this tweet ID
+   */
   afterTweetId: Snowflake | null;
 
+  /**
+   * The book will fetch tweets that were created before this tweet ID
+   */
   beforeTweetId: Snowflake | null;
+
+  /**
+   * The book will fetch tweets that were created after this timestamp
+   */
+  afterTimestamp: number | null;
+
+  /**
+   * The book will fetch tweets that were created before this timestamp
+   */
+  beforeTimestamp: number | null;
 
   /**
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the count tweets book with
    */
-  constructor(client: Client, options: CreateCountTweetsBookOptions) {
+  constructor(client: Client, options: TweetsCountBookOptions) {
     super(client);
     this.hasMore = true;
     this.query = options.query;

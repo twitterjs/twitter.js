@@ -223,41 +223,6 @@ export interface TwitterjsErrorConstructor {
 }
 
 /**
- * The options used to create a {@link CountTweetsBook} object
- */
-export interface CreateCountTweetsBookOptions {
-  /**
-   * The query for matching tweets
-   */
-  query: string;
-
-  /**
-   * Match tweets that were created after this timestamp
-   */
-  afterTimestamp?: number;
-
-  /**
-   * Match tweets that were created before this timestamp
-   */
-  beforeTimestamp?: number;
-
-  /**
-   * The granularity of the {@link TweetCountBucket}
-   */
-  granularity?: Granularity;
-
-  /**
-   * Match tweets that were created after this tweet ID
-   */
-  afterTweetId?: Snowflake;
-
-  /**
-   * Match tweets that weere created before this tweet ID
-   */
-  beforeTweetId?: Snowflake;
-}
-
-/**
  * The options used to add a new filtered tweet stream rule
  */
 export interface FilteredTweetStreamAddRuleOptions {
@@ -496,4 +461,69 @@ export interface SearchTweetsOptions {
    * The maximum number of tweets to fetch per page
    */
   maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to create a {@link TweetsCountBook} object
+ */
+export interface TweetsCountBookOptions {
+  /**
+   * The query for matching tweets
+   */
+  query: string;
+
+  /**
+   * Match tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Match tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * The granularity of the {@link TweetCountBucket}
+   */
+  granularity?: Granularity;
+
+  /**
+   * Match tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Match tweets that weere created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
+}
+
+/**
+ * The options for fetching tweets count matching a query
+ */
+export interface CountTweetsOptions {
+  /**
+   * Match tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Match tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Match tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Match tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The granularity of the {@link TweetCountBucket}
+   */
+  granularity?: Granularity;
 }
