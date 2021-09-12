@@ -50,7 +50,7 @@ export class SimplifiedTweet extends BaseStructure {
   /**
    * The unique identifier of the User who posted the Tweet
    */
-  authorID: Snowflake | null;
+  authorId: Snowflake | null;
 
   /**
    * Contains context annotations for the Tweet
@@ -60,7 +60,7 @@ export class SimplifiedTweet extends BaseStructure {
   /**
    * The ID of the original Tweet of the conversation (which includes direct replies, replies of replies)
    */
-  conversationID: Snowflake | null;
+  conversationId: Snowflake | null;
 
   /**
    * The `ISO 8601` creation time of the Tweet
@@ -81,7 +81,7 @@ export class SimplifiedTweet extends BaseStructure {
    * If the Tweet is a reply, this field will contain the original Tweet’s author ID.
    * This will not necessarily always be the user directly mentioned in the Tweet
    */
-  inReplyToUserID: Snowflake | null;
+  inReplyToUserId: Snowflake | null;
 
   /**
    * The language of the Tweet, if detected by Twitter. Returned as a `BCP47` language tag
@@ -146,13 +146,13 @@ export class SimplifiedTweet extends BaseStructure {
     this.id = data.id;
     this.text = data.text;
     this.attachments = data.attachments ? new TweetAttachments(data.attachments) : null;
-    this.authorID = data.author_id ?? null;
+    this.authorId = data.author_id ?? null;
     this.contextAnnotations = this.#patchTweetContextAnnotations(data.context_annotations);
-    this.conversationID = data.conversation_id ?? null;
+    this.conversationId = data.conversation_id ?? null;
     this.createdAt = data.created_at ? new Date(data.created_at) : null;
     this.entities = data.entities ? new TweetEntities(data.entities) : null;
     this.geo = data.geo ? new TweetGeo(data.geo) : null;
-    this.inReplyToUserID = data.in_reply_to_user_id ?? null;
+    this.inReplyToUserId = data.in_reply_to_user_id ?? null;
     this.lang = data.lang ?? null;
     this.nonPublicMetrics = data.non_public_metrics ? new TweetNonPublicMetrics(data.non_public_metrics) : null;
     this.organicMetrics = data.organic_metrics ? new TweetOrganicMetrics(data.organic_metrics) : null;

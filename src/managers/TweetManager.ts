@@ -70,9 +70,9 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @param tweetResolvable An ID or instance that can be resolved to a tweet object
    * @returns The id of the resolved tweet object
    */
-  override resolveID(tweetResolvable: TweetResolvable): Snowflake | null {
-    const tweetID = super.resolveID(tweetResolvable);
-    if (typeof tweetID === 'string') return tweetID;
+  override resolveId(tweetResolvable: TweetResolvable): Snowflake | null {
+    const tweetId = super.resolveId(tweetResolvable);
+    if (typeof tweetId === 'string') return tweetId;
     if (tweetResolvable instanceof SimplifiedTweet) return tweetResolvable.id;
     return null;
   }
@@ -85,18 +85,18 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   async fetch<T extends FetchTweetOptions | FetchTweetsOptions>(options: T): Promise<TweetManagerFetchResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('tweet' in options) {
-      const tweetID = this.resolveID(options.tweet);
-      if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
-      return this.#fetchSingleTweet(tweetID, options) as Promise<TweetManagerFetchResult<T>>;
+      const tweetId = this.resolveId(options.tweet);
+      if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
+      return this.#fetchSingleTweet(tweetId, options) as Promise<TweetManagerFetchResult<T>>;
     }
     if ('tweets' in options) {
       if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
-      const tweetIDs = options.tweets.map(tweet => {
-        const tweetID = this.resolveID(tweet);
-        if (!tweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
-        return tweetID;
+      const tweetIds = options.tweets.map(tweet => {
+        const tweetId = this.resolveId(tweet);
+        if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
+        return tweetId;
       });
-      return this.#fetchMultipleTweets(tweetIDs, options) as Promise<TweetManagerFetchResult<T>>;
+      return this.#fetchMultipleTweets(tweetIds, options) as Promise<TweetManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -107,12 +107,12 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link TweetLikeResponse} object
    */
   async like(targetTweet: TweetResolvable): Promise<TweetLikeResponse> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'like');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'like');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const body: PostTweetsLikeJSONBody = {
-      tweet_id: targetTweetID,
+      tweet_id: tweetId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: PostTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
@@ -125,14 +125,14 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link TweetUnlikeResponse} object
    */
   async unlike(targetTweet: TweetResolvable): Promise<TweetUnlikeResponse> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
     const data: DeleteTweetsLikeResponse = await this.client._api
       .users(loggedInUser.id)
-      .likes(targetTweetID)
+      .likes(tweetId)
       .delete(requestData);
     return new TweetUnlikeResponse(data);
   }
@@ -161,12 +161,12 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link RetweetResponse} object
    */
   async retweet(targetTweet: TweetResolvable): Promise<RetweetResponse> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const body: PostUsersRetweetsJSONBody = {
-      tweet_id: targetTweetID,
+      tweet_id: tweetId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
@@ -179,14 +179,14 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link RemovedRetweetResponse} object
    */
   async unRetweet(targetTweet: TweetResolvable): Promise<RemovedRetweetResponse> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersRetweetsResponse = await this.client._api
       .users(loggedInUser.id)
-      .retweets(targetTweetID)
+      .retweets(tweetId)
       .delete(requestData);
     return new RemovedRetweetResponse(data);
   }
@@ -197,8 +197,8 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link Collection} of {@link User} objects
    */
   async fetchRetweetedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const queryParameters = this.client.options.queryParameters;
     const query: GetTweetsRetweetingUsersQuery = {
       expansions: queryParameters?.userExpansions,
@@ -206,9 +206,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       'tweet.fields': queryParameters?.tweetFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetTweetsRetweetingUsersResponse = await this.client._api
-      .tweets(targetTweetID)
-      .retweeted_by.get(requestData);
+    const data: GetTweetsRetweetingUsersResponse = await this.client._api.tweets(tweetId).retweeted_by.get(requestData);
     const retweetedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return retweetedByUsersCollection;
     const rawUsers = data.data;
@@ -226,8 +224,8 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @returns A {@link Collection} of {@link User} objects who liked the specified tweet
    */
   async fetchLikedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
     const queryParameters = this.client.options.queryParameters;
     const query: GetTweetsLikingUsersQuery = {
       expansions: queryParameters?.userExpansions,
@@ -235,9 +233,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       'tweet.fields': queryParameters?.tweetFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetTweetsLikingUsersResponse = await this.client._api
-      .tweets(targetTweetID)
-      .liking_users.get(requestData);
+    const data: GetTweetsLikingUsersResponse = await this.client._api.tweets(tweetId).liking_users.get(requestData);
     const likedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return likedByUsersCollection;
     const rawUsers = data.data;
@@ -255,17 +251,17 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
    * @param options The options for searching tweets
    * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
    */
-  async searchTweets(
+  async search(
     query: string,
     options?: SearchTweetsOptions,
   ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
     const bookData: SearchTweetsBookOptions = { query };
     if (options?.afterTweet) {
-      const afterTweetId = this.client.tweets.resolveID(options.afterTweet);
+      const afterTweetId = this.client.tweets.resolveId(options.afterTweet);
       if (afterTweetId) bookData.afterTweetId = afterTweetId;
     }
     if (options?.beforeTweet) {
-      const beforeTweetId = this.client.tweets.resolveID(options.beforeTweet);
+      const beforeTweetId = this.client.tweets.resolveId(options.beforeTweet);
       if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
     }
     if (options?.afterTime) {
@@ -286,9 +282,9 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleTweet(tweetID: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
+  async #fetchSingleTweet(tweetId: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
-      const cachedTweet = this.cache.get(tweetID);
+      const cachedTweet = this.cache.get(tweetId);
       if (cachedTweet) return cachedTweet;
     }
     const queryParameters = this.client.options.queryParameters;
@@ -301,18 +297,18 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetID).get(requestData);
+    const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetId).get(requestData);
     return this.add(data.data.id, data, options.cacheAfterFetching);
   }
 
   async #fetchMultipleTweets(
-    tweetIDs: Array<Snowflake>,
+    tweetIds: Array<Snowflake>,
     options: FetchTweetsOptions,
   ): Promise<Collection<Snowflake, Tweet>> {
     const fetchedTweetCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleTweetsByIdsQuery = {
-      ids: tweetIDs,
+      ids: tweetIds,
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -335,13 +331,13 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     targetTweet: TweetResolvable,
     isHidden: boolean,
   ): Promise<TweetReplyHideUnhideResponse> {
-    const targetTweetID = this.resolveID(targetTweet);
-    if (!targetTweetID) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
+    const tweetId = this.resolveId(targetTweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
     const body: PutTweetReplyHideUnhideJSONBody = {
       hidden: isHidden,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(targetTweetID).hidden.put(requestData);
+    const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(tweetId).hidden.put(requestData);
     return new TweetReplyHideUnhideResponse(data);
   }
 }

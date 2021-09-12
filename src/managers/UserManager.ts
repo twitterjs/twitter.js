@@ -77,9 +77,9 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @param userResolvable An ID or instance that can be resolved to a user object
    * @returns The id of the resolved user object
    */
-  override resolveID(userResolvable: UserResolvable): Snowflake | null {
-    const userID = super.resolveID(userResolvable);
-    if (typeof userID === 'string') return userID;
+  override resolveId(userResolvable: UserResolvable): Snowflake | null {
+    const userId = super.resolveId(userResolvable);
+    if (typeof userId === 'string') return userId;
     if (userResolvable instanceof SimplifiedUser) return userResolvable.id;
     return null;
   }
@@ -92,18 +92,18 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   async fetch<T extends FetchUserOptions | FetchUsersOptions>(options: T): Promise<UserManagerFetchResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('user' in options) {
-      const userID = this.resolveID(options.user);
-      if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
-      return this.#fetchSingleUser(userID, options) as Promise<UserManagerFetchResult<T>>;
+      const userId = this.resolveId(options.user);
+      if (!userId) throw new CustomError('USER_RESOLVE_ID', 'fetch');
+      return this.#fetchSingleUser(userId, options) as Promise<UserManagerFetchResult<T>>;
     }
     if ('users' in options) {
       if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
-      const userIDs = options.users.map(user => {
-        const userID = this.resolveID(user);
-        if (!userID) throw new CustomError('USER_RESOLVE_ID', 'fetch');
-        return userID;
+      const userIds = options.users.map(user => {
+        const userId = this.resolveId(user);
+        if (!userId) throw new CustomError('USER_RESOLVE_ID', 'fetch');
+        return userId;
       });
-      return this.#fetchMultipleUsers(userIDs, options) as Promise<UserManagerFetchResult<T>>;
+      return this.#fetchMultipleUsers(userIds, options) as Promise<UserManagerFetchResult<T>>;
     }
     throw new CustomError('INVALID_FETCH_OPTIONS');
   }
@@ -120,7 +120,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   ): Promise<UserManagerFetchByUsernameResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('username' in options) {
-      const { username } = options;
+      const username = options.username;
       if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
       return this.#fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
     }
@@ -142,12 +142,12 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserFollowResponse} object
    */
   async follow(targetUser: UserResolvable): Promise<UserFollowResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'follow');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const body: PostUsersFollowingJSONBody = {
-      target_user_id: targetUserID,
+      target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: PostUsersFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
@@ -160,14 +160,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserUnfollowResponse} object
    */
   async unfollow(targetUser: UserResolvable): Promise<UserUnfollowResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
-    const loggedInUser = this.client.me;
-    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
+    const loggedInUserId = this.client.me?.id;
+    if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersFollowingResponse = await this.client._api
-      .users(loggedInUser.id)
-      .following(targetUserID)
+      .users(loggedInUserId)
+      .following(userId)
       .delete(requestData);
     return new UserUnfollowResponse(data);
   }
@@ -178,15 +178,15 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserBlockResponse} object
    */
   async block(targetUser: UserResolvable): Promise<UserBlockResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'block');
-    const loggedInUser = this.client.me;
-    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'block');
+    const loggedInUserId = this.client.me?.id;
+    if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const body: PostUsersBlockingJSONBody = {
-      target_user_id: targetUserID,
+      target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUser.id).blocking.post(requestData);
+    const data: PostUsersBlockingResponse = await this.client._api.users(loggedInUserId).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
 
@@ -196,14 +196,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserUnblockResponse} object
    */
   async unblock(targetUser: UserResolvable): Promise<UserUnblockResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unblock');
-    const loggedInUser = this.client.me;
-    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unblock');
+    const loggedInUserId = this.client.me?.id;
+    if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersBlockingResponse = await this.client._api
-      .users(loggedInUser.id)
-      .blocking(targetUserID)
+      .users(loggedInUserId)
+      .blocking(userId)
       .delete(requestData);
     return new UserUnblockResponse(data);
   }
@@ -214,15 +214,15 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserMuteResponse} object
    */
   async mute(targetUser: UserResolvable): Promise<UserMuteResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'mute');
-    const loggedInUser = this.client.me;
-    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'mute');
+    const loggedInUserId = this.client.me?.id;
+    if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const body: PostUsersMutingJSONBody = {
-      target_user_id: targetUserID,
+      target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PostUsersMutingResponse = await this.client._api.users(loggedInUser.id).muting.post(requestData);
+    const data: PostUsersMutingResponse = await this.client._api.users(loggedInUserId).muting.post(requestData);
     return new UserMuteResponse(data);
   }
 
@@ -232,14 +232,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
    * @returns A {@link UserUnmuteResponse} object
    */
   async unmute(targetUser: UserResolvable): Promise<UserUnmuteResponse> {
-    const targetUserID = this.resolveID(targetUser);
-    if (!targetUserID) throw new CustomError('USER_RESOLVE_ID', 'unmute');
-    const loggedInUser = this.client.me;
-    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const userId = this.resolveId(targetUser);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unmute');
+    const loggedInUserId = this.client.me?.id;
+    if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
     const data: DeleteUsersMutingResponse = await this.client._api
-      .users(loggedInUser.id)
-      .muting(targetUserID)
+      .users(loggedInUserId)
+      .muting(userId)
       .delete(requestData);
     return new UserUnmuteResponse(data);
   }
@@ -254,7 +254,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     targetUser: UserResolvable,
     maxResultsPerPage?: number,
   ): Promise<[FollowersBook, Collection<Snowflake, User>]> {
-    const userId = this.resolveID(targetUser);
+    const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create followers book for');
     const followersBook = new FollowersBook(this.client, { userId, maxResultsPerPage });
     const firstPage = await followersBook.fetchNextPage();
@@ -271,7 +271,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     targetUser: UserResolvable,
     maxResultsPerPage?: number,
   ): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
-    const userId = this.resolveID(targetUser);
+    const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create following book for');
     const followingBook = new FollowingsBook(this.client, { userId, maxResultsPerPage });
     const firstPage = await followingBook.fetchNextPage();
@@ -288,7 +288,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     targetUser: UserResolvable,
     maxResultsPerPage?: number,
   ): Promise<[LikedTweetsBook, Collection<Snowflake, Tweet>]> {
-    const userId = this.resolveID(targetUser);
+    const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create liked book for');
     const likedTweetBook = new LikedTweetsBook(this.client, { userId, maxResultsPerPage });
     const firstPage = await likedTweetBook.fetchNextPage();
@@ -305,15 +305,15 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     targetUser: UserResolvable,
     options?: FetchComposedTweetsOptions,
   ): Promise<[ComposedTweetsBook, Collection<Snowflake, Tweet>]> {
-    const userId = this.resolveID(targetUser);
+    const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create tweets book for');
     const bookData: ComposedTweetsBookOptions = { userId };
     if (options?.afterTweet) {
-      const afterTweetId = this.client.tweets.resolveID(options.afterTweet);
+      const afterTweetId = this.client.tweets.resolveId(options.afterTweet);
       if (afterTweetId) bookData.afterTweetId = afterTweetId;
     }
     if (options?.beforeTweet) {
-      const beforeTweetId = this.client.tweets.resolveID(options.beforeTweet);
+      const beforeTweetId = this.client.tweets.resolveId(options.beforeTweet);
       if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
     }
     if (options?.afterTime) {
@@ -345,15 +345,15 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     targetUser: UserResolvable,
     options?: FetchMentionsOptions,
   ): Promise<[MentionsBook, Collection<Snowflake, Tweet>]> {
-    const userId = this.resolveID(targetUser);
+    const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create mentions book for');
     const bookData: MentionsBookOptions = { userId };
     if (options?.afterTweet) {
-      const afterTweetId = this.client.tweets.resolveID(options.afterTweet);
+      const afterTweetId = this.client.tweets.resolveId(options.afterTweet);
       if (afterTweetId) bookData.afterTweetId = afterTweetId;
     }
     if (options?.beforeTweet) {
-      const beforeTweetId = this.client.tweets.resolveID(options.beforeTweet);
+      const beforeTweetId = this.client.tweets.resolveId(options.beforeTweet);
       if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
     }
     if (options?.afterTime) {
@@ -374,9 +374,9 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchSingleUser(userID: Snowflake, options: FetchUserOptions): Promise<User> {
+  async #fetchSingleUser(userId: Snowflake, options: FetchUserOptions): Promise<User> {
     if (!options.skipCacheCheck) {
-      const cachedUser = this.cache.get(userID);
+      const cachedUser = this.cache.get(userId);
       if (cachedUser) return cachedUser;
     }
     const queryParameters = this.client.options.queryParameters;
@@ -386,15 +386,15 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetSingleUserByIdResponse = await this.client._api.users(userID).get(requestData);
+    const data: GetSingleUserByIdResponse = await this.client._api.users(userId).get(requestData);
     return new User(this.client, data);
   }
 
-  async #fetchMultipleUsers(userIDs: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
+  async #fetchMultipleUsers(userIds: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
     const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GetMultipleUsersByIdsQuery = {
-      ids: userIDs,
+      ids: userIds,
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,

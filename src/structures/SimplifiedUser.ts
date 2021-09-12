@@ -61,7 +61,7 @@ export class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of this user's pinned Tweet
    */
-  pinnedTweetID: Snowflake | null;
+  pinnedTweetId: Snowflake | null;
 
   /**
    * The URL to the profile image for this user, as shown on the user's profile
@@ -103,7 +103,7 @@ export class SimplifiedUser extends BaseStructure {
     this.description = data.description ?? null;
     this.entities = data.entities ? new UserEntities(data.entities) : null;
     this.location = data.location ?? null;
-    this.pinnedTweetID = data.pinned_tweet_id ?? null;
+    this.pinnedTweetId = data.pinned_tweet_id ?? null;
     this.profileImageURL = data.profile_image_url ?? null;
     this.protected = data.protected ?? null;
     this.publicMetrics = data.public_metrics ? new UserPublicMetrics(data.public_metrics) : null;

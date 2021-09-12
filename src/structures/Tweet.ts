@@ -70,7 +70,7 @@ export class Tweet extends SimplifiedTweet {
 
   #patchAuthor(users?: Array<APIUser>): SimplifiedUser | undefined {
     if (!users) return;
-    const rawAuthor = users.find(user => user.id === this.authorID);
+    const rawAuthor = users.find(user => user.id === this.authorId);
     if (!rawAuthor) return;
     return new SimplifiedUser(this.client, rawAuthor);
   }
@@ -92,9 +92,9 @@ export class Tweet extends SimplifiedTweet {
     referenceType: APITweetReferencedTweetType,
     tweets?: Array<APITweet>,
   ): SimplifiedTweet | undefined {
-    const originalTweetID = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
-    if (!originalTweetID || !tweets) return;
-    const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetID);
+    const originalTweetId = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
+    if (!originalTweetId || !tweets) return;
+    const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetId);
     if (!rawOriginalTweet) return;
     return new SimplifiedTweet(this.client, rawOriginalTweet);
   }

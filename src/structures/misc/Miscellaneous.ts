@@ -86,12 +86,12 @@ export class TweetReference {
 }
 
 export class TweetGeo {
-  placeID: string;
+  placeId: string;
   type: 'Point' | null;
   coordinates: TweetGeoCoordinates | null;
 
   constructor(data: APITweetGeo) {
-    this.placeID = data.place_id;
+    this.placeId = data.place_id;
     this.type = data.coordinates?.type ?? null;
     this.coordinates = data.coordinates ? new TweetGeoCoordinates(data.coordinates) : null;
   }

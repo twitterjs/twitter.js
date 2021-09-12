@@ -181,11 +181,22 @@ export interface FetchSpacesByCreatorIdsOptions extends Omit<BaseFetchOptions, '
 }
 
 /**
- * Options used to search spaces
+ * The options used to search spaces
  */
 export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The query to match with
+   */
   query: string;
+
+  /**
+   * The state of the spaces to match
+   */
   state: 'live' | 'scheduled';
+
+  /**
+   * The number of maximum spaces to fetch
+   */
   maxResults?: number;
 }
 
