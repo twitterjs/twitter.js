@@ -1,12 +1,14 @@
-import type { User } from '../structures/User.js';
+import type { Collection } from '../util';
 import type { Snowflake } from 'twitter-types';
-import type { Tweet } from '../structures/Tweet.js';
-import type { Space } from '../structures/Space.js';
-import type { Collection } from '../util/Collection.js';
-import type { SimplifiedUser } from '../structures/SimplifiedUser.js';
-import type { SimplifiedTweet } from '../structures/SimplifiedTweet.js';
-import type { SimplifiedSpace } from '../structures/SimplifiedSpace.js';
-import type { FilteredTweetStreamRule } from '../structures/FilteredTweetStreamRule.js';
+import type {
+  User,
+  Tweet,
+  Space,
+  SimplifiedSpace,
+  SimplifiedUser,
+  SimplifiedTweet,
+  FilteredTweetStreamRule,
+} from '../structures';
 import type {
   ClientEventsMapping,
   FetchTweetOptions,
@@ -17,7 +19,8 @@ import type {
   FetchUsersOptions,
   FetchSpaceOptions,
   FetchSpacesOptions,
-} from './Interfaces.js';
+  BookOptions,
+} from './Interfaces';
 
 export type ClientEventArgsType<K> = K extends keyof ClientEventsMapping
   ? ClientEventsMapping[K]
@@ -57,3 +60,23 @@ export type SpaceManagerFetchResult<T extends FetchSpaceOptions | FetchSpacesOpt
   : Collection<Snowflake, Space>;
 
 export type FilteredTweetStreamRuleResolvable = FilteredTweetStreamRule | Snowflake;
+
+/**
+ * The options used to create a {@link BlocksBook} object
+ */
+export type BlocksBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link FollowersBook} object
+ */
+export type FollowersBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link FollowingsBook} object
+ */
+export type FollowingsBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link LikedTweetsBook} object
+ */
+export type LikedTweetsBookOptions = BookOptions;

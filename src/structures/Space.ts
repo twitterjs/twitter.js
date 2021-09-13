@@ -1,5 +1,5 @@
-import { SimplifiedSpace } from './SimplifiedSpace.js';
-import type { Client } from '../client/Client.js';
+import { SimplifiedSpace } from './SimplifiedSpace';
+import type { Client } from '../client';
 import type { SingleSpaceLookupResponse } from 'twitter-types';
 
 export class Space extends SimplifiedSpace {

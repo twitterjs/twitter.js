@@ -1,5 +1,5 @@
-import type { RESTManager } from './RESTManager.js';
-import type { RequestData } from '../structures/misc/Misc.js';
+import type { RESTManager } from './RESTManager';
+import type { RequestData } from '../structures';
 
 /* eslint-disable */
 const noop = () => { };

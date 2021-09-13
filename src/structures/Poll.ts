@@ -1,6 +1,6 @@
-import { PollOption } from './misc/Misc.js';
-import { BaseStructure } from './BaseStructure.js';
-import type { Client } from '../client/Client.js';
+import { PollOption } from './misc';
+import { BaseStructure } from './BaseStructure';
+import type { Client } from '../client';
 import type { APIPoll, APIPollVotingStatus } from 'twitter-types';
 
 /**
@@ -23,7 +23,7 @@ export class Poll extends BaseStructure {
     this.id = data.id;
     this.options = data.options.map(option => new PollOption(option));
     this.durationMinutes = data.duration_minutes ?? null;
-    this.endDatetime = data.end_datetime ?? null;
+    this.endDatetime = data.end_datetime ? new Date(data.end_datetime) : null;
     this.votingStatus = data.voting_status ?? null;
   }
 }

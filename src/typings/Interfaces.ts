@@ -1,20 +1,21 @@
-import type { Tweet } from '../structures/Tweet.js';
-import type { ClientEvents } from '../util/Constants.js';
-import type { RequestData } from '../structures/misc/Misc.js';
-import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types.js';
+import type { Client } from '../client';
+import type { ClientEvents } from '../util';
+import type { Tweet, RequestData } from '../structures';
+import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
 import type {
   Granularity,
   MediaFieldsParameter,
   PlaceFieldsParameter,
   PollFieldsParameter,
+  Snowflake,
   SpaceExpansionsParameter,
   SpaceFieldsParameter,
   TweetExpansionsParameter,
   TweetFieldsParameter,
+  TweetTypeExcludesRequestParameter,
   UserExpansionsParameter,
   UserFieldsParameter,
 } from 'twitter-types';
-import { Client } from '../client/Client.js';
 
 /**
  * The options for the API in use
@@ -180,11 +181,22 @@ export interface FetchSpacesByCreatorIdsOptions extends Omit<BaseFetchOptions, '
 }
 
 /**
- * Options used to search spaces
+ * The options used to search spaces
  */
 export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The query to match with
+   */
   query: string;
+
+  /**
+   * The state of the spaces to match
+   */
   state: 'live' | 'scheduled';
+
+  /**
+   * The number of maximum spaces to fetch
+   */
   maxResults?: number;
 }
 
@@ -208,28 +220,6 @@ export interface StructureConstructable<T> {
 export interface TwitterjsErrorConstructor {
   // eslint-disable-next-line
   new(key: string, ...args: Array<unknown>): Error;
-}
-
-export interface SearchTweetsBookCreateOptions {
-  query: string;
-
-  /**
-   * The maximum number of tweets to fetch per page. Must be between `10` and `100`, inclusive
-   */
-  maxResultsPerPage?: number;
-  startTime?: Date;
-  endTime?: Date;
-  sinceTweet?: TweetResolvable;
-  untilTweet?: TweetResolvable;
-}
-
-export interface CountTweetsBookCreateOptions {
-  query: string;
-  startTime?: Date;
-  endTime?: Date;
-  granularity?: Granularity;
-  sinceTweet?: TweetResolvable;
-  untilTweet?: TweetResolvable;
 }
 
 /**
@@ -267,4 +257,273 @@ export interface RequestDataOptions<Q, B> {
    * Whether the request should be authorized with user context authorization
    */
   isUserContext?: boolean;
+}
+
+/**
+ * The options used to fetch users blocked by the authorized user
+ */
+export interface FetchBlocksOptions {
+  /**
+   * The maximum number of users to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+export interface BookOptions {
+  /**
+   * The ID of the user to create the book for
+   */
+  userId: Snowflake;
+
+  /**
+   * The maximum number of results to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to fetch tweets composed by a twitter user
+ */
+export interface FetchComposedTweetsOptions {
+  /**
+   * Fetch tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Fetch tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The types of tweet to exclude from fetching
+   */
+  exclude?: Array<TweetTypeExcludesRequestParameter>;
+
+  /**
+   * The maximum number of tweets to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to create a {@link ComposedTweetsBook} object for a user
+ */
+export interface ComposedTweetsBookOptions extends BookOptions {
+  /**
+   * Return tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Return tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * The types of tweets to exclude
+   */
+  exclude?: Array<TweetTypeExcludesRequestParameter>;
+
+  /**
+   * Return tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Return tweets that were created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
+}
+
+/**
+ * The options used to create a {@link MentionsBook} object
+ */
+export interface MentionsBookOptions extends BookOptions {
+  /**
+   * Return tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Return tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * Return tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Return tweets that were created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
+}
+
+/**
+ * The options used to fetch tweets that mention a given user
+ */
+export interface FetchMentionsOptions {
+  /**
+   * Fetch tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Fetch tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The maximum number of tweets to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to create a {@link SearchTweetsBook} object
+ */
+export interface SearchTweetsBookOptions {
+  query: string;
+
+  /**
+   * Return tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Return tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * Return tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Return tweets that were created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
+
+  /**
+   * The maximum number of results to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to fetch tweets using query
+ */
+export interface SearchTweetsOptions {
+  /**
+   * Fetch tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Fetch tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Fetch tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The maximum number of tweets to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
+/**
+ * The options used to create a {@link TweetsCountBook} object
+ */
+export interface TweetsCountBookOptions {
+  /**
+   * The query for matching tweets
+   */
+  query: string;
+
+  /**
+   * Match tweets that were created after this timestamp
+   */
+  afterTimestamp?: number;
+
+  /**
+   * Match tweets that were created before this timestamp
+   */
+  beforeTimestamp?: number;
+
+  /**
+   * The granularity of the {@link TweetCountBucket}
+   */
+  granularity?: Granularity;
+
+  /**
+   * Match tweets that were created after this tweet ID
+   */
+  afterTweetId?: Snowflake;
+
+  /**
+   * Match tweets that weere created before this tweet ID
+   */
+  beforeTweetId?: Snowflake;
+}
+
+/**
+ * The options for fetching tweets count matching a query
+ */
+export interface CountTweetsOptions {
+  /**
+   * Match tweets that were created after this point in time
+   */
+  afterTime?: Date | number;
+
+  /**
+   * Match tweets that were created before this point in time
+   */
+  beforeTime?: Date | number;
+
+  /**
+   * Match tweets that were created after this tweet
+   */
+  afterTweet?: TweetResolvable;
+
+  /**
+   * Match tweets that were created before this tweet
+   */
+  beforeTweet?: TweetResolvable;
+
+  /**
+   * The granularity of the {@link TweetCountBucket}
+   */
+  granularity?: Granularity;
 }

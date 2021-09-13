@@ -1,9 +1,8 @@
-import { Space } from '../structures/Space.js';
-import { BaseManager } from './BaseManager.js';
-import { Collection } from '../util/Collection.js';
-import { CustomTypeError } from '../errors/index.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import type { Client } from '../client/Client.js';
+import { Collection } from '../util';
+import { BaseManager } from './BaseManager';
+import { CustomTypeError } from '../errors';
+import { RequestData, Space } from '../structures';
+import type { Client } from '../client';
 import type {
   FetchSpaceOptions,
   FetchSpacesByCreatorIdsOptions,
@@ -38,14 +37,14 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
   async fetch<T extends FetchSpaceOptions | FetchSpacesOptions>(options: T): Promise<SpaceManagerFetchResult<T>> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
     if ('space' in options) {
-      const spaceId = this.resolveID(options.space);
+      const spaceId = this.resolveId(options.space);
       if (!spaceId) throw new CustomTypeError('SPACE_RESOLVE_ID');
       return this.#fetchSingleSpace(spaceId, options) as Promise<SpaceManagerFetchResult<T>>;
     }
     if ('spaces' in options) {
       if (!Array.isArray(options.spaces)) throw new CustomTypeError('INVALID_TYPE', 'spaces', 'array', true);
       const spaceIds = options.spaces.map(space => {
-        const spaceId = this.resolveID(space);
+        const spaceId = this.resolveId(space);
         if (!spaceId) throw new CustomTypeError('SPACE_RESOLVE_ID');
         return spaceId;
       });
@@ -64,7 +63,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
     const fetchedSpaceCollection = new Collection<Snowflake, Space>();
     const userIds = options.users.map(user => {
-      const userId = this.client.users.resolveID(user as UserResolvable);
+      const userId = this.client.users.resolveId(user as UserResolvable);
       if (!userId) throw new CustomTypeError('USER_RESOLVE_ID', 'fetch spaces of');
       return userId;
     });
@@ -88,7 +87,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
   }
 
   /**
-   * Searches spaces to fetch them.
+   * Fetches spaces using search query.
    * @param options Option used to search spaces
    * @returns A {@link Collection} of {@link Space} as a `Promise`
    */

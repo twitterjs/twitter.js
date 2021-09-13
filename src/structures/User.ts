@@ -1,6 +1,6 @@
-import { SimplifiedUser } from './SimplifiedUser.js';
-import { SimplifiedTweet } from './SimplifiedTweet.js';
-import type { Client } from '../client/Client.js';
+import { SimplifiedUser } from './SimplifiedUser';
+import { SimplifiedTweet } from './SimplifiedTweet';
+import type { Client } from '../client';
 import type { APITweet, SingleUserLookupResponse } from 'twitter-types';
 
 /**
@@ -22,7 +22,7 @@ export class User extends SimplifiedUser {
 
   #patchPinnedTweet(tweets?: Array<APITweet>): SimplifiedTweet | undefined {
     if (!tweets) return;
-    const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetID);
+    const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetId);
     if (!rawPinnedTweet) return;
     return new SimplifiedTweet(this.client, rawPinnedTweet);
   }

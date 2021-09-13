@@ -1,21 +1,28 @@
 import type { Response } from 'node-fetch';
 import type { APIProblem } from 'twitter-types';
-import type { ClientOptions } from '../typings/Interfaces.js';
+import type { ClientOptions } from '../typings';
 
-const has = (obj: Record<string, unknown>, key: string) => Object.prototype.hasOwnProperty.call(obj, key);
+/**
+ * Checks whether a given key is present in a given object.
+ * @param targetObject The object to check the key in
+ * @param key The key to check
+ * @returns `true` if the key is present, otherwise `false`
+ */
+export const objectHasKey = (targetObject: Record<string, unknown>, key: string): boolean =>
+  Object.prototype.hasOwnProperty.call(targetObject, key);
 
 /* eslint-disable */
-export function mergeDefault(defaultObject: any, given: any): ClientOptions {
-  if (!given) return defaultObject;
+export function mergeDefault(defaultObject: any, givenObject: any): ClientOptions {
+  if (!givenObject) return defaultObject;
   let key: keyof ClientOptions | any;
   for (key in defaultObject) {
-    if (!has(given, key) || given[key] === undefined) {
-      given[key] = defaultObject[key];
-    } else if (given[key] === Object(given[key])) {
-      given[key] = mergeDefault(defaultObject[key], given[key]);
+    if (!objectHasKey(givenObject, key) || givenObject[key] === undefined) {
+      givenObject[key] = defaultObject[key];
+    } else if (givenObject[key] === Object(givenObject[key])) {
+      givenObject[key] = mergeDefault(defaultObject[key], givenObject[key]);
     }
   }
-  return given as ClientOptions;
+  return givenObject as ClientOptions;
 }
 /* eslint-enable */
 

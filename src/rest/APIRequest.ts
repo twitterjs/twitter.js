@@ -1,10 +1,10 @@
 import https from 'https';
 import fetch from 'node-fetch';
-import type { Client } from '../client/Client.js';
-import type { RESTManager } from './RESTManager.js';
-import type { RequestData } from '../structures/misc/Misc.js';
+import type { Client } from '../client';
+import type { RESTManager } from './RESTManager';
+import type { RequestData } from '../structures';
 import type { Response, HeaderInit, BodyInit } from 'node-fetch';
-import type { ExtendedRequestData } from '../typings/Interfaces.js';
+import type { ExtendedRequestData } from '../typings';
 
 const agent = new https.Agent({ keepAlive: true });
 

@@ -1,10 +1,10 @@
-import { Poll } from './Poll.js';
-import { Place } from './Place.js';
-import { Media } from './Media.js';
-import { Collection } from '../util/Collection.js';
-import { SimplifiedUser } from './SimplifiedUser.js';
-import { SimplifiedTweet } from './SimplifiedTweet.js';
-import type { Client } from '../client/Client.js';
+import { Poll } from './Poll';
+import { Place } from './Place';
+import { Media } from './Media';
+import { Collection } from '../util';
+import { SimplifiedUser } from './SimplifiedUser';
+import { SimplifiedTweet } from './SimplifiedTweet';
+import type { Client } from '../client';
 import type {
   APIMedia,
   APIPlace,
@@ -70,7 +70,7 @@ export class Tweet extends SimplifiedTweet {
 
   #patchAuthor(users?: Array<APIUser>): SimplifiedUser | undefined {
     if (!users) return;
-    const rawAuthor = users.find(user => user.id === this.authorID);
+    const rawAuthor = users.find(user => user.id === this.authorId);
     if (!rawAuthor) return;
     return new SimplifiedUser(this.client, rawAuthor);
   }
@@ -92,9 +92,9 @@ export class Tweet extends SimplifiedTweet {
     referenceType: APITweetReferencedTweetType,
     tweets?: Array<APITweet>,
   ): SimplifiedTweet | undefined {
-    const originalTweetID = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
-    if (!originalTweetID || !tweets) return;
-    const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetID);
+    const originalTweetId = this.referencedTweets?.find(tweet => tweet.type === referenceType)?.id;
+    if (!originalTweetId || !tweets) return;
+    const rawOriginalTweet = tweets.find(tweet => tweet.id === originalTweetId);
     if (!rawOriginalTweet) return;
     return new SimplifiedTweet(this.client, rawOriginalTweet);
   }

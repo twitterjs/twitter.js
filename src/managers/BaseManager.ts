@@ -1,6 +1,6 @@
-import { Collection } from '../util/Collection.js';
-import type { Client } from '../client/Client.js';
-import type { StructureConstructable } from '../typings/Interfaces.js';
+import { Collection } from '../util';
+import type { Client } from '../client';
+import type { StructureConstructable } from '../typings';
 
 /**
  * The base class for all managers
@@ -49,7 +49,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
    * Resolves a structure resolvable to its id.
    * @param idOrInstance The ID or instance of the strucutre held by this manager
    */
-  resolveID(idOrInstance: K | R): K | null {
+  resolveId(idOrInstance: K | R): K | null {
     if (idOrInstance instanceof this._holds) return idOrInstance.id;
     if (typeof idOrInstance === 'string') return idOrInstance as K;
     return null;

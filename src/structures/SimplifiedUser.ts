@@ -1,11 +1,9 @@
-import { BaseStructure } from './BaseStructure.js';
-import { UserPublicMetrics } from './misc/Misc.js';
-import { UserEntities } from './misc/UserEntities.js';
-import { FollowersBook } from '../books/FollowersBook.js';
-import { FollowingsBook } from '../books/FollowingsBook.js';
-import type { User } from './User.js';
-import type { Client } from '../client/Client.js';
-import type { Collection } from '../util/Collection.js';
+import { BaseStructure } from './BaseStructure';
+import { UserPublicMetrics, UserEntities } from './misc';
+import { FollowersBook, FollowingsBook } from '../books';
+import type { User } from './User';
+import type { Client } from '../client';
+import type { Collection } from '../util';
 import type { APIUser, Snowflake } from 'twitter-types';
 import type {
   UserFollowResponse,
@@ -14,7 +12,7 @@ import type {
   UserUnblockResponse,
   UserMuteResponse,
   UserUnmuteResponse,
-} from './misc/Misc.js';
+} from './misc';
 
 /**
  * A simplified version of {@link User} class
@@ -63,7 +61,7 @@ export class SimplifiedUser extends BaseStructure {
   /**
    * The unique identifier of this user's pinned Tweet
    */
-  pinnedTweetID: Snowflake | null;
+  pinnedTweetId: Snowflake | null;
 
   /**
    * The URL to the profile image for this user, as shown on the user's profile
@@ -101,11 +99,11 @@ export class SimplifiedUser extends BaseStructure {
     this.id = data.id;
     this.name = data.name;
     this.username = data.username;
-    this.createdAt = data.created_at ?? null;
+    this.createdAt = data.created_at ? new Date(data.created_at) : null;
     this.description = data.description ?? null;
     this.entities = data.entities ? new UserEntities(data.entities) : null;
     this.location = data.location ?? null;
-    this.pinnedTweetID = data.pinned_tweet_id ?? null;
+    this.pinnedTweetId = data.pinned_tweet_id ?? null;
     this.profileImageURL = data.profile_image_url ?? null;
     this.protected = data.protected ?? null;
     this.publicMetrics = data.public_metrics ? new UserPublicMetrics(data.public_metrics) : null;
@@ -163,20 +161,20 @@ export class SimplifiedUser extends BaseStructure {
   }
 
   /**
-   * Creates a {@link FollowersBook} object for fetching followers of this user.
+   * Fetches followers of this user.
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
    * @returns A tuple containing {@link FollowersBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  async fetchFollowersBook(maxResultsPerPage?: number): Promise<[FollowersBook, Collection<Snowflake, User>]> {
-    return this.client.users.fetchFollowersBook(this.id, maxResultsPerPage);
+  async fetchFollowers(maxResultsPerPage?: number): Promise<[FollowersBook, Collection<Snowflake, User>]> {
+    return this.client.users.fetchFollowers(this.id, maxResultsPerPage);
   }
 
   /**
-   * Creates a {@link FollowingsBook} object for fetching users followed by this user.
+   * Fetches users followed by this user.
    * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
    * @returns A tuple containing {@link FollowingsBook} object and a {@link Collection} of {@link User} objects representing the first page
    */
-  async fetchFollowingBook(maxResultsPerPage?: number): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
-    return this.client.users.fetchFollowingBook(this.id, maxResultsPerPage);
+  async fetchFollowings(maxResultsPerPage?: number): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
+    return this.client.users.fetchFollowings(this.id, maxResultsPerPage);
   }
 }

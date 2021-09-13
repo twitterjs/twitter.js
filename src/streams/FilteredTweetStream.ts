@@ -1,10 +1,8 @@
-import { BaseStream } from './BaseStream.js';
-import { Collection } from '../util/Collection.js';
-import { ClientEvents } from '../util/Constants.js';
-import { RequestData } from '../structures/misc/Misc.js';
-import { FilteredTweetStreamRule } from '../structures/FilteredTweetStreamRule.js';
-import type { Client } from '../client/Client.js';
-import type { FilteredTweetStreamAddRuleOptions, FilteredTweetStreamRuleResolvable } from '../typings/index.js';
+import { BaseStream } from './BaseStream';
+import { Collection, ClientEvents } from '../util';
+import { RequestData, FilteredTweetStreamRule } from '../structures';
+import type { Client } from '../client';
+import type { FilteredTweetStreamAddRuleOptions, FilteredTweetStreamRuleResolvable } from '../typings';
 import type {
   GetFilteredTweetStreamQuery,
   GetFilteredTweetStreamResponse,

@@ -1,4 +1,4 @@
-import { CustomErrors } from './TwitterjsError.js';
+import { CustomErrors } from './TwitterjsError';
 
-export * from './ErrorMessages.js';
+export * from './ErrorMessages';
 export const { CustomError, CustomRangeError, CustomTypeError } = CustomErrors;

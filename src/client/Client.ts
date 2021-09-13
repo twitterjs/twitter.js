@@ -1,37 +1,22 @@
-import { BaseClient } from './BaseClient.js';
-import { BlocksBook } from '../books/BlocksBook.js';
-import { ClientEvents } from '../util/Constants.js';
-import { RESTManager } from '../rest/RESTManager.js';
-import { ClientUser } from '../structures/ClientUser.js';
-import { UserManager } from '../managers/UserManager.js';
-import { TweetManager } from '../managers/TweetManager.js';
-import { SpaceManager } from '../managers/SpaceManager.js';
-import { CountTweetsBook } from '../books/CountTweetsBook.js';
-import { SearchTweetsBook } from '../books/SearchTweetsBook.js';
-import { CustomError, CustomTypeError } from '../errors/index.js';
-import { SampledTweetStream } from '../streams/SampledTweetStream.js';
-import { FilteredTweetStream } from '../streams/FilteredTweetStream.js';
-import { ClientCredentials, RequestData } from '../structures/misc/Misc.js';
-import type { User } from '../structures/User.js';
-import type { Tweet } from '../structures/Tweet.js';
-import type { Collection } from '../util/Collection.js';
-import type {
-  GetSingleUserByUsernameQuery,
-  GetSingleUserByUsernameResponse,
-  GetTweetCountsResponse,
-  Snowflake,
-} from 'twitter-types';
-import type { ClientEventKeyType, ClientEventListenerType, ClientEventArgsType } from '../index.js';
+import { BaseClient } from './BaseClient';
+import { RESTManager } from '../rest/RESTManager';
+import { ClientEvents } from '../util';
+import { CustomError, CustomTypeError } from '../errors';
+import { SampledTweetStream, FilteredTweetStream } from '../streams';
+import { UserManager, TweetManager, SpaceManager } from '../managers';
+import { ClientCredentials, RequestData, ClientUser } from '../structures';
+import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
 import type {
   ClientCredentialsInterface,
   ClientEventsMapping,
   ClientOptions,
-  CountTweetsBookCreateOptions,
-  SearchTweetsBookCreateOptions,
-} from '../typings/Interfaces.js';
+  ClientEventKeyType,
+  ClientEventArgsType,
+  ClientEventListenerType,
+} from '../typings';
 
 /**
- * The core class that exposes library APIs
+ * The core class that exposes all the functionalities available in twitter.js
  */
 export class Client extends BaseClient {
   /**
@@ -40,39 +25,52 @@ export class Client extends BaseClient {
   readyAt: Date | null;
 
   /**
-   * The bearer token that was provided for the client
+   * The bearer token that was provided to the client during login
    */
   token: string | null;
 
   /**
-   * The credentials that were provided to the client
+   * The credentials that were provided to the client during login
+   *
+   * **Note**: This will be available only if the client was logged in using {@link Client.login}
    */
   credentials: ClientCredentials | null;
 
   /**
-   * The twitter user this client represents and authorized with
+   * The twitter user this client represents
+   *
+   * **Note**: This will be available only if the client was logged in using {@link Client.login}
    */
   me: ClientUser | null;
 
   /**
-   * The class that manages and forwards API requests made by the client
+   * The manager for twitter API requests made by the client
    */
   rest: RESTManager;
 
   /**
-   * The tweet manager class of the client
+   * The manager for {@link Tweet} objects
    */
   tweets: TweetManager;
 
   /**
-   * The user manager class of the client
+   * The manager for {@link User} objects
    */
   users: UserManager;
 
+  /**
+   * The manager for {@link Space} objects
+   */
   spaces: SpaceManager;
 
+  /**
+   * The class for working with sampled tweet stream
+   */
   sampledTweets: SampledTweetStream;
 
+  /**
+   * The class for working with filtered tweet stream
+   */
   filteredTweets: FilteredTweetStream;
 
   /**
@@ -98,7 +96,11 @@ export class Client extends BaseClient {
   }
 
   /**
-   * A getter that returns the buildRoute function from {@link APIRouter}
+   * A getter that returns the `routeBuilder` method of {@link RESTManager}
+   * for making API requests
+   *
+   * **Note**: This is a shortcut made available for internal use only, users of the library need not to
+   * use it and should treat it as a private field
    * @private
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,7 +109,7 @@ export class Client extends BaseClient {
   }
 
   /**
-   * Makes the client ready for use and stores the provided token in memory.
+   * Sets the client ready to make bearer token authorized API requests.
    * Emits a `ready` event on success.
    * @param token The bearer token for the client
    * @returns The provided bearer token as a `Promise`
@@ -126,7 +128,7 @@ export class Client extends BaseClient {
   }
 
   /**
-   * Makes the client ready for use and stores the provided credentials in memory.
+   * Sets the client ready to make both bearer token and user context authorized API requests.
    * Emits a `ready` event on success.
    * @param credentials The credentials for the client
    * @returns The provided credentials as a `Promise`
@@ -148,45 +150,6 @@ export class Client extends BaseClient {
 
     this.emit(ClientEvents.READY, this);
     return this.credentials;
-  }
-
-  /**
-   * Creates a {@link SearchTweetsBook} object for fetching tweets using search query.
-   * @param options The options for creating the book
-   * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
-   */
-  async fetchSearchTweetsBook(
-    options: SearchTweetsBookCreateOptions,
-  ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
-    const searchTweetsBook = new SearchTweetsBook(this, options);
-    const firstPage = await searchTweetsBook.fetchNextPage();
-    return [searchTweetsBook, firstPage];
-  }
-
-  /**
-   * Creates a {@link CountTweetsBook} object for fetching number of tweets matching a query.
-   * @param options The options for creating the book
-   * @returns TODO
-   */
-  async fetchCountTweetsBook(
-    options: CountTweetsBookCreateOptions,
-  ): Promise<[CountTweetsBook, GetTweetCountsResponse]> {
-    const countTweetsBook = new CountTweetsBook(this, options);
-    const firstPage = await countTweetsBook.fetchNextPage();
-    return [countTweetsBook, firstPage];
-  }
-
-  /**
-   * Creates a {@link BlocksBook} object for fetching users blocked by the authorized user.
-   * @param maxResultsPerPage The maximum amount of users to fetch per page
-   * @returns A tuple containing {@link BlocksBook} object and a {@link Collection} of {@link User} objects representing the first page
-   */
-  async fetchBlocksBook(maxResultsPerPage?: number): Promise<[BlocksBook, Collection<Snowflake, User>]> {
-    const userID = this.me?.id;
-    if (!userID) throw new CustomError('USER_RESOLVE_ID', 'create blocks book for');
-    const blocksBook = new BlocksBook(this, userID, maxResultsPerPage);
-    const firstPage = await blocksBook.fetchNextPage();
-    return [blocksBook, firstPage];
   }
 
   override on<K extends keyof ClientEventsMapping | symbol>(

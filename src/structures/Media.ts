@@ -1,12 +1,7 @@
-import { BaseStructure } from './BaseStructure.js';
-import type { Client } from '../client/Client.js';
+import { BaseStructure } from './BaseStructure';
+import { MediaNonPublicMetrics, MediaOrganicMetrics, MediaPromotedMetrics, MediaPublicMetrics } from './misc';
+import type { Client } from '../client';
 import type { APIMedia, APIMediaType } from 'twitter-types';
-import {
-  MediaNonPublicMetrics,
-  MediaOrganicMetrics,
-  MediaPromotedMetrics,
-  MediaPublicMetrics,
-} from './misc/MediaMetrics.js';
 
 /**
  * The class that represents a media content in a {@link Tweet}

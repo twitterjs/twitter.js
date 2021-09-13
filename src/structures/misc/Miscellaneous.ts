@@ -1,5 +1,5 @@
-import { CustomError } from '../../errors/index.js';
-import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings/Interfaces';
+import { CustomError } from '../../errors';
+import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings';
 import type {
   APIPlaceGeo,
   APIPlaceGeoBoundingBox,
@@ -15,12 +15,14 @@ import type {
   DeleteUsersFollowingResponse,
   DeleteUsersMutingResponse,
   DeleteUsersRetweetsResponse,
+  Granularity,
   PostTweetsLikeResponse,
   PostUsersBlockingResponse,
   PostUsersFollowingResponse,
   PostUsersMutingResponse,
   PostUsersRetweetsResponse,
   PutTweetReplyHideUnhideResponse,
+  SearchCount,
   Snowflake,
 } from 'twitter-types';
 
@@ -84,12 +86,12 @@ export class TweetReference {
 }
 
 export class TweetGeo {
-  placeID: string;
+  placeId: string;
   type: 'Point' | null;
   coordinates: TweetGeoCoordinates | null;
 
   constructor(data: APITweetGeo) {
-    this.placeID = data.place_id;
+    this.placeId = data.place_id;
     this.type = data.coordinates?.type ?? null;
     this.coordinates = data.coordinates ? new TweetGeoCoordinates(data.coordinates) : null;
   }
@@ -333,5 +335,34 @@ export class ClientCredentials {
     ) {
       throw new CustomError('CREDENTIALS_NOT_STRING');
     }
+  }
+}
+
+export class TweetCountBucket {
+  /**
+   * The start time of the bucket
+   */
+  start: Date;
+
+  /**
+   * The end time of the bucket
+   */
+  end: Date;
+
+  /**
+   * The number of tweets created between start and end time that matched with the query
+   */
+  count: number;
+
+  /**
+   * The timespan between start and end time of this bucket
+   */
+  granularity: Granularity;
+
+  constructor(data: SearchCount, granularity: Granularity | null) {
+    this.start = new Date(data.start);
+    this.end = new Date(data.end);
+    this.count = data.tweet_count;
+    this.granularity = granularity ?? 'hour';
   }
 }
