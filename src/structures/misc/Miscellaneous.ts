@@ -9,7 +9,9 @@ import type {
   APITweetGeoCoordinates,
   APITweetReferencedTweet,
   APITweetReferencedTweetType,
+  APITweetWithheld,
   APIUserPublicMetrics,
+  APIUserWithheld,
   DeleteTweetsLikeResponse,
   DeleteUsersBlockingResponse,
   DeleteUsersFollowingResponse,
@@ -364,5 +366,40 @@ export class TweetCountBucket {
     this.end = new Date(data.end);
     this.count = data.tweet_count;
     this.granularity = granularity ?? 'hour';
+  }
+}
+
+/**
+ * Represents withholding details about a user
+ */
+export class UserWitheld {
+  /**
+   * A list of countries where this content is not available
+   */
+  countryCodes: Array<string>;
+
+  /**
+   * The type of content being withheld
+   */
+  scope: string | null;
+
+  constructor(data: APIUserWithheld) {
+    this.countryCodes = data.country_codes;
+    this.scope = data.scope ?? null;
+  }
+}
+
+/**
+ * Represents withholding details about a tweet
+ */
+export class TweetWithheld extends UserWitheld {
+  /**
+   * Whether the content is being withheld on the basis of copyright infringement
+   */
+  copyright: boolean;
+
+  constructor(data: APITweetWithheld) {
+    super(data);
+    this.copyright = data.copyright;
   }
 }

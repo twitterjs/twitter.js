@@ -1,5 +1,5 @@
 import { BaseStructure } from './BaseStructure';
-import { UserPublicMetrics, UserEntities } from './misc';
+import { UserPublicMetrics, UserEntities, UserWitheld } from './misc';
 import { FollowersBook, FollowingsBook } from '../books';
 import type { User } from './User';
 import type { Client } from '../client';
@@ -91,7 +91,7 @@ export class SimplifiedUser extends BaseStructure {
   /**
    * Contains withholding details for withheld content, if applicable
    */
-  withheld?: any; // TODO
+  withheld: UserWitheld | null;
 
   constructor(client: Client, data: APIUser) {
     super(client);
@@ -109,7 +109,7 @@ export class SimplifiedUser extends BaseStructure {
     this.publicMetrics = data.public_metrics ? new UserPublicMetrics(data.public_metrics) : null;
     this.url = data.url ?? null;
     this.verified = data.verified ?? null;
-    this.withheld = data.withheld;
+    this.withheld = data.withheld ? new UserWitheld(data.withheld) : null;
   }
 
   /**

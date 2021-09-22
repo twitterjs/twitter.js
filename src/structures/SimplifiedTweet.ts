@@ -9,6 +9,7 @@ import {
   TweetGeo,
   TweetReference,
   TweetEntities,
+  TweetWithheld,
 } from './misc';
 import type { User } from './User';
 import type { Client } from '../client';
@@ -138,7 +139,7 @@ export class SimplifiedTweet extends BaseStructure {
    *
    * See https://help.twitter.com/en/rules-and-policies/tweet-withheld-by-country
    */
-  withheld?: any; // TODO
+  withheld: TweetWithheld | null;
 
   constructor(client: Client, data: APITweet) {
     super(client);
@@ -162,7 +163,7 @@ export class SimplifiedTweet extends BaseStructure {
     this.referencedTweets = this.#patchReferencedTweets(data.referenced_tweets);
     this.replySettings = data.reply_settings ?? null;
     this.source = data.source ?? null;
-    this.withheld = data.withheld;
+    this.withheld = data.withheld ? new TweetWithheld(data.withheld) : null;
   }
 
   /**
