@@ -5,15 +5,14 @@ import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser } from '../structures';
-import type { GetSingleUserByUsernameQuery, GetSingleUserByUsernameResponse } from 'twitter-types';
+import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
-  ClientCredentialsInterface,
-  ClientEventsMapping,
-  ClientOptions,
-  ClientEventKeyType,
-  ClientEventArgsType,
-  ClientEventListenerType,
-} from '../typings';
+  GetFilteredTweetStreamQuery,
+  GetFilteredTweetStreamResponse,
+  GetSampledTweetStreamQuery,
+  GetSingleUserByUsernameQuery,
+  GetSingleUserByUsernameResponse,
+} from 'twitter-types';
 
 /**
  * The core class that exposes all the functionalities available in twitter.js
@@ -124,6 +123,12 @@ export class Client extends BaseClient {
     this.readyAt = new Date();
 
     this.emit(ClientEvents.READY, this);
+    if (this.options.events.includes('FILTERED_TWEET_CREATE')) {
+      this.#connectToFilteredTweetStream();
+    }
+    if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
+      this.#connectToSampledTweetStream();
+    }
     return this.token;
   }
 
@@ -149,32 +154,13 @@ export class Client extends BaseClient {
       throw new CustomError('USER_CONTEXT_LOGIN_ERROR', this.credentials.username);
 
     this.emit(ClientEvents.READY, this);
+    if (this.options.events.includes('FILTERED_TWEET_CREATE')) {
+      this.#connectToFilteredTweetStream();
+    }
+    if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
+      this.#connectToSampledTweetStream();
+    }
     return this.credentials;
-  }
-
-  override on<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
-  ): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    super.on(event, listener as (...args: any[]) => void);
-    return this;
-  }
-
-  override once<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    listener: (...args: ClientEventListenerType<K>) => void,
-  ): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    super.on(event, listener as (...args: any[]) => void);
-    return this;
-  }
-
-  override emit<K extends keyof ClientEventsMapping | symbol>(
-    event: ClientEventKeyType<K>,
-    ...args: ClientEventArgsType<K>
-  ): boolean {
-    return super.emit(event, ...args);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
@@ -189,5 +175,61 @@ export class Client extends BaseClient {
     const requestData = new RequestData({ query });
     const data: GetSingleUserByUsernameResponse = await this._api.users.by.username(username).get(requestData);
     return new ClientUser(this, data);
+  }
+
+  async #connectToFilteredTweetStream(): Promise<void> {
+    const queryParameters = this.options.queryParameters;
+    const query: GetFilteredTweetStreamQuery = {
+      expansions: queryParameters?.tweetExpansions,
+      'media.fields': queryParameters?.mediaFields,
+      'place.fields': queryParameters?.placeFields,
+      'poll.fields': queryParameters?.pollFields,
+      'tweet.fields': queryParameters?.tweetFields,
+      'user.fields': queryParameters?.userFields,
+    };
+    const requestData = new RequestData({ query, isStreaming: true });
+    const filteredTweetStreamResponse = await this._api.tweets.search.stream.get(requestData);
+    try {
+      for await (const chunk of filteredTweetStreamResponse.body) {
+        const stringifiedChunk = chunk.toString();
+        try {
+          const data: GetFilteredTweetStreamResponse = JSON.parse(stringifiedChunk);
+          const tweet = this.tweets.add(data.data.id, data);
+          this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet);
+        } catch (error) {
+          // Find a way to fix the error where it's not able to parse
+        }
+      }
+    } catch (err) {
+      // TODO: add a reconnection mechanism
+    }
+  }
+
+  async #connectToSampledTweetStream(): Promise<void> {
+    const queryParameters = this.options.queryParameters;
+    const query: GetSampledTweetStreamQuery = {
+      expansions: queryParameters?.tweetExpansions,
+      'media.fields': queryParameters?.mediaFields,
+      'place.fields': queryParameters?.placeFields,
+      'poll.fields': queryParameters?.pollFields,
+      'tweet.fields': queryParameters?.tweetFields,
+      'user.fields': queryParameters?.userFields,
+    };
+    const requestData = new RequestData({ query, isStreaming: true });
+    const sampledTweetStreamResponse = await this._api.tweets.sample.stream.get(requestData);
+    try {
+      for await (const chunk of sampledTweetStreamResponse.body) {
+        const stringifiedChunk = chunk.toString();
+        try {
+          const data = JSON.parse(stringifiedChunk);
+          const tweet = this.tweets.add(data.data.id, data);
+          this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
+        } catch (error) {
+          // Find a way to fix the error where it's not able to parse
+        }
+      }
+    } catch (err) {
+      // TODO: add a reconnection mechanism
+    }
   }
 }
