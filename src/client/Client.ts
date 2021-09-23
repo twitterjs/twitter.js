@@ -10,6 +10,7 @@ import type {
   GetFilteredTweetStreamQuery,
   GetFilteredTweetStreamResponse,
   GetSampledTweetStreamQuery,
+  GetSampledTweetStreamResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
 } from 'twitter-types';
@@ -221,7 +222,7 @@ export class Client extends BaseClient {
       for await (const chunk of sampledTweetStreamResponse.body) {
         const stringifiedChunk = chunk.toString();
         try {
-          const data = JSON.parse(stringifiedChunk);
+          const data: GetSampledTweetStreamResponse = JSON.parse(stringifiedChunk);
           const tweet = this.tweets.add(data.data.id, data);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {

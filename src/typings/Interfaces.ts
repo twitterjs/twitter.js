@@ -269,6 +269,16 @@ export interface FetchBlocksOptions {
   maxResultsPerPage?: number;
 }
 
+/**
+ * The options used to fetch users muted by the authorized user
+ */
+export interface FetchMutesOptions {
+  /**
+   * The maximum number of users to fetch per page
+   */
+  maxResultsPerPage?: number;
+}
+
 export interface BookOptions {
   /**
    * The ID of the user to create the book for

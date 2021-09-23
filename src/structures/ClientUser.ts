@@ -1,8 +1,8 @@
 import { User } from './User';
-import { BlocksBook } from '../books';
+import { BlocksBook, MutesBook } from '../books';
 import type { Client } from '../client';
 import type { Collection } from '../util';
-import type { FetchBlocksOptions } from '../typings';
+import type { FetchBlocksOptions, FetchMutesOptions } from '../typings';
 import type { SingleUserLookupResponse, Snowflake } from 'twitter-types';
 
 export class ClientUser extends User {
@@ -19,5 +19,16 @@ export class ClientUser extends User {
     const blocksBook = new BlocksBook(this.client, { userId: this.id, maxResultsPerPage: options?.maxResultsPerPage });
     const firstPage = await blocksBook.fetchNextPage();
     return [blocksBook, firstPage];
+  }
+
+  /**
+   * Fetches users muted by the authorized user.
+   * @param options The options for fetching muted users
+   * @returns A tuple containing {@link MutesBook} object and a {@link Collection} of {@link User} objects representing the first page
+   */
+  async fetchMutes(options?: FetchMutesOptions): Promise<[MutesBook, Collection<Snowflake, User>]> {
+    const mutesBook = new MutesBook(this.client, { userId: this.id, maxResultsPerPage: options?.maxResultsPerPage });
+    const firstPage = await mutesBook.fetchNextPage();
+    return [mutesBook, firstPage];
   }
 }

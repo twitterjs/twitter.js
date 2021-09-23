@@ -80,3 +80,8 @@ export type FollowingsBookOptions = BookOptions;
  * The options used to create a {@link LikedTweetsBook} object
  */
 export type LikedTweetsBookOptions = BookOptions;
+
+/**
+ * The options used to create a {@link MutesBook} object
+ */
+export type MutesBookOptions = BookOptions;
