@@ -26,12 +26,12 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
    * @param structureType The kind of structures this manager stores
    */
   constructor(client: Client, structureType: StructureConstructable<T>) {
-    Object.defineProperty(this, 'client', { writable: true });
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
 
     this.cache = new Collection<K, T>();
 
-    Object.defineProperty(this, '_holds', { writable: true });
+    Object.defineProperty(this, '_holds', { writable: true, enumerable: false });
     this._holds = structureType;
   }
 

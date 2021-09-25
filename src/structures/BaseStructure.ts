@@ -13,7 +13,7 @@ export class BaseStructure {
    * @param client The client this structure belongs to
    */
   constructor(client: Client) {
-    Object.defineProperty(this, 'client', { writable: true });
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
   }
 }

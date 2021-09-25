@@ -1,5 +1,4 @@
-import type { Response } from 'node-fetch';
-import type { APIProblem } from 'twitter-types';
+import type { Response } from 'undici';
 import type { ClientOptions } from '../typings';
 
 /**
@@ -31,7 +30,9 @@ export function mergeDefault(defaultObject: any, givenObject: any): ClientOption
  * @param res The response sent by the API
  * @returns The body of the response
  */
-export async function parseResponse(res: Response): Promise<Record<string, unknown> | Buffer | APIProblem> {
-  if (res.headers.get('content-type')?.startsWith('application/json')) return res.json();
-  return res.buffer();
+export async function parseResponse(res: Response): Promise<unknown | ArrayBuffer> {
+  if (res.headers.get('content-type')?.startsWith('application/json')) {
+    return res.json() as Promise<Record<string, unknown>>;
+  }
+  return res.arrayBuffer();
 }

@@ -1,12 +1,9 @@
-import https from 'https';
-import fetch from 'node-fetch';
+import { fetch } from 'undici';
 import type { Client } from '../client';
 import type { RESTManager } from './RESTManager';
 import type { RequestData } from '../structures';
-import type { Response, HeaderInit, BodyInit } from 'node-fetch';
+import type { Response, HeadersInit, BodyInit } from 'undici';
 import type { ExtendedRequestData } from '../typings';
-
-const agent = new https.Agent({ keepAlive: true });
 
 export class APIRequest {
   rest: RESTManager;
@@ -23,6 +20,7 @@ export class APIRequest {
     this.path = path;
     this.options = options;
     this.route = options.route;
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = rest.client;
     this.isStreaming = options.isStreaming;
 
@@ -40,7 +38,7 @@ export class APIRequest {
     const baseURL = `${this.client.options.api?.baseURL}/${this.client.options.api?.version}`;
     const url = baseURL + this.path;
 
-    const headers: HeaderInit = {};
+    const headers: HeadersInit = {};
     headers.Authorization = this.options.isUserContext
       ? this.rest.getUserContextAuth(this.method, url)
       : this.rest.getBearerAuth();
@@ -53,8 +51,8 @@ export class APIRequest {
 
     return fetch(url, {
       method: this.method,
+      keepalive: true,
       headers,
-      agent,
       body,
     });
   }

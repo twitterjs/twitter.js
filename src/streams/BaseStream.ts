@@ -10,7 +10,7 @@ export class BaseStream {
   client: Client;
 
   constructor(client: Client) {
-    Object.defineProperty(this, 'client', { writable: true });
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
   }
 }

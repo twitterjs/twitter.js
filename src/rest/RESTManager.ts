@@ -6,8 +6,7 @@ import { buildRoute } from './APIRouter';
 import { APIRequest } from './APIRequest';
 import { RequestHandler } from './RequestHandler';
 import type { Client } from '../client';
-import type { Response } from 'node-fetch';
-import type { APIProblem } from 'twitter-types';
+import type { Response } from 'undici';
 import type { ExtendedRequestData } from '../typings';
 
 /**
@@ -25,6 +24,7 @@ export class RESTManager {
   requestHandlers: Collection<string, RequestHandler>;
 
   constructor(client: Client) {
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
     this.requestHandlers = new Collection();
   }
@@ -78,7 +78,7 @@ export class RESTManager {
     method: string,
     path: string,
     options: ExtendedRequestData<string, unknown>,
-  ): Promise<Record<string, unknown> | Buffer | APIProblem | undefined | Response> {
+  ): Promise<Record<string, unknown> | ArrayBuffer | Response> {
     const apiRequest = new APIRequest(this, method, path, options);
     let handler = this.requestHandlers.get(apiRequest.route);
     if (!handler) {

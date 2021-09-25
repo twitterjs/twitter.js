@@ -5,6 +5,7 @@ import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser } from '../structures';
+import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
   GetFilteredTweetStreamQuery,
@@ -79,10 +80,10 @@ export class Client extends BaseClient {
   constructor(options?: ClientOptions) {
     super(options);
 
-    Object.defineProperty(this, 'token', { writable: true });
+    Object.defineProperty(this, 'token', { writable: true, enumerable: false });
     this.token = null;
 
-    Object.defineProperty(this, 'credentials', { writable: true });
+    Object.defineProperty(this, 'credentials', { writable: true, enumerable: false });
     this.credentials = null;
 
     this.me = null;
@@ -189,19 +190,23 @@ export class Client extends BaseClient {
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query, isStreaming: true });
-    const filteredTweetStreamResponse = await this._api.tweets.search.stream.get(requestData);
+    const { body }: Response = await this._api.tweets.search.stream.get(requestData);
+    if (!body) throw Error('No response body');
     try {
-      for await (const chunk of filteredTweetStreamResponse.body) {
-        const stringifiedChunk = chunk.toString();
+      for await (const chunk of body) {
+        const buffer = Buffer.from(chunk);
+        const data = buffer.toString();
         try {
-          const data: GetFilteredTweetStreamResponse = JSON.parse(stringifiedChunk);
-          const tweet = this.tweets.add(data.data.id, data);
+          const rawTweet: GetFilteredTweetStreamResponse = JSON.parse(data);
+          const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet);
         } catch (error) {
-          // Find a way to fix the error where it's not able to parse
+          // Keep alive signal received. Do nothing.
+          // TODO: Not neccessary but can emit a client event for this (keepAliveSignal)
         }
       }
-    } catch (err) {
+    } catch (error) {
+      console.log(error);
       // TODO: add a reconnection mechanism
     }
   }
@@ -217,19 +222,23 @@ export class Client extends BaseClient {
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query, isStreaming: true });
-    const sampledTweetStreamResponse = await this._api.tweets.sample.stream.get(requestData);
+    const { body }: Response = await this._api.tweets.sample.stream.get(requestData);
+    if (!body) throw Error('No response body');
     try {
-      for await (const chunk of sampledTweetStreamResponse.body) {
-        const stringifiedChunk = chunk.toString();
+      for await (const chunk of body) {
+        const buffer = Buffer.from(chunk);
+        const data = buffer.toString();
         try {
-          const data: GetSampledTweetStreamResponse = JSON.parse(stringifiedChunk);
-          const tweet = this.tweets.add(data.data.id, data);
+          const rawTweet: GetSampledTweetStreamResponse = JSON.parse(data);
+          const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {
-          // Find a way to fix the error where it's not able to parse
+          // Keep alive signal received. Do nothing.
+          // TODO: Not neccessary but can emit a client event for this (keepAliveSignal)
         }
       }
-    } catch (err) {
+    } catch (error) {
+      console.log(error);
       // TODO: add a reconnection mechanism
     }
   }

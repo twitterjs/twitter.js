@@ -13,7 +13,7 @@ export class BaseBook {
    * @param client The logged in {@link Client} instance
    */
   constructor(client: Client) {
-    Object.defineProperty(this, 'client', { writable: true });
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
   }
 }
