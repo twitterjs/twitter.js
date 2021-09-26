@@ -6,6 +6,7 @@ export class TwitterAPIError extends Error {
   type: string;
 
   scope: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any; // TODO
   field: string | null;
   period: string | null;
