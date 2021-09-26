@@ -14,10 +14,6 @@
     "lib": ["ESNext"]
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["**/*.test.ts"]
 }

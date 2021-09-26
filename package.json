@@ -9,6 +9,9 @@
     "doc": "typedoc",
     "test": "jest",
     "prepare": "husky install",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "format": "prettier --write **/*.{json,yml,yaml}",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
