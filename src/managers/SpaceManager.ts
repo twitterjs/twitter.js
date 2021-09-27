@@ -25,6 +25,9 @@ import type {
 } from 'twitter-types';
 
 export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
+  /**
+   * @param client The logged in {@link Client} instance
+   */
   constructor(client: Client) {
     super(client, Space);
   }

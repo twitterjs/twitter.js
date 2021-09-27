@@ -17,7 +17,7 @@ export class BaseStructure {
   id: Snowflake;
 
   /**
-   * @param client The instance of {@link Client} that was used to log in
+   * @param client The logged in {@link Client} instance
    * @param data The data for the base structure
    */
   constructor(client: Client, data: BaseStructureData) {

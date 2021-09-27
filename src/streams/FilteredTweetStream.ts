@@ -15,6 +15,9 @@ import type {
 } from 'twitter-types';
 
 export class FilteredTweetStream extends BaseStream {
+  /**
+   * @param client The logged in {@link Client} instance
+   */
   constructor(client: Client) {
     super(client);
   }
