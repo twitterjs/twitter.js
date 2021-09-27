@@ -19,11 +19,6 @@ import type {
  */
 export class SimplifiedUser extends BaseStructure {
   /**
-   * The unique identifier of the user
-   */
-  id: Snowflake;
-
-  /**
    * The name of the user, as they’ve defined it on their profile. Not necessarily a person’s name.
    * Typically capped at `50` characters, but subject to change
    */
@@ -94,9 +89,7 @@ export class SimplifiedUser extends BaseStructure {
   withheld: UserWitheld | null;
 
   constructor(client: Client, data: APIUser) {
-    super(client);
-
-    this.id = data.id;
+    super(client, data);
     this.name = data.name;
     this.username = data.username;
     this.createdAt = data.created_at ? new Date(data.created_at) : null;

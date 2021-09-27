@@ -1,15 +1,22 @@
 import { PlaceGeo } from './misc';
-import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
 import type { APIPlace, APIPlaceGeo, APIPlaceType } from 'twitter-types';
 
 /**
  * The class that represents a place tagged in a {@link Tweet}
  */
-export class Place extends BaseStructure {
-  fullName: string;
+export class Place {
+  /**
+   * The instance of {@link Client} that was used to log in
+   */
+  client: Client;
 
+  /**
+   * The unique identifier of the place
+   */
   id: string;
+
+  fullName: string;
 
   containedWithin: Array<string>;
 
@@ -24,10 +31,10 @@ export class Place extends BaseStructure {
   placeType: APIPlaceType | null;
 
   constructor(client: Client, data: APIPlace) {
-    super(client);
-
-    this.fullName = data.full_name;
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
+    this.client = client;
     this.id = data.id;
+    this.fullName = data.full_name;
     this.containedWithin = data.contained_within ?? [];
     this.country = data.country ?? null;
     this.countryCode = data.country_code ?? null;

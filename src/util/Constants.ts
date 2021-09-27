@@ -117,10 +117,11 @@ export const SpaceExpansions: Array<SpaceExpansionsParameter> = [
 ];
 
 export const ClientEvents = {
+  FILTERED_TWEET_CREATE: 'filteredTweetCreate',
+  KEEP_ALIVE_SIGNAL: 'keepAliveSignal',
   PARTIAL_ERROR: 'partialError',
   READY: 'ready',
   SAMPLED_TWEET_CREATE: 'sampledTweetCreate',
-  FILTERED_TWEET_CREATE: 'filteredTweetCreate',
 };
 
 /**
@@ -154,4 +155,9 @@ export const defaultClientOptions: ClientOptions = {
    * The events that the client opted-in for
    */
   events: [],
+};
+
+export const StreamType = {
+  SAMPLED: 'sampled',
+  FILTERED: 'filtered',
 };

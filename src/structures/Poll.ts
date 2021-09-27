@@ -7,8 +7,6 @@ import type { APIPoll, APIPollVotingStatus } from 'twitter-types';
  * The class that represents a poll in a {@link Tweet}
  */
 export class Poll extends BaseStructure {
-  id: string;
-
   options: Array<PollOption>;
 
   durationMinutes: number | null;
@@ -18,9 +16,7 @@ export class Poll extends BaseStructure {
   votingStatus: APIPollVotingStatus | null;
 
   constructor(client: Client, data: APIPoll) {
-    super(client);
-
-    this.id = data.id;
+    super(client, data);
     this.options = data.options.map(option => new PollOption(option));
     this.durationMinutes = data.duration_minutes ?? null;
     this.endDatetime = data.end_datetime ? new Date(data.end_datetime) : null;

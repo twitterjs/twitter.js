@@ -50,12 +50,13 @@ export class RequestHandler {
       if (request.isStreaming) return res;
       const parsedResponse = (await parseResponse(res)) as Record<string, unknown> | ArrayBuffer;
       if ('errors' in parsedResponse) {
-        /**
-         * Emitted when the raw data of a 200 OK API response contains error along with the requested data.
-         * Use this to debug what fields are missing and why
-         */
-        this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
-
+        if (this.manager.client.options.events.includes('PARTIAL_ERROR')) {
+          /**
+           * Emitted when the raw data of a 200 OK API response contains error along with the requested data.
+           * Use this to debug what fields are missing and why
+           */
+          this.manager.client.emit(ClientEvents.PARTIAL_ERROR, parsedResponse.errors);
+        }
         // Throw error if there is no data field in the response as there is nothing to process. (⚠ not sure this is true for every response, will look this up later)
         // Currently the thrown error will contain information about the first error only, listen for `partialError` to get the complete error object
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

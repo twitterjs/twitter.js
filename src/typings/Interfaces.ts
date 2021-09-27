@@ -57,10 +57,11 @@ export interface ClientCredentialsInterface {
 }
 
 export interface ClientEventsMapping {
+  filteredTweetCreate: [tweet: Tweet];
+  keepAliveSignal: [stream: 'sampled' | 'filtered'];
   partialError: [partialError: Record<string, unknown>];
   ready: [client: Client];
   sampledTweetCreate: [tweet: Tweet];
-  filteredTweetCreate: [tweet: Tweet];
 }
 
 /**
@@ -536,4 +537,11 @@ export interface CountTweetsOptions {
    * The granularity of the {@link TweetCountBucket}
    */
   granularity?: Granularity;
+}
+
+/**
+ * The data to instantiate {@link BaseStructure} with
+ */
+export interface BaseStructureData {
+  id: Snowflake;
 }
