@@ -1,19 +1,28 @@
 import type { Client } from '../client';
+import type { Snowflake } from 'twitter-types';
+import type { BaseStructureData } from '../typings';
 
 /**
  * The base class for all structures
  */
 export class BaseStructure {
   /**
-   * The client that initialized this class
+   * The instance of {@link Client} that was used to log in
    */
   client: Client;
 
   /**
-   * @param client The client this structure belongs to
+   * The unique identifier of the strucutre
    */
-  constructor(client: Client) {
+  id: Snowflake;
+
+  /**
+   * @param client The instance of {@link Client} that was used to log in
+   * @param data The data for the base structure
+   */
+  constructor(client: Client, data: BaseStructureData) {
     Object.defineProperty(this, 'client', { writable: true, enumerable: false });
     this.client = client;
+    this.id = data.id;
   }
 }

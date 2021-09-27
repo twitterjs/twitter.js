@@ -1,6 +1,6 @@
 import { BaseClient } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
-import { ClientEvents } from '../util';
+import { ClientEvents, StreamType } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager } from '../managers';
@@ -196,13 +196,18 @@ export class Client extends BaseClient {
       for await (const chunk of body) {
         const buffer = Buffer.from(chunk);
         const data = buffer.toString();
+        if (data === '\r\n') {
+          if (this.options.events.includes('KEEP_ALIVE_SIGNAL')) {
+            this.emit(ClientEvents.KEEP_ALIVE_SIGNAL, StreamType.FILTERED);
+          }
+          continue;
+        }
         try {
           const rawTweet: GetFilteredTweetStreamResponse = JSON.parse(data);
           const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet);
         } catch (error) {
-          // Keep alive signal received. Do nothing.
-          // TODO: Not neccessary but can emit a client event for this (keepAliveSignal)
+          // twitter sends corrupted data sometimes that throws error while parsing it
         }
       }
     } catch (error) {
@@ -228,13 +233,18 @@ export class Client extends BaseClient {
       for await (const chunk of body) {
         const buffer = Buffer.from(chunk);
         const data = buffer.toString();
+        if (data === '\r\n') {
+          if (this.options.events.includes('KEEP_ALIVE_SIGNAL')) {
+            this.emit(ClientEvents.KEEP_ALIVE_SIGNAL, StreamType.SAMPLED);
+          }
+          continue;
+        }
         try {
           const rawTweet: GetSampledTweetStreamResponse = JSON.parse(data);
           const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {
-          // Keep alive signal received. Do nothing.
-          // TODO: Not neccessary but can emit a client event for this (keepAliveSignal)
+          // twitter sends corrupted data sometimes that throws error while parsing it
         }
       }
     } catch (error) {

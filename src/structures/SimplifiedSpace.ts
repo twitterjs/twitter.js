@@ -4,11 +4,6 @@ import type { APISpace, Snowflake } from 'twitter-types';
 
 export class SimplifiedSpace extends BaseStructure {
   /**
-   * The unique identifier of the requested Space
-   */
-  id: Snowflake;
-
-  /**
    * Indicates if the Space has started or will start in the future, or if it has ended
    */
   state: string;
@@ -79,8 +74,7 @@ export class SimplifiedSpace extends BaseStructure {
   creatorId: Snowflake | null;
 
   constructor(client: Client, data: APISpace) {
-    super(client);
-    this.id = data.id;
+    super(client, data);
     this.state = data.state;
     this.createdAt = data.created_at ? new Date(data.created_at) : null;
     this.creatorId = data.creator_id ?? null;

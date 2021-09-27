@@ -1,4 +1,3 @@
-import { BaseStructure } from './BaseStructure';
 import { MediaNonPublicMetrics, MediaOrganicMetrics, MediaPromotedMetrics, MediaPublicMetrics } from './misc';
 import type { Client } from '../client';
 import type { APIMedia, APIMediaType } from 'twitter-types';
@@ -6,7 +5,15 @@ import type { APIMedia, APIMediaType } from 'twitter-types';
 /**
  * The class that represents a media content in a {@link Tweet}
  */
-export class Media extends BaseStructure {
+export class Media {
+  /**
+   * The instance of {@link Client} that was used to log in
+   */
+  client: Client;
+
+  /**
+   * The unique identifier of the media
+   */
   id: string;
 
   type: APIMediaType;
@@ -30,8 +37,8 @@ export class Media extends BaseStructure {
   width: number | null;
 
   constructor(client: Client, data: APIMedia) {
-    super(client);
-
+    Object.defineProperty(this, 'client', { writable: true, enumerable: false });
+    this.client = client;
     this.id = data.media_key;
     this.type = data.type;
     this.duration = data.duration_ms ?? null;

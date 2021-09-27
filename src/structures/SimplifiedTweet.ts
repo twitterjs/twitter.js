@@ -34,11 +34,6 @@ import type {
  */
 export class SimplifiedTweet extends BaseStructure {
   /**
-   * The unique identifier of the requested Tweet
-   */
-  id: Snowflake;
-
-  /**
    * The actual `UTF-8` text of the Tweet
    */
   text: string;
@@ -142,9 +137,7 @@ export class SimplifiedTweet extends BaseStructure {
   withheld: TweetWithheld | null;
 
   constructor(client: Client, data: APITweet) {
-    super(client);
-
-    this.id = data.id;
+    super(client, data);
     this.text = data.text;
     this.attachments = data.attachments ? new TweetAttachments(data.attachments) : null;
     this.authorId = data.author_id ?? null;
