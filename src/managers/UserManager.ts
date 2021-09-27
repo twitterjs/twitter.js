@@ -54,7 +54,7 @@ import type {
  */
 export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   /**
-   * @param client The client this manager belongs to
+   * @param client The logged in {@link Client} instance
    */
   constructor(client: Client) {
     super(client, User);

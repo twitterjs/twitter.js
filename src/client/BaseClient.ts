@@ -9,7 +9,7 @@ import type {
 } from '../typings';
 
 /**
- * The base class for all clients
+ * The base client class
  */
 export class BaseClient extends EventEmitter {
   /**

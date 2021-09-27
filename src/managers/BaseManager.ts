@@ -7,7 +7,7 @@ import type { StructureConstructable } from '../typings';
  */
 export class BaseManager<K extends string, R, T extends { id: K }> {
   /**
-   * The client that initialized this manager
+   * The instance of {@link Client} that was used to log in
    */
   client: Client;
 
@@ -22,7 +22,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
   protected _holds: StructureConstructable<T>;
 
   /**
-   * @param client The client this manager belongs to
+   * @param client The logged in {@link Client} instance
    * @param structureType The kind of structures this manager stores
    */
   constructor(client: Client, structureType: StructureConstructable<T>) {

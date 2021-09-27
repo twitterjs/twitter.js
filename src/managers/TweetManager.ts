@@ -50,7 +50,7 @@ import type {
  */
 export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
   /**
-   * @param client The client this manager belongs to
+   * @param client The logged in {@link Client} instance
    */
   constructor(client: Client) {
     super(client, Tweet);
