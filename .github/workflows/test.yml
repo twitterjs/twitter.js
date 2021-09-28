@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+    tags-ignore:
+      - v*.*
 jobs:
   Lint:
     name: ESlint
