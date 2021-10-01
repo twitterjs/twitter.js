@@ -16,6 +16,7 @@ const messages = {
   USER_CONTEXT_LOGIN_ERROR: (username: string) => `Could not fetch the user ${username}.`,
   CREDENTIALS_NOT_STRING: "One or more client credentials fields are missing or aren't of type string.",
   SPACE_RESOLVE_ID: (action: string) => `Could not resolve the space ID to ${action}.`,
+  LIST_RESOLVE_ID: (action: string) => `Could not resolve the list ID to ${action}.`,
 };
 
 for (const [key, message] of Object.entries(messages)) {

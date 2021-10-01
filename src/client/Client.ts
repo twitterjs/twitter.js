@@ -3,7 +3,7 @@ import { RESTManager } from '../rest/RESTManager';
 import { ClientEvents, StreamType } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
-import { UserManager, TweetManager, SpaceManager } from '../managers';
+import { UserManager, TweetManager, SpaceManager, ListManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser } from '../structures';
 import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
@@ -65,6 +65,11 @@ export class Client extends BaseClient {
   spaces: SpaceManager;
 
   /**
+   * The manager for {@link List} objects
+   */
+  lists: ListManager;
+
+  /**
    * The class for working with sampled tweet stream
    */
   sampledTweets: SampledTweetStream;
@@ -92,6 +97,7 @@ export class Client extends BaseClient {
     this.tweets = new TweetManager(this);
     this.users = new UserManager(this);
     this.spaces = new SpaceManager(this);
+    this.lists = new ListManager(this);
     this.sampledTweets = new SampledTweetStream(this);
     this.filteredTweets = new FilteredTweetStream(this);
   }

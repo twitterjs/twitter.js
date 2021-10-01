@@ -2,6 +2,7 @@ export * from './misc';
 export * from './BaseStructure';
 export * from './ClientUser';
 export * from './FilteredTweetStreamRule';
+export * from './List';
 export * from './Media';
 export * from './Place';
 export * from './Poll';

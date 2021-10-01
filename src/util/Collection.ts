@@ -1,4 +1,4 @@
-import BaseCollection from '@discordjs/collection';
+import { Collection as BaseCollection } from '@discordjs/collection';
 
 /**
  * The data structure for storing objects mapped by their unique identifier property
