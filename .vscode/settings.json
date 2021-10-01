@@ -31,5 +31,12 @@
     "comments": true
   },
   "explorer.compactFolders": false,
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "typescript.format.enable": false,
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "typescript.suggest.autoImports": true,
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.implementationsCodeLens.enabled": true
 }
