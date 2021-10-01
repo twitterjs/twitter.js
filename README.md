@@ -10,10 +10,6 @@
   </p>
 </div>
 
-<!-- <div align="center">
-	<img src="src/.vuepress/public/branding/banner_small.png" title="Twitter.js Guide" alt="Twitter.js Guide" />
-</div> -->
-
 # Twitter.js
 
 An object-oriented Node.js and TypeScript library for interacting with Twitter API v2
