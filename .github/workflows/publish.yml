@@ -3,8 +3,8 @@ on:
   release:
     types: [published]
 jobs:
-  NPM:
-    name: npm-publish
+  Npm-Publish:
+    name: npm
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
