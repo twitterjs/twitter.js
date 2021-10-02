@@ -565,3 +565,8 @@ export interface CreateListOptions {
    */
   private?: boolean;
 }
+
+/**
+ * The options used to update a list
+ */
+export type UpdateListOptions = Partial<CreateListOptions>;
