@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run TypeScript Compiler
+      - name: Run TypeScript compiler
         run: npm run build
 
   Doc:
