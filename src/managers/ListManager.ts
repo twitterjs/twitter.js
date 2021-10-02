@@ -12,7 +12,10 @@ import type {
   PostListCreateResponse,
   PostListFollowJSONBody,
   PostListFollowResponse,
+  PostListPinJSONBody,
+  PostListPinResponse,
   PostListUnfollowResponse,
+  PostListUnpinResponse,
   PutListUpdateJSONBody,
   PutListUpdateResponse,
   Snowflake,
@@ -152,5 +155,41 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
       .followed_lists(listId)
       .delete(requestData);
     return !res.data.following;
+  }
+
+  /**
+   * Pins a list.
+   * @param list The list to pin
+   * @returns A boolean representing whether the authorized user pinned the list
+   */
+  async pin(list: ListResolvable): Promise<boolean> {
+    const listId = this.resolveId(list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'pin');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostListPinJSONBody = {
+      list_id: listId,
+    };
+    const requestData = new RequestData({ body, isUserContext: true });
+    const res: PostListPinResponse = await this.client._api.users(loggedInUser.id).pinned_lists.post(requestData);
+    return res.data.pinned;
+  }
+
+  /**
+   * Unpins a list.
+   * @param list The list to unpin
+   * @returns A boolean representing whether the authorized user unpinned the list
+   */
+  async unpin(list: ListResolvable): Promise<boolean> {
+    const listId = this.resolveId(list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'pin');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
+    const res: PostListUnpinResponse = await this.client._api
+      .users(loggedInUser.id)
+      .pinned_lists(listId)
+      .delete(requestData);
+    return res.data.pinned;
   }
 }
