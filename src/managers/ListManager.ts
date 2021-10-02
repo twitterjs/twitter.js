@@ -1,6 +1,6 @@
 import { BaseManager } from './BaseManager';
-import { CustomError, CustomTypeError } from '../errors';
 import { List, RequestData } from '../structures';
+import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
 import type { CreateListOptions, ListResolvable, UpdateListOptions, UserResolvable } from '../typings';
 import type {
