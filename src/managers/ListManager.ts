@@ -10,6 +10,9 @@ import type {
   PostListAddMemberResponse,
   PostListCreateJSONBody,
   PostListCreateResponse,
+  PostListFollowJSONBody,
+  PostListFollowResponse,
+  PostListUnfollowResponse,
   PutListUpdateJSONBody,
   PutListUpdateResponse,
   Snowflake,
@@ -113,5 +116,41 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
       .members(userId)
       .delete(requestData);
     return !res.data.is_member;
+  }
+
+  /**
+   * Follows a list.
+   * @param list The list to follow
+   * @returns A boolean representing whether the authorized user followed the list
+   */
+  async follow(list: ListResolvable): Promise<boolean> {
+    const listId = this.resolveId(list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'follow');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const body: PostListFollowJSONBody = {
+      list_id: listId,
+    };
+    const requestData = new RequestData({ body, isUserContext: true });
+    const res: PostListFollowResponse = await this.client._api.users(loggedInUser.id).followed_lists.post(requestData);
+    return res.data.following;
+  }
+
+  /**
+   * Unfollows a list.
+   * @param list The list to unfollow
+   * @returns A boolean representing whether the authorized user unfollowed the list
+   */
+  async unfollow(list: ListResolvable): Promise<boolean> {
+    const listId = this.resolveId(list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'unfollow');
+    const loggedInUser = this.client.me;
+    if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
+    const requestData = new RequestData({ isUserContext: true });
+    const res: PostListUnfollowResponse = await this.client._api
+      .users(loggedInUser.id)
+      .followed_lists(listId)
+      .delete(requestData);
+    return !res.data.following;
   }
 }
