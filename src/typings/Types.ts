@@ -8,6 +8,7 @@ import type {
   SimplifiedUser,
   SimplifiedTweet,
   FilteredTweetStreamRule,
+  List,
 } from '../structures';
 import type {
   ClientEventsMapping,
@@ -54,6 +55,8 @@ export type TweetManagerFetchResult<T extends FetchTweetOptions | FetchTweetsOpt
 export type TweetResolvable = Tweet | SimplifiedTweet | Snowflake;
 
 export type SpaceResolvable = Space | SimplifiedSpace | Snowflake;
+
+export type ListResolvable = List | Snowflake;
 
 export type SpaceManagerFetchResult<T extends FetchSpaceOptions | FetchSpacesOptions> = T extends FetchSpaceOptions
   ? Space

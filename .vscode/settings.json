@@ -38,5 +38,6 @@
   },
   "typescript.suggest.autoImports": true,
   "typescript.referencesCodeLens.enabled": true,
-  "typescript.implementationsCodeLens.enabled": true
+  "typescript.implementationsCodeLens.enabled": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

@@ -545,3 +545,28 @@ export interface CountTweetsOptions {
 export interface BaseStructureData {
   id: Snowflake;
 }
+
+/**
+ * The options used for creating a new list
+ */
+export interface CreateListOptions {
+  /**
+   * The name of the list
+   */
+  name: string;
+
+  /**
+   * The description of the list
+   */
+  description?: string;
+
+  /**
+   * Whether the list should be private
+   */
+  private?: boolean;
+}
+
+/**
+ * The options used to update a list
+ */
+export type UpdateListOptions = Partial<CreateListOptions>;
