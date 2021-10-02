@@ -6,6 +6,8 @@ import type { CreateListOptions, ListResolvable, UpdateListOptions, UserResolvab
 import type {
   DeleteListDeleteResponse,
   DeleteListRemoveMemberResponse,
+  DeleteListUnfollowResponse,
+  DeleteListUnpinResponse,
   PostListAddMemberJSONBody,
   PostListAddMemberResponse,
   PostListCreateJSONBody,
@@ -14,8 +16,6 @@ import type {
   PostListFollowResponse,
   PostListPinJSONBody,
   PostListPinResponse,
-  PostListUnfollowResponse,
-  PostListUnpinResponse,
   PutListUpdateJSONBody,
   PutListUpdateResponse,
   Snowflake,
@@ -150,7 +150,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const res: PostListUnfollowResponse = await this.client._api
+    const res: DeleteListUnfollowResponse = await this.client._api
       .users(loggedInUser.id)
       .followed_lists(listId)
       .delete(requestData);
@@ -186,7 +186,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const res: PostListUnpinResponse = await this.client._api
+    const res: DeleteListUnpinResponse = await this.client._api
       .users(loggedInUser.id)
       .pinned_lists(listId)
       .delete(requestData);
