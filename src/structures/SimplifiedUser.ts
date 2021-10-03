@@ -93,7 +93,8 @@ export class SimplifiedUser extends BaseStructure {
     this.name = data.name;
     this.username = data.username;
     this.createdAt = data.created_at ? new Date(data.created_at) : null;
-    this.description = data.description ?? null;
+    this.description =
+      typeof data.description === 'string' ? (data.description.length > 0 ? data.description : null) : null;
     this.entities = data.entities ? new UserEntities(data.entities) : null;
     this.location = data.location ?? null;
     this.pinnedTweetId = data.pinned_tweet_id ?? null;
