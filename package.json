@@ -1,6 +1,6 @@
 {
   "name": "twitter.js",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
   "description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
   "main": "dist/cjs/index.js",
