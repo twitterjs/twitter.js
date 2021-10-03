@@ -1,10 +1,12 @@
 {
   "name": "twitter.js",
   "version": "0.7.0",
+  "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
   "description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "build:dev": "tsc -w",
     "doc": "typedoc",
     "test": "jest",
@@ -12,26 +14,10 @@
     "lint": "eslint src --ext ts",
     "lint:fix": "eslint src --ext ts --fix",
     "format": "prettier --write **/*.{json,yml,yaml}",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "zx": "zx ./script.mjs",
+    "prepublishOnly": "npm run build && npm run zx"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/twitterjs/twitter.js.git"
-  },
-  "keywords": [
-    "twitter.js",
-    "twitter",
-    "tjs",
-    "typescript",
-    "bots",
-    "api"
-  ],
-  "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/twitterjs/twitter.js/issues"
-  },
-  "homepage": "https://github.com/twitterjs/twitter.js#readme",
   "dependencies": {
     "@discordjs/collection": "^0.2.1",
     "@sapphire/async-queue": "^1.1.4",
@@ -58,14 +44,32 @@
     "prettier": "^2.4.1",
     "twitter-types": "^0.15.1",
     "typedoc": "^0.22.4",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "zx": "^4.2.0"
   },
-  "type": "module",
   "files": [
     "/dist"
   ],
+  "type": "module",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twitterjs/twitter.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/twitterjs/twitter.js/issues"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/twitterjs/twitter.js#readme",
+  "keywords": [
+    "twitter.js",
+    "twitter",
+    "tjs",
+    "typescript",
+    "bots",
+    "api"
+  ]
 }
