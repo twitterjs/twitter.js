@@ -1,6 +1,6 @@
 import type { Client } from '../client';
-import type { ClientEvents } from '../util';
-import type { Tweet, RequestData } from '../structures';
+import type { ClientEvents, Collection } from '../util';
+import type { Tweet, RequestData, MatchingRule } from '../structures';
 import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
 import type {
   Granularity,
@@ -57,7 +57,7 @@ export interface ClientCredentialsInterface {
 }
 
 export interface ClientEventsMapping {
-  filteredTweetCreate: [tweet: Tweet];
+  filteredTweetCreate: [tweet: Tweet, matchingRules: Collection<Snowflake, MatchingRule>];
   keepAliveSignal: [stream: 'sampled' | 'filtered'];
   partialError: [partialError: Record<string, unknown>];
   ready: [client: Client];
