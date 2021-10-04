@@ -1,10 +1,10 @@
 import { BaseClient } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
-import { ClientEvents, StreamType } from '../util';
+import { ClientEvents, Collection, StreamType } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { SampledTweetStream, FilteredTweetStream } from '../streams';
 import { UserManager, TweetManager, SpaceManager, ListManager } from '../managers';
-import { ClientCredentials, RequestData, ClientUser } from '../structures';
+import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../structures';
 import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
@@ -14,6 +14,7 @@ import type {
   GetSampledTweetStreamResponse,
   GetSingleUserByUsernameQuery,
   GetSingleUserByUsernameResponse,
+  Snowflake,
 } from 'twitter-types';
 
 /**
@@ -209,9 +210,13 @@ export class Client extends BaseClient {
           continue;
         }
         try {
-          const rawTweet: GetFilteredTweetStreamResponse = JSON.parse(data);
-          const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
-          this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet);
+          const rawData: GetFilteredTweetStreamResponse = JSON.parse(data);
+          const tweet = this.tweets.add(rawData.data.id, rawData, false);
+          const matchingRules = rawData.matching_rules.reduce((col, rule) => {
+            col.set(rule.id, new MatchingRule(rule));
+            return col;
+          }, new Collection<Snowflake, MatchingRule>());
+          this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet, matchingRules);
         } catch (error) {
           // twitter sends corrupted data sometimes that throws error while parsing it
         }
