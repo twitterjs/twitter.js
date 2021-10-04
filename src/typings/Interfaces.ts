@@ -591,23 +591,3 @@ export interface FetchFilteredStreamRulesOptions extends Omit<BaseFetchOptions, 
    */
   rules?: Array<FilteredStreamRuleResolvable>;
 }
-
-/**
- * The options used to create a filtered stream rule
- */
-export interface CreateFilteredStreamRuleOptions {
-  /**
-   * The rule to create
-   */
-  rule: FilteredStreamRuleData;
-}
-
-/**
- * The options used to create multiple filtered stream rules
- */
-export interface CreateFilteredStreamRulesOptions {
-  /**
-   * The rules to create
-   */
-  rules: Array<FilteredStreamRuleData>;
-}

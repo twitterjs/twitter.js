@@ -4,10 +4,9 @@ import { CustomError, CustomTypeError } from '../errors';
 import { RequestData, FilteredStreamRule } from '../structures';
 import type { Client } from '../client';
 import type {
-  CreateFilteredStreamRuleOptions,
-  CreateFilteredStreamRulesOptions,
   FetchFilteredStreamRuleOptions,
   FetchFilteredStreamRulesOptions,
+  FilteredStreamRuleData,
   FilteredStreamRuleManagerFetchResult,
   FilteredStreamRuleResolvable,
 } from '../typings';
@@ -46,7 +45,7 @@ export class FilteredStreamRuleManager extends BaseManager<
       return this.#fetchMultipleRules() as Promise<FilteredStreamRuleManagerFetchResult<T>>;
     } else if ('rule' in options) {
       const ruleId = this.resolveId(options.rule);
-      if (!ruleId) throw new CustomError('TODO', 'fetch');
+      if (!ruleId) throw new CustomError('RULE_RESOLVE_ID', 'fetch');
       return this.#fetchSingleRule(ruleId, options) as Promise<FilteredStreamRuleManagerFetchResult<T>>;
     } else if ('rules' in options) {
       if (typeof options.rules === 'undefined') {
@@ -57,7 +56,7 @@ export class FilteredStreamRuleManager extends BaseManager<
       }
       const ruleIds = options.rules.map(rule => {
         const ruleId = this.resolveId(rule);
-        if (!ruleId) throw new CustomError('TODO', 'fetch');
+        if (!ruleId) throw new CustomError('RULE_RESOLVE_ID', 'fetch');
         return ruleId;
       });
       return this.#fetchMultipleRules(ruleIds, options) as Promise<FilteredStreamRuleManagerFetchResult<T>>;
@@ -67,14 +66,13 @@ export class FilteredStreamRuleManager extends BaseManager<
 
   /**
    * Creates one or multiple rules for the filtered stream.
-   * @param options The options for creating rules
+   * @param data The data for creating rules
    * @returns A {@link Collection} of {@link FilteredStreamRule} objects
    */
-  async create<T extends CreateFilteredStreamRuleOptions | CreateFilteredStreamRulesOptions>(
-    options: T,
+  async create(
+    data: FilteredStreamRuleData | Array<FilteredStreamRuleData>,
   ): Promise<Collection<Snowflake, FilteredStreamRule>> {
-    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-    const rules = 'rule' in options ? [options.rule] : options.rules;
+    const rules = Array.isArray(data) ? data : [data];
     const body: PostAddFilteredTweetStreamRulesJSONBody = {
       add: rules,
     };
@@ -82,17 +80,18 @@ export class FilteredStreamRuleManager extends BaseManager<
     const res: PostAddFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
-    return res.data.reduce((rulesCollection, rawRule) => {
+    return res.data.reduce((createdRules, rawRule) => {
       const rule = this.add(rawRule.id, rawRule);
-      return rulesCollection.set(rule.id, rule);
+      return createdRules.set(rule.id, rule);
     }, new Collection<Snowflake, FilteredStreamRule>());
   }
 
   /**
-   * Deletes rules for the filtered tweeet stream using their ids.
-   * @param ids The ids of the rules to delete
+   * Deletes one or multiple rules for the filtered stream using their ids.
+   * @param ruleId The id or ids of the rules to delete
    */
-  async deleteRulesByIds(ids: Array<Snowflake>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+  async deleteById(ruleId: Snowflake | Array<Snowflake>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+    const ids = Array.isArray(ruleId) ? ruleId : [ruleId];
     const body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody = {
       delete: {
         ids,
@@ -102,10 +101,11 @@ export class FilteredStreamRuleManager extends BaseManager<
   }
 
   /**
-   * Deletes rules for the filtered tweet stream using their values.
-   * @param values The values of the rules to delete
+   * Deletes one or multiple rules for the filtered stream using their values.
+   * @param ruleValue The value or values of the rules to delete
    */
-  async deleteRulesByValues(values: Array<string>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+  async deleteByValue(ruleValue: string | Array<string>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+    const values = Array.isArray(ruleValue) ? ruleValue : [ruleValue];
     const body: PostRemoveFilteredTweetStreamRulesByValuesJSONBody = {
       delete: {
         values,
@@ -136,7 +136,8 @@ export class FilteredStreamRuleManager extends BaseManager<
     };
     const requestData = new RequestData({ query });
     const res: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(requestData);
-    const rawRule = res.data[0];
+    const rawRule = res.data?.[0];
+    if (!rawRule) throw new CustomError('RULE_NOT_FOUND');
     return this.add(rawRule.id, rawRule, options.cacheAfterFetching);
   }
 
@@ -151,6 +152,7 @@ export class FilteredStreamRuleManager extends BaseManager<
     const requestData = new RequestData({ query });
     const res: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(requestData);
     const rawRules = res.data;
+    if (!rawRules?.length) return fetchedRules;
     for (const rawRule of rawRules) {
       const rule = this.add(rawRule.id, rawRule, options?.cacheAfterFetching);
       fetchedRules.set(rule.id, rule);

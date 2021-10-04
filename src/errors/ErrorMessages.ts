@@ -17,6 +17,8 @@ const messages = {
   CREDENTIALS_NOT_STRING: "One or more client credentials fields are missing or aren't of type string.",
   SPACE_RESOLVE_ID: (action: string) => `Could not resolve the space ID to ${action}.`,
   LIST_RESOLVE_ID: (action: string) => `Could not resolve the list ID to ${action}.`,
+  RULE_NOT_FOUND: `The specified rule does not exist or has been deleted`,
+  RULE_RESOLVE_ID: (action: string) => `Could not resolve the rule ID to ${action}.`,
 };
 
 for (const [key, message] of Object.entries(messages)) {
