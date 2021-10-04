@@ -1,6 +1,6 @@
 import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
-import type { APIFilteredTweetStreamRule, Snowflake } from 'twitter-types';
+import type { APIFilteredTweetStreamRule } from 'twitter-types';
 
 export class FilteredStreamRule extends BaseStructure {
   tag: string | null;
