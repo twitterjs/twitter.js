@@ -2,8 +2,7 @@ import { BaseClient } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
 import { ClientEvents, Collection, StreamType } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
-import { SampledTweetStream, FilteredTweetStream } from '../streams';
-import { UserManager, TweetManager, SpaceManager, ListManager } from '../managers';
+import { UserManager, TweetManager, SpaceManager, ListManager, FilteredStreamRuleManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../structures';
 import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
@@ -71,14 +70,9 @@ export class Client extends BaseClient {
   lists: ListManager;
 
   /**
-   * The class for working with sampled tweet stream
+   * The manager for {@link FilteredStreamRule} objects
    */
-  sampledTweets: SampledTweetStream;
-
-  /**
-   * The class for working with filtered tweet stream
-   */
-  filteredTweets: FilteredTweetStream;
+  filteredStreamRules: FilteredStreamRuleManager;
 
   /**
    * @param options The options to initialize the client with
@@ -99,8 +93,7 @@ export class Client extends BaseClient {
     this.users = new UserManager(this);
     this.spaces = new SpaceManager(this);
     this.lists = new ListManager(this);
-    this.sampledTweets = new SampledTweetStream(this);
-    this.filteredTweets = new FilteredTweetStream(this);
+    this.filteredStreamRules = new FilteredStreamRuleManager(this);
   }
 
   /**
@@ -133,10 +126,10 @@ export class Client extends BaseClient {
 
     this.emit(ClientEvents.READY, this);
     if (this.options.events.includes('FILTERED_TWEET_CREATE')) {
-      this.#connectToFilteredTweetStream();
+      this.#connectToFilteredStream();
     }
     if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
-      this.#connectToSampledTweetStream();
+      this.#connectToSampledStream();
     }
     return this.token;
   }
@@ -164,10 +157,10 @@ export class Client extends BaseClient {
 
     this.emit(ClientEvents.READY, this);
     if (this.options.events.includes('FILTERED_TWEET_CREATE')) {
-      this.#connectToFilteredTweetStream();
+      this.#connectToFilteredStream();
     }
     if (this.options.events.includes('SAMPLED_TWEET_CREATE')) {
-      this.#connectToSampledTweetStream();
+      this.#connectToSampledStream();
     }
     return this.credentials;
   }
@@ -186,7 +179,7 @@ export class Client extends BaseClient {
     return new ClientUser(this, data);
   }
 
-  async #connectToFilteredTweetStream(): Promise<void> {
+  async #connectToFilteredStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
     const query: GetFilteredTweetStreamQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -227,7 +220,7 @@ export class Client extends BaseClient {
     }
   }
 
-  async #connectToSampledTweetStream(): Promise<void> {
+  async #connectToSampledStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
     const query: GetSampledTweetStreamQuery = {
       expansions: queryParameters?.tweetExpansions,
