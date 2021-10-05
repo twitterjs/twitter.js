@@ -1,5 +1,6 @@
 import type { Collection } from '../util';
 import type { Snowflake } from 'twitter-types';
+import type { FetchFilteredStreamRuleOptions, FetchFilteredStreamRulesOptions } from './Interfaces';
 import type {
   User,
   Tweet,
@@ -7,7 +8,7 @@ import type {
   SimplifiedSpace,
   SimplifiedUser,
   SimplifiedTweet,
-  FilteredTweetStreamRule,
+  FilteredStreamRule,
   List,
 } from '../structures';
 import type {
@@ -62,7 +63,7 @@ export type SpaceManagerFetchResult<T extends FetchSpaceOptions | FetchSpacesOpt
   ? Space
   : Collection<Snowflake, Space>;
 
-export type FilteredTweetStreamRuleResolvable = FilteredTweetStreamRule | Snowflake;
+export type FilteredStreamRuleResolvable = FilteredStreamRule | Snowflake;
 
 /**
  * The options used to create a {@link BlocksBook} object
@@ -88,3 +89,7 @@ export type LikedTweetsBookOptions = BookOptions;
  * The options used to create a {@link MutesBook} object
  */
 export type MutesBookOptions = BookOptions;
+
+export type FilteredStreamRuleManagerFetchResult<
+  T extends FetchFilteredStreamRuleOptions | FetchFilteredStreamRulesOptions,
+> = T extends FetchFilteredStreamRuleOptions ? FilteredStreamRule : Collection<Snowflake, FilteredStreamRule>;

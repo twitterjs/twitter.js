@@ -1,4 +1,5 @@
 import type { Client } from '../client';
+import type { FilteredStreamRuleResolvable } from './Types';
 import type { ClientEvents, Collection } from '../util';
 import type { Tweet, RequestData, MatchingRule } from '../structures';
 import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
@@ -226,7 +227,7 @@ export interface TwitterjsErrorConstructor {
 /**
  * The options used to add a new filtered tweet stream rule
  */
-export interface FilteredTweetStreamAddRuleOptions {
+export interface FilteredStreamRuleData {
   /**
    * The value of the rule
    */
@@ -570,3 +571,23 @@ export interface CreateListOptions {
  * The options used to update a list
  */
 export type UpdateListOptions = Partial<CreateListOptions>;
+
+/**
+ * Options used to feth a single filtered stream rule
+ */
+export interface FetchFilteredStreamRuleOptions extends BaseFetchOptions {
+  /**
+   * The rule to fetch
+   */
+  rule: FilteredStreamRuleResolvable;
+}
+
+/**
+ * Options used to feth multiple filtered stream rules
+ */
+export interface FetchFilteredStreamRulesOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+  /**
+   * The rules to fetch, fetches all if not provided
+   */
+  rules?: Array<FilteredStreamRuleResolvable>;
+}
