@@ -7,11 +7,11 @@ const id: Snowflake = '1234567890';
 const rawData = { id };
 const client = new Client();
 const baseManager = new BaseManager(client, BaseStructure);
-const baseStructure = baseManager.add(id, rawData);
+const baseStructure = baseManager._add(id, rawData);
 
-// BaseManager#add
+// BaseManager#_add
 test('Add base structure to cache', () => {
-  expect(baseManager.add(id, rawData)).toBeInstanceOf(BaseStructure);
+  expect(baseManager._add(id, rawData)).toBeInstanceOf(BaseStructure);
 });
 
 // BaseManager#resolveId

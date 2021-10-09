@@ -404,7 +404,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = this.add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
+      const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
       fetchedUserCollection.set(user.id, user);
     }
     return fetchedUserCollection;
@@ -443,7 +443,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = this.add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
+      const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
       fetchedUserCollection.set(user.id, user);
     }
     return fetchedUserCollection;

@@ -333,7 +333,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     };
     const requestData = new RequestData({ query });
     const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetId).get(requestData);
-    return this.add(data.data.id, data, options.cacheAfterFetching);
+    return this._add(data.data.id, data, options.cacheAfterFetching);
   }
 
   async #fetchMultipleTweets(
@@ -356,7 +356,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const rawTweets = data.data;
     const rawTweetsIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.add(rawTweet.id, { data: rawTweet, includes: rawTweetsIncludes }, options.cacheAfterFetching);
+      const tweet = this._add(rawTweet.id, { data: rawTweet, includes: rawTweetsIncludes }, options.cacheAfterFetching);
       fetchedTweetCollection.set(tweet.id, tweet);
     }
     return fetchedTweetCollection;

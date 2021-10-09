@@ -204,7 +204,7 @@ export class Client extends BaseClient {
         }
         try {
           const rawData: GetFilteredTweetStreamResponse = JSON.parse(data);
-          const tweet = this.tweets.add(rawData.data.id, rawData, false);
+          const tweet = this.tweets._add(rawData.data.id, rawData, false);
           const matchingRules = rawData.matching_rules.reduce((col, rule) => {
             col.set(rule.id, new MatchingRule(rule));
             return col;
@@ -245,7 +245,7 @@ export class Client extends BaseClient {
         }
         try {
           const rawTweet: GetSampledTweetStreamResponse = JSON.parse(data);
-          const tweet = this.tweets.add(rawTweet.data.id, rawTweet, false);
+          const tweet = this.tweets._add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {
           // twitter sends corrupted data sometimes that throws error while parsing it

@@ -144,7 +144,7 @@ export class ComposedTweetsBook extends BaseBook {
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
+      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
       tweetsCollection.set(tweet.id, tweet);
     }
     return tweetsCollection;

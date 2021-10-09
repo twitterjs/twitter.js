@@ -118,7 +118,7 @@ export class SearchTweetsBook extends BaseBook {
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.client.tweets.add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
+      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
       tweetsCollection.set(tweet.id, tweet);
     }
     return tweetsCollection;

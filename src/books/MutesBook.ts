@@ -101,7 +101,7 @@ export class MutesBook extends BaseBook {
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = this.client.users.add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
+      const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
       mutedUsersCollection.set(user.id, user);
     }
     return mutedUsersCollection;

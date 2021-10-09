@@ -102,7 +102,7 @@ export class FollowersBook extends BaseBook {
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = this.client.users.add(rawUser.id, { data: rawUser, includes: rawIncludes });
+      const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes });
       followersCollection.set(user.id, user);
     }
     return followersCollection;

@@ -81,7 +81,7 @@ export class FilteredStreamRuleManager extends BaseManager<
       requestData,
     );
     return res.data.reduce((createdRules, rawRule) => {
-      const rule = this.add(rawRule.id, rawRule);
+      const rule = this._add(rawRule.id, rawRule);
       return createdRules.set(rule.id, rule);
     }, new Collection<Snowflake, FilteredStreamRule>());
   }
@@ -138,7 +138,7 @@ export class FilteredStreamRuleManager extends BaseManager<
     const res: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(requestData);
     const rawRule = res.data?.[0];
     if (!rawRule) throw new CustomError('RULE_NOT_FOUND');
-    return this.add(rawRule.id, rawRule, options.cacheAfterFetching);
+    return this._add(rawRule.id, rawRule, options.cacheAfterFetching);
   }
 
   async #fetchMultipleRules(
@@ -154,7 +154,7 @@ export class FilteredStreamRuleManager extends BaseManager<
     const rawRules = res.data;
     if (!rawRules?.length) return fetchedRules;
     for (const rawRule of rawRules) {
-      const rule = this.add(rawRule.id, rawRule, options?.cacheAfterFetching);
+      const rule = this._add(rawRule.id, rawRule, options?.cacheAfterFetching);
       fetchedRules.set(rule.id, rule);
     }
     return fetchedRules;

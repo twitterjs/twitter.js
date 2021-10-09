@@ -83,7 +83,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
     for (const rawSpace of rawSpaces) {
-      const space = this.add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
+      const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
       fetchedSpaceCollection.set(space.id, space);
     }
     return fetchedSpaceCollection;
@@ -111,7 +111,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
     for (const rawSpace of rawSpaces) {
-      const space = this.add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
+      const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
       fetchedSpaceCollection.set(space.id, space);
     }
     return fetchedSpaceCollection;
@@ -132,7 +132,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     };
     const requestData = new RequestData({ query });
     const data: GetSingleSpaceByIdResponse = await this.client._api.spaces(spaceId).get(requestData);
-    return this.add(data.data.id, data, options.cacheAfterFetching);
+    return this._add(data.data.id, data, options.cacheAfterFetching);
   }
 
   async #fetchMultipleSpaces(
@@ -152,7 +152,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
     for (const rawSpace of rawSpaces) {
-      const space = this.add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
+      const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
       fetchedSpaceCollection.set(space.id, space);
     }
     return fetchedSpaceCollection;

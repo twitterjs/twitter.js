@@ -46,7 +46,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const res: PostListCreateResponse = await this.client._api.lists.post(requestData);
-    const list = this.add(res.data.id, res.data);
+    const list = this._add(res.data.id, res.data);
     return list;
   }
 
