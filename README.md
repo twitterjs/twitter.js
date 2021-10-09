@@ -46,7 +46,7 @@ client.on('ready', async () => {
   console.log(`Logged in as ${client.me.username}`);  // Logged in as tjs_test
   const user = await client.users.fetchByUsername({
     username: 'iShiibi'
-  })
+  });
   await user.follow();
 });
 
@@ -63,13 +63,13 @@ const client = new Client({ events: ['FILTERED_TWEET_CREATE'] });
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-  await client.filteredTweets.addRules([{ value: '@tjs_test' }]);
+  await client.filteredStreamRules.create({ value: '@tjs_test', tag: 'Tweets mentioning the user tjs_test' });
 });
 
 client.on('filteredTweetCreate', async tweet => {
   console.log(`${tweet.text}`); // hey @tjs_test, like this tweet if you're listening!
   await tweet.like();
-})
+});
 
 client.login(credentials);
 ```
