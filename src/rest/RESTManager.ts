@@ -80,7 +80,7 @@ export class RESTManager {
   async request(
     method: string,
     path: string,
-    options: ExtendedRequestData<string, unknown>,
+    options: ExtendedRequestData<unknown, unknown>,
   ): Promise<Record<string, unknown> | ArrayBuffer | Response> {
     const apiRequest = new APIRequest(this, method, path, options);
     let handler = this.requestHandlers.get(apiRequest.route);

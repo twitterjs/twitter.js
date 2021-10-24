@@ -14,7 +14,7 @@ export class APIRequest {
   client: Client;
   isStreaming?: boolean;
 
-  constructor(rest: RESTManager, method: string, path: string, options: ExtendedRequestData<string, unknown>) {
+  constructor(rest: RESTManager, method: string, path: string, options: ExtendedRequestData<unknown, unknown>) {
     this.rest = rest;
     this.method = method;
     this.path = path;
@@ -24,7 +24,7 @@ export class APIRequest {
     this.client = rest.client;
     this.isStreaming = options.isStreaming;
 
-    if (options.query) {
+    if (options.query && typeof options.query === 'object') {
       const queryString = Object.entries(options.query)
         .filter(([, value]) => value !== null && typeof value !== 'undefined')
         .map(([key, value]) => (Array.isArray(value) ? `${key}=${value.join(',')}` : `${key}=${value}`))

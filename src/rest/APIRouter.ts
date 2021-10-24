@@ -23,7 +23,7 @@ export function buildRoute(manager: RESTManager): any {
             routeBucket.push(currentDirectory);
           }
         }
-        return (options: RequestData<string, unknown>) =>
+        return (options: RequestData<unknown, unknown>) =>
           manager.request(property, path.join('/'), Object.assign({ route: routeBucket.join('/') }, options));
       }
       path.push(property);

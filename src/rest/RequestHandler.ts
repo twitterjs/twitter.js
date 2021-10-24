@@ -1,5 +1,3 @@
-import { errors } from 'undici';
-import { HTTPError } from './HTTPError';
 import { setTimeout } from 'timers/promises';
 import { AsyncQueue } from '@sapphire/async-queue';
 import { TwitterAPIError } from './TwitterAPIError';
@@ -35,16 +33,7 @@ export class RequestHandler {
   }
 
   async execute(request: APIRequest): Promise<Record<string, unknown> | ArrayBuffer | Response> {
-    let res: Response;
-    try {
-      res = await request.make();
-    } catch (error) {
-      if (error instanceof errors.UndiciError) {
-        throw new HTTPError(request.method, error.message, error.name, request.path);
-      } else {
-        throw error;
-      }
-    }
+    const res = await request.make();
 
     if (res.ok) {
       if (request.isStreaming) return res;
@@ -73,16 +62,7 @@ export class RequestHandler {
         await setTimeout(20000); // TODO: Remove this once the latency issue has been fixed
         return this.execute(request);
       }
-      let apiError: APIProblem;
-      try {
-        apiError = (await parseResponse(res)) as APIProblem;
-      } catch (error) {
-        if (error instanceof errors.UndiciError) {
-          throw new HTTPError(request.method, error.message, error.name, request.path);
-        } else {
-          throw error;
-        }
-      }
+      const apiError = (await parseResponse(res)) as APIProblem;
       throw new TwitterAPIError(apiError);
     }
   }
