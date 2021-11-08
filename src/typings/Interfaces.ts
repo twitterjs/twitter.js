@@ -591,3 +591,34 @@ export interface FetchFilteredStreamRulesOptions extends Omit<BaseFetchOptions, 
    */
   rules?: Array<FilteredStreamRuleResolvable>;
 }
+
+export interface TweetCreateOptions {
+  directMessageDeepLink?: string;
+  forSuperFollowersOnly?: boolean;
+  geo?: TweetCreateGeoOptions;
+  media?: TweetCreateMediaOptions;
+  poll?: TweetCreatePollOptions;
+  quoteTweetId?: Snowflake;
+  reply?: TweetCreateReplyOptions;
+  text?: string;
+}
+
+export interface TweetCreateGeoOptions {
+  placeId: string;
+}
+
+export interface TweetCreateMediaOptions {
+  mediaIds?: Array<Snowflake>;
+  taggedUserIds?: Array<Snowflake>;
+}
+
+export interface TweetCreatePollOptions {
+  durationMinutes: number;
+  options: Array<string>;
+}
+
+export interface TweetCreateReplyOptions {
+  excludeReplyUserIds?: Array<Snowflake>;
+  inReplyToTweetId?: Snowflake;
+  replySettings?: 'following' | 'mentionedUsers';
+}

@@ -12,6 +12,7 @@ import {
   User,
   Tweet,
   TweetCountBucket,
+  TweetPayload,
 } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
@@ -24,6 +25,7 @@ import type {
   SearchTweetsBookOptions,
   TweetsCountBookOptions,
   CountTweetsOptions,
+  TweetCreateOptions,
 } from '../typings';
 import type {
   DeleteTweetsLikeResponse,
@@ -36,6 +38,7 @@ import type {
   GetTweetsLikingUsersResponse,
   GetTweetsRetweetingUsersQuery,
   GetTweetsRetweetingUsersResponse,
+  PostTweetCreateResponse,
   PostTweetsLikeJSONBody,
   PostTweetsLikeResponse,
   PostUsersRetweetsJSONBody,
@@ -313,6 +316,13 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const tweetsCountBook = new TweetsCountBook(this.client, bookData);
     const firstPage = await tweetsCountBook.fetchNextPage();
     return [tweetsCountBook, firstPage];
+  }
+
+  async create(options: TweetCreateOptions): Promise<PostTweetCreateResponse> {
+    const data = new TweetPayload(options).resolveData();
+    const requestData = new RequestData({ body: data, isUserContext: true });
+    const res: PostTweetCreateResponse = await this.client._api.tweets.post(requestData);
+    return res;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

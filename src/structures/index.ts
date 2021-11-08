@@ -11,4 +11,5 @@ export * from './SimplifiedTweet';
 export * from './SimplifiedUser';
 export * from './Space';
 export * from './Tweet';
+export * from './TweetPayload';
 export * from './User';
