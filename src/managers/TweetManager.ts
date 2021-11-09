@@ -319,7 +319,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   }
 
   async create(options: TweetCreateOptions): Promise<PostTweetCreateResponse> {
-    const data = new TweetPayload(options).resolveData();
+    const data = new TweetPayload(this.client, options).resolveData();
     const requestData = new RequestData({ body: data, isUserContext: true });
     const res: PostTweetCreateResponse = await this.client._api.tweets.post(requestData);
     return res;

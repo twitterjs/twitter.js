@@ -4,6 +4,7 @@ import type { ClientEvents, Collection } from '../util';
 import type { Tweet, RequestData, MatchingRule } from '../structures';
 import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
 import type {
+  APITweetReplySettings,
   Granularity,
   MediaFieldsParameter,
   PlaceFieldsParameter,
@@ -598,7 +599,7 @@ export interface TweetCreateOptions {
   geo?: TweetCreateGeoOptions;
   media?: TweetCreateMediaOptions;
   poll?: TweetCreatePollOptions;
-  quoteTweetId?: Snowflake;
+  quoteTweet?: TweetResolvable;
   reply?: TweetCreateReplyOptions;
   text?: string;
 }
@@ -609,7 +610,7 @@ export interface TweetCreateGeoOptions {
 
 export interface TweetCreateMediaOptions {
   mediaIds?: Array<Snowflake>;
-  taggedUserIds?: Array<Snowflake>;
+  taggedUsers?: Array<UserResolvable>;
 }
 
 export interface TweetCreatePollOptions {
@@ -618,7 +619,7 @@ export interface TweetCreatePollOptions {
 }
 
 export interface TweetCreateReplyOptions {
-  excludeReplyUserIds?: Array<Snowflake>;
-  inReplyToTweetId?: Snowflake;
-  replySettings?: 'following' | 'mentionedUsers';
+  excludeReplyUsers?: Array<UserResolvable>;
+  inReplyToTweet?: TweetResolvable;
+  replySettings?: APITweetReplySettings;
 }
