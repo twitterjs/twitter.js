@@ -14,7 +14,7 @@ import type {
   APITweetReferencedTweetType,
   APIUser,
   GetSingleTweetByIdResponse,
-  PostTweetCreateResponse,
+  Snowflake,
 } from 'twitter-types';
 
 /**
@@ -73,21 +73,21 @@ export class Tweet extends SimplifiedTweet {
    * @param options The options for the reply
    * @returns The created reply
    */
-  async reply(options: TweetReplyOptions): Promise<PostTweetCreateResponse> {
+  async reply(options: TweetReplyOptions): Promise<{ id: Snowflake; text: string }> {
     return this.client.tweets.create({ ...options, inReplyToTweet: this.id });
   }
 
   /**
-   * Quotes a tweet
+   * Quotes this tweet
    * @param options The options for quoting
    * @returns The created tweet
    */
-  async quote(options: TweetQuoteOptions): Promise<PostTweetCreateResponse> {
+  async quote(options: TweetQuoteOptions): Promise<{ id: Snowflake; text: string }> {
     return this.client.tweets.create({ ...options, quoteTweet: this.id });
   }
 
   /**
-   * Deletes this tweet if it was created by the authorized user.
+   * Deletes this tweet.
    * @returns A boolean representing whether the tweet got deleted
    */
   async delete(): Promise<boolean> {
