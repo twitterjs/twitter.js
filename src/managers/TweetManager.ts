@@ -28,6 +28,7 @@ import type {
   TweetCreateOptions,
 } from '../typings';
 import type {
+  DeleteTweetDeleteResponse,
   DeleteTweetsLikeResponse,
   DeleteUsersRetweetsResponse,
   GetMultipleTweetsByIdsQuery,
@@ -323,6 +324,19 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const requestData = new RequestData({ body: data, isUserContext: true });
     const res: PostTweetCreateResponse = await this.client._api.tweets.post(requestData);
     return res;
+  }
+
+  /**
+   * Deletes a tweet created by the authorized user.
+   * @param tweet The tweet to delete
+   * @returns A boolean representing whether the tweet got deleted
+   */
+  async delete(tweet: TweetResolvable): Promise<boolean> {
+    const tweetId = this.resolveId(tweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'delete');
+    const requestData = new RequestData({ isUserContext: true });
+    const res: DeleteTweetDeleteResponse = await this.client._api.tweets(tweetId).delete(requestData);
+    return res.deleted;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

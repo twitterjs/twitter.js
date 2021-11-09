@@ -12,7 +12,6 @@ import type {
   TweetCreateMediaOptions,
   TweetCreateOptions,
   TweetCreatePollOptions,
-  TweetCreateReplyOptions,
 } from '../typings';
 
 export class TweetPayload {
@@ -42,14 +41,14 @@ export class TweetPayload {
     return pollData ? { duration_minutes: pollData.durationMinutes, options: pollData.options } : undefined;
   }
 
-  resolveReply(replyData?: TweetCreateReplyOptions): PostTweetCreateReplyData | undefined {
-    const excludeUserIds = replyData?.excludeReplyUsers?.map(user => {
+  resolveReply(): PostTweetCreateReplyData | undefined {
+    const excludeUserIds = this.options?.excludeReplyUsers?.map(user => {
       const userId = this.client.users.resolveId(user);
       if (!userId) throw new CustomError('USER_RESOLVE_ID', 'exclude from the reply');
       return userId;
     });
-    const inReplyToTweetId = replyData?.inReplyToTweet
-      ? this.client.tweets.resolveId(replyData.inReplyToTweet) ?? undefined
+    const inReplyToTweetId = this.options?.inReplyToTweet
+      ? this.client.tweets.resolveId(this.options.inReplyToTweet) ?? undefined
       : undefined;
 
     return excludeUserIds || inReplyToTweetId
@@ -71,8 +70,8 @@ export class TweetPayload {
       media: this.resolveMedia(this.options.media),
       poll: this.resolvePoll(this.options.poll),
       quote_tweet_id,
-      reply: this.resolveReply(this.options.reply),
-      reply_settings: this.options.reply?.replySettings,
+      reply: this.resolveReply(),
+      reply_settings: this.options.replySettings,
     };
 
     return data;

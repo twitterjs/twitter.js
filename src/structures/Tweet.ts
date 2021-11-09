@@ -5,6 +5,7 @@ import { Collection } from '../util';
 import { SimplifiedUser } from './SimplifiedUser';
 import { SimplifiedTweet } from './SimplifiedTweet';
 import type { Client } from '../client';
+import type { TweetQuoteOptions, TweetReplyOptions } from '../typings';
 import type {
   APIMedia,
   APIPlace,
@@ -13,6 +14,7 @@ import type {
   APITweetReferencedTweetType,
   APIUser,
   GetSingleTweetByIdResponse,
+  PostTweetCreateResponse,
 } from 'twitter-types';
 
 /**
@@ -64,6 +66,32 @@ export class Tweet extends SimplifiedTweet {
     this.polls = this.#patchPolls(data.includes?.polls);
     this.places = this.#patchPlaces(data.includes?.places);
     this.media = this.#patchMedia(data.includes?.media);
+  }
+
+  /**
+   * Sends a reply to this tweet
+   * @param options The options for the reply
+   * @returns The created reply
+   */
+  async reply(options: TweetReplyOptions): Promise<PostTweetCreateResponse> {
+    return this.client.tweets.create({ ...options, inReplyToTweet: this.id });
+  }
+
+  /**
+   * Quotes a tweet
+   * @param options The options for quoting
+   * @returns The created tweet
+   */
+  async quote(options: TweetQuoteOptions): Promise<PostTweetCreateResponse> {
+    return this.client.tweets.create({ ...options, quoteTweet: this.id });
+  }
+
+  /**
+   * Deletes this tweet if it was created by the authorized user.
+   * @returns A boolean representing whether the tweet got deleted
+   */
+  async delete(): Promise<boolean> {
+    return this.client.tweets.delete(this.id);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

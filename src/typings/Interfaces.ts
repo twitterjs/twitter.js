@@ -593,6 +593,9 @@ export interface FetchFilteredStreamRulesOptions extends Omit<BaseFetchOptions, 
   rules?: Array<FilteredStreamRuleResolvable>;
 }
 
+/**
+ * Options used to craete a tweet
+ */
 export interface TweetCreateOptions {
   directMessageDeepLink?: string;
   forSuperFollowersOnly?: boolean;
@@ -600,7 +603,9 @@ export interface TweetCreateOptions {
   media?: TweetCreateMediaOptions;
   poll?: TweetCreatePollOptions;
   quoteTweet?: TweetResolvable;
-  reply?: TweetCreateReplyOptions;
+  excludeReplyUsers?: Array<UserResolvable>;
+  inReplyToTweet?: TweetResolvable;
+  replySettings?: APITweetReplySettings;
   text?: string;
 }
 
@@ -616,10 +621,4 @@ export interface TweetCreateMediaOptions {
 export interface TweetCreatePollOptions {
   durationMinutes: number;
   options: Array<string>;
-}
-
-export interface TweetCreateReplyOptions {
-  excludeReplyUsers?: Array<UserResolvable>;
-  inReplyToTweet?: TweetResolvable;
-  replySettings?: APITweetReplySettings;
 }
