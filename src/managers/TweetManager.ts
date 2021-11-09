@@ -12,6 +12,7 @@ import {
   User,
   Tweet,
   TweetCountBucket,
+  TweetPayload,
 } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
@@ -24,8 +25,10 @@ import type {
   SearchTweetsBookOptions,
   TweetsCountBookOptions,
   CountTweetsOptions,
+  TweetCreateOptions,
 } from '../typings';
 import type {
+  DeleteTweetDeleteResponse,
   DeleteTweetsLikeResponse,
   DeleteUsersRetweetsResponse,
   GetMultipleTweetsByIdsQuery,
@@ -36,6 +39,7 @@ import type {
   GetTweetsLikingUsersResponse,
   GetTweetsRetweetingUsersQuery,
   GetTweetsRetweetingUsersResponse,
+  PostTweetCreateResponse,
   PostTweetsLikeJSONBody,
   PostTweetsLikeResponse,
   PostUsersRetweetsJSONBody,
@@ -313,6 +317,31 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const tweetsCountBook = new TweetsCountBook(this.client, bookData);
     const firstPage = await tweetsCountBook.fetchNextPage();
     return [tweetsCountBook, firstPage];
+  }
+
+  /**
+   * Creates a new tweet.
+   * @param options The options for creating the tweet
+   * @returns The id and text of the created tweet
+   */
+  async create(options: TweetCreateOptions): Promise<{ id: Snowflake; text: string }> {
+    const data = new TweetPayload(this.client, options).resolveData();
+    const requestData = new RequestData({ body: data, isUserContext: true });
+    const res: PostTweetCreateResponse = await this.client._api.tweets.post(requestData);
+    return res.data;
+  }
+
+  /**
+   * Deletes a tweet created by the authorized user.
+   * @param tweet The tweet to delete
+   * @returns A boolean representing whether the tweet got deleted
+   */
+  async delete(tweet: TweetResolvable): Promise<boolean> {
+    const tweetId = this.resolveId(tweet);
+    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'delete');
+    const requestData = new RequestData({ isUserContext: true });
+    const res: DeleteTweetDeleteResponse = await this.client._api.tweets(tweetId).delete(requestData);
+    return res.data.deleted;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

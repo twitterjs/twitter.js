@@ -4,6 +4,7 @@ import type { ClientEvents, Collection } from '../util';
 import type { Tweet, RequestData, MatchingRule } from '../structures';
 import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
 import type {
+  APITweetReplySettings,
   Granularity,
   MediaFieldsParameter,
   PlaceFieldsParameter,
@@ -590,4 +591,34 @@ export interface FetchFilteredStreamRulesOptions extends Omit<BaseFetchOptions, 
    * The rules to fetch, fetches all if not provided
    */
   rules?: Array<FilteredStreamRuleResolvable>;
+}
+
+/**
+ * Options used to craete a tweet
+ */
+export interface TweetCreateOptions {
+  directMessageDeepLink?: string;
+  forSuperFollowersOnly?: boolean;
+  geo?: TweetCreateGeoOptions;
+  media?: TweetCreateMediaOptions;
+  poll?: TweetCreatePollOptions;
+  quoteTweet?: TweetResolvable;
+  excludeReplyUsers?: Array<UserResolvable>;
+  inReplyToTweet?: TweetResolvable;
+  replySettings?: APITweetReplySettings;
+  text?: string;
+}
+
+export interface TweetCreateGeoOptions {
+  placeId: string;
+}
+
+export interface TweetCreateMediaOptions {
+  mediaIds?: Array<Snowflake>;
+  taggedUsers?: Array<UserResolvable>;
+}
+
+export interface TweetCreatePollOptions {
+  durationMinutes: number;
+  options: Array<string>;
 }

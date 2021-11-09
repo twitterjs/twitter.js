@@ -1,6 +1,6 @@
 import type { Collection } from '../util';
 import type { Snowflake } from 'twitter-types';
-import type { FetchFilteredStreamRuleOptions, FetchFilteredStreamRulesOptions } from './Interfaces';
+import type { FetchFilteredStreamRuleOptions, FetchFilteredStreamRulesOptions, TweetCreateOptions } from './Interfaces';
 import type {
   User,
   Tweet,
@@ -93,3 +93,13 @@ export type MutesBookOptions = BookOptions;
 export type FilteredStreamRuleManagerFetchResult<
   T extends FetchFilteredStreamRuleOptions | FetchFilteredStreamRulesOptions,
 > = T extends FetchFilteredStreamRuleOptions ? FilteredStreamRule : Collection<Snowflake, FilteredStreamRule>;
+
+/**
+ * Options used to reply to a tweet
+ */
+export type TweetReplyOptions = Omit<TweetCreateOptions, 'inReplyToTweet'>;
+
+/**
+ * Options used to quote a tweet
+ */
+export type TweetQuoteOptions = Omit<TweetCreateOptions, 'quoteTweet'>;
