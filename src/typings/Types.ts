@@ -92,7 +92,9 @@ export type MutesBookOptions = BookOptions;
 
 export type FilteredStreamRuleManagerFetchResult<
   T extends FetchFilteredStreamRuleOptions | FetchFilteredStreamRulesOptions,
-> = T extends FetchFilteredStreamRuleOptions ? FilteredStreamRule : Collection<Snowflake, FilteredStreamRule>;
+> = T extends undefined | FetchFilteredStreamRulesOptions
+  ? Collection<Snowflake, FilteredStreamRule>
+  : FilteredStreamRule;
 
 /**
  * Options used to reply to a tweet
