@@ -2,7 +2,7 @@
 
 ## Getting started
 
-If you love web devlopment and would be interested in contributing, check out our [Discord server](https://discord.gg/f5Pefuskx4)!
+The twitter.js [Discord server](https://discord.gg/f5Pefuskx4) is a place for users to communicate about anything and everything related to twitter.js. Ask questions here, discuss your ideas with other community members, or just have some fun time in the general channel.
 
 Thank you for investing your time in contributing to the project!
 
