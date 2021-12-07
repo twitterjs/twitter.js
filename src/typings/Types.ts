@@ -47,7 +47,7 @@ export type UserManagerFetchResult<T extends FetchUserOptions | FetchUsersOption
 export type UserManagerFetchByUsernameResult<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions> =
   T extends FetchUserByUsernameOptions ? User : Collection<Snowflake, User>;
 
-export type UserResolvable = User | SimplifiedUser | Snowflake;
+export type UserResolvable = User | SimplifiedUser | Tweet | SimplifiedTweet | Snowflake;
 
 export type TweetManagerFetchResult<T extends FetchTweetOptions | FetchTweetsOptions> = T extends FetchTweetOptions
   ? Tweet
