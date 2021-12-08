@@ -11,10 +11,11 @@ import {
   UserUnfollowResponse,
   UserUnmuteResponse,
   User,
+  Tweet,
   SimplifiedUser,
+  SimplifiedTweet,
 } from '../structures';
 import type { Client } from '../client';
-import type { Tweet } from '../structures';
 import type {
   UserManagerFetchByUsernameResult,
   UserManagerFetchResult,
@@ -69,6 +70,9 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const user = super.resolve(userResolvable);
     if (user) return user;
     if (userResolvable instanceof SimplifiedUser) return super.resolve(userResolvable.id);
+    if (userResolvable instanceof Tweet || userResolvable instanceof SimplifiedTweet) {
+      return userResolvable.authorId ? super.resolve(userResolvable.authorId) : null;
+    }
     return null;
   }
 
@@ -81,6 +85,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const userId = super.resolveId(userResolvable);
     if (typeof userId === 'string') return userId;
     if (userResolvable instanceof SimplifiedUser) return userResolvable.id;
+    if (userResolvable instanceof Tweet || userResolvable instanceof SimplifiedTweet) return userResolvable.authorId;
     return null;
   }
 
