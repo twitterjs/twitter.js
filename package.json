@@ -22,7 +22,7 @@
     "@discordjs/collection": "^0.3.2",
     "@sapphire/async-queue": "^1.1.9",
     "oauth-1.0a": "^2.2.6",
-    "undici": "^4.11.1"
+    "undici": "^4.11.3"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
