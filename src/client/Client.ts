@@ -103,6 +103,7 @@ export class Client extends BaseClient {
    * **Note**: This is a shortcut made available for internal use only, users of the library need not to
    * use it and should treat it as a private field
    * @private
+   * @internal
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get _api(): any {

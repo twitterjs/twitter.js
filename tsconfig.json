@@ -11,7 +11,8 @@
     "strictNullChecks": true,
     "incremental": true,
     "esModuleInterop": true,
-    "lib": ["ESNext"]
+    "lib": ["ESNext"],
+    "stripInternal": true
   },
   "compileOnSave": true,
   "include": ["src"],
