@@ -1,4 +1,5 @@
 import { Client } from '../../client';
+import { test, expect } from 'vitest';
 import { BaseManager } from '../BaseManager';
 import { BaseStructure } from '../../structures';
 import type { Snowflake } from 'twitter-types';

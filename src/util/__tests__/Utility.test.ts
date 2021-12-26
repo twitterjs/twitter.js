@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { objectHasKey, mergeDefault } from '../Utility';
 
 test('key is present', () => {
@@ -9,21 +10,21 @@ test('key is not present', () => {
 });
 
 test('merge objects with mutually exclusive keys', () => {
-  expect(mergeDefault({ one: 1 }, { two: 2 })).toStrictEqual({ one: 1, two: 2 });
+  expect(mergeDefault({ one: 1 }, { two: 2 })).toEqual({ one: 1, two: 2 });
 });
 
 test('merge objects with one common key', () => {
-  expect(mergeDefault({ one: 1, two: 2 }, { two: 2 })).toStrictEqual({ one: 1, two: 2 });
+  expect(mergeDefault({ one: 1, two: 2 }, { two: 2 })).toEqual({ one: 1, two: 2 });
 });
 
 test('merge objects with one common key but different values', () => {
-  expect(mergeDefault({ a: 'alpha', b: 'beta' }, { b: 'boy' })).toStrictEqual({ a: 'alpha', b: 'boy' });
+  expect(mergeDefault({ a: 'alpha', b: 'beta' }, { b: 'boy' })).toEqual({ a: 'alpha', b: 'boy' });
 });
 
 test('merge objects with one common key but its value in given object is undefined', () => {
-  expect(mergeDefault({ one: 1, two: 2 }, { two: undefined })).toStrictEqual({ one: 1, two: 2 });
+  expect(mergeDefault({ one: 1, two: 2 }, { two: undefined })).toEqual({ one: 1, two: 2 });
 });
 
 test('merge objects with one common key but its value in given object is null', () => {
-  expect(mergeDefault({ one: 1, two: 2 }, { two: null })).toStrictEqual({ one: 1, two: null });
+  expect(mergeDefault({ one: 1, two: 2 }, { two: null })).toEqual({ one: 1, two: null });
 });
