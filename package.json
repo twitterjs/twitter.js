@@ -22,7 +22,7 @@
     "@discordjs/collection": "^0.3.2",
     "@sapphire/async-queue": "^1.1.9",
     "oauth-1.0a": "^2.2.6",
-    "undici": "^4.12.0"
+    "undici": "^4.12.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
@@ -39,7 +39,7 @@
     "twitter-types": "^0.18.3",
     "typedoc": "^0.22.10",
     "typescript": "^4.5.4",
-    "vitest": "^0.0.113",
+    "vitest": "^0.0.120",
     "zx": "^4.2.0"
   },
   "files": [
