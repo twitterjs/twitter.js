@@ -28,24 +28,24 @@ import type {
   TweetCreateOptions,
 } from '../typings';
 import type {
-  DeleteTweetDeleteResponse,
-  DeleteTweetsLikeResponse,
-  DeleteUsersRetweetsResponse,
-  GetMultipleTweetsByIdsQuery,
-  GetMultipleTweetsByIdsResponse,
-  GetSingleTweetByIdQuery,
-  GetSingleTweetByIdResponse,
-  GetTweetsLikingUsersQuery,
-  GetTweetsLikingUsersResponse,
-  GetTweetsRetweetingUsersQuery,
-  GetTweetsRetweetingUsersResponse,
-  PostTweetCreateResponse,
-  PostTweetsLikeJSONBody,
-  PostTweetsLikeResponse,
-  PostUsersRetweetsJSONBody,
-  PostUsersRetweetsResponse,
-  PutTweetReplyHideUnhideJSONBody,
-  PutTweetReplyHideUnhideResponse,
+  DELETE_2_tweets_id_Response,
+  DELETE_2_users_id_likes_tweet_id_Response,
+  DELETE_2_users_id_retweets_source_tweet_id_Response,
+  GET_2_tweets_id_liking_users_Query,
+  GET_2_tweets_id_liking_users_Response,
+  GET_2_tweets_id_Query,
+  GET_2_tweets_id_Response,
+  GET_2_tweets_id_retweeted_by_Query,
+  GET_2_tweets_id_retweeted_by_Response,
+  GET_2_tweets_Query,
+  GET_2_tweets_Response,
+  POST_2_tweets_Response,
+  POST_2_users_id_likes_JSONBody,
+  POST_2_users_id_likes_Response,
+  POST_2_users_id_retweets_JSONBody,
+  POST_2_users_id_retweets_Response,
+  PUT_2_tweets_id_hidden_JSONBody,
+  PUT_2_tweets_id_hidden_Response,
   Snowflake,
 } from 'twitter-types';
 
@@ -118,11 +118,11 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'like');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostTweetsLikeJSONBody = {
+    const body: POST_2_users_id_likes_JSONBody = {
       tweet_id: tweetId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PostTweetsLikeResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
+    const data: POST_2_users_id_likes_Response = await this.client._api.users(loggedInUser.id).likes.post(requestData);
     return new TweetLikeResponse(data);
   }
 
@@ -137,7 +137,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const data: DeleteTweetsLikeResponse = await this.client._api
+    const data: DELETE_2_users_id_likes_tweet_id_Response = await this.client._api
       .users(loggedInUser.id)
       .likes(tweetId)
       .delete(requestData);
@@ -172,11 +172,13 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: PostUsersRetweetsJSONBody = {
+    const body: POST_2_users_id_retweets_JSONBody = {
       tweet_id: tweetId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PostUsersRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
+    const data: POST_2_users_id_retweets_Response = await this.client._api
+      .users(loggedInUser.id)
+      .retweets.post(requestData);
     return new RetweetResponse(data);
   }
 
@@ -191,7 +193,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const data: DeleteUsersRetweetsResponse = await this.client._api
+    const data: DELETE_2_users_id_retweets_source_tweet_id_Response = await this.client._api
       .users(loggedInUser.id)
       .retweets(tweetId)
       .delete(requestData);
@@ -207,13 +209,15 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const queryParameters = this.client.options.queryParameters;
-    const query: GetTweetsRetweetingUsersQuery = {
+    const query: GET_2_tweets_id_retweeted_by_Query = {
       expansions: queryParameters?.userExpansions,
       'user.fields': queryParameters?.userFields,
       'tweet.fields': queryParameters?.tweetFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetTweetsRetweetingUsersResponse = await this.client._api.tweets(tweetId).retweeted_by.get(requestData);
+    const data: GET_2_tweets_id_retweeted_by_Response = await this.client._api
+      .tweets(tweetId)
+      .retweeted_by.get(requestData);
     const retweetedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return retweetedByUsersCollection;
     const rawUsers = data.data;
@@ -234,13 +238,15 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
     const queryParameters = this.client.options.queryParameters;
-    const query: GetTweetsLikingUsersQuery = {
+    const query: GET_2_tweets_id_liking_users_Query = {
       expansions: queryParameters?.userExpansions,
       'user.fields': queryParameters?.userFields,
       'tweet.fields': queryParameters?.tweetFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetTweetsLikingUsersResponse = await this.client._api.tweets(tweetId).liking_users.get(requestData);
+    const data: GET_2_tweets_id_liking_users_Response = await this.client._api
+      .tweets(tweetId)
+      .liking_users.get(requestData);
     const likedByUsersCollection = new Collection<Snowflake, User>();
     if (data.meta.result_count === 0) return likedByUsersCollection;
     const rawUsers = data.data;
@@ -327,7 +333,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   async create(options: TweetCreateOptions): Promise<{ id: Snowflake; text: string }> {
     const data = new TweetPayload(this.client, options).resolveData();
     const requestData = new RequestData({ body: data, isUserContext: true });
-    const res: PostTweetCreateResponse = await this.client._api.tweets.post(requestData);
+    const res: POST_2_tweets_Response = await this.client._api.tweets.post(requestData);
     return res.data;
   }
 
@@ -340,7 +346,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     const tweetId = this.resolveId(tweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'delete');
     const requestData = new RequestData({ isUserContext: true });
-    const res: DeleteTweetDeleteResponse = await this.client._api.tweets(tweetId).delete(requestData);
+    const res: DELETE_2_tweets_id_Response = await this.client._api.tweets(tweetId).delete(requestData);
     return res.data.deleted;
   }
 
@@ -352,7 +358,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       if (cachedTweet) return cachedTweet;
     }
     const queryParameters = this.client.options.queryParameters;
-    const query: GetSingleTweetByIdQuery = {
+    const query: GET_2_tweets_id_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -361,7 +367,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetSingleTweetByIdResponse = await this.client._api.tweets(tweetId).get(requestData);
+    const data: GET_2_tweets_id_Response = await this.client._api.tweets(tweetId).get(requestData);
     return this._add(data.data.id, data, options.cacheAfterFetching);
   }
 
@@ -371,7 +377,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   ): Promise<Collection<Snowflake, Tweet>> {
     const fetchedTweetCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetMultipleTweetsByIdsQuery = {
+    const query: GET_2_tweets_Query = {
       ids: tweetIds,
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
@@ -381,7 +387,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GetMultipleTweetsByIdsResponse = await this.client._api.tweets.get(requestData);
+    const data: GET_2_tweets_Response = await this.client._api.tweets.get(requestData);
     const rawTweets = data.data;
     const rawTweetsIncludes = data.includes;
     for (const rawTweet of rawTweets) {
@@ -397,11 +403,11 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   ): Promise<TweetReplyHideUnhideResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
-    const body: PutTweetReplyHideUnhideJSONBody = {
+    const body: PUT_2_tweets_id_hidden_JSONBody = {
       hidden: isHidden,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: PutTweetReplyHideUnhideResponse = await this.client._api.tweets(tweetId).hidden.put(requestData);
+    const data: PUT_2_tweets_id_hidden_Response = await this.client._api.tweets(tweetId).hidden.put(requestData);
     return new TweetReplyHideUnhideResponse(data);
   }
 }

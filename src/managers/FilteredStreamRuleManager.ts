@@ -11,13 +11,10 @@ import type {
   FilteredStreamRuleResolvable,
 } from '../typings';
 import type {
-  GetFilteredTweetStreamRulesQuery,
-  GetFilteredTweetStreamRulesResponse,
-  PostAddFilteredTweetStreamRulesJSONBody,
-  PostAddFilteredTweetStreamRulesResponse,
-  PostRemoveFilteredTweetStreamRulesByIdsJSONBody,
-  PostRemoveFilteredTweetStreamRulesByValuesJSONBody,
-  PostRemoveFilteredTweetStreamRulesResponse,
+  GET_2_tweets_search_stream_rules_Query,
+  GET_2_tweets_search_stream_rules_Response,
+  POST_2_tweets_search_stream_rules_JSONBody,
+  POST_2_tweets_search_stream_rules_Response,
   Snowflake,
 } from 'twitter-types';
 
@@ -73,26 +70,28 @@ export class FilteredStreamRuleManager extends BaseManager<
     data: FilteredStreamRuleData | Array<FilteredStreamRuleData>,
   ): Promise<Collection<Snowflake, FilteredStreamRule>> {
     const rules = Array.isArray(data) ? data : [data];
-    const body: PostAddFilteredTweetStreamRulesJSONBody = {
+    const body: POST_2_tweets_search_stream_rules_JSONBody = {
       add: rules,
     };
     const requestData = new RequestData({ body });
-    const res: PostAddFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
+    const res: POST_2_tweets_search_stream_rules_Response = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
-    return res.data.reduce((createdRules, rawRule) => {
-      const rule = this._add(rawRule.id, rawRule);
-      return createdRules.set(rule.id, rule);
-    }, new Collection<Snowflake, FilteredStreamRule>());
+    return (
+      res.data?.reduce((createdRules, rawRule) => {
+        const rule = this._add(rawRule.id, rawRule);
+        return createdRules.set(rule.id, rule);
+      }, new Collection<Snowflake, FilteredStreamRule>()) ?? new Collection<Snowflake, FilteredStreamRule>()
+    );
   }
 
   /**
    * Deletes one or multiple rules for the filtered stream using their ids.
    * @param ruleId The id or ids of the rules to delete
    */
-  async deleteById(ruleId: Snowflake | Array<Snowflake>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+  async deleteById(ruleId: Snowflake | Array<Snowflake>): Promise<POST_2_tweets_search_stream_rules_Response> {
     const ids = Array.isArray(ruleId) ? ruleId : [ruleId];
-    const body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody = {
+    const body: POST_2_tweets_search_stream_rules_JSONBody = {
       delete: {
         ids,
       },
@@ -104,9 +103,9 @@ export class FilteredStreamRuleManager extends BaseManager<
    * Deletes one or multiple rules for the filtered stream using their values.
    * @param ruleValue The value or values of the rules to delete
    */
-  async deleteByValue(ruleValue: string | Array<string>): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+  async deleteByValue(ruleValue: string | Array<string>): Promise<POST_2_tweets_search_stream_rules_Response> {
     const values = Array.isArray(ruleValue) ? ruleValue : [ruleValue];
-    const body: PostRemoveFilteredTweetStreamRulesByValuesJSONBody = {
+    const body: POST_2_tweets_search_stream_rules_JSONBody = {
       delete: {
         values,
       },
@@ -117,10 +116,10 @@ export class FilteredStreamRuleManager extends BaseManager<
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #deleteRules(
-    body: PostRemoveFilteredTweetStreamRulesByIdsJSONBody | PostRemoveFilteredTweetStreamRulesByValuesJSONBody,
-  ): Promise<PostRemoveFilteredTweetStreamRulesResponse> {
+    body: POST_2_tweets_search_stream_rules_JSONBody,
+  ): Promise<POST_2_tweets_search_stream_rules_Response> {
     const requestData = new RequestData({ body });
-    const res: PostRemoveFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
+    const res: POST_2_tweets_search_stream_rules_Response = await this.client._api.tweets.search.stream.rules.post(
       requestData,
     );
     return res;
@@ -131,11 +130,13 @@ export class FilteredStreamRuleManager extends BaseManager<
       const cachedRule = this.cache.get(ruleId);
       if (cachedRule) return cachedRule;
     }
-    const query: GetFilteredTweetStreamRulesQuery = {
+    const query: GET_2_tweets_search_stream_rules_Query = {
       ids: [ruleId],
     };
     const requestData = new RequestData({ query });
-    const res: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(requestData);
+    const res: GET_2_tweets_search_stream_rules_Response = await this.client._api.tweets.search.stream.rules.get(
+      requestData,
+    );
     const rawRule = res.data?.[0];
     if (!rawRule) throw new CustomError('RULE_NOT_FOUND');
     return this._add(rawRule.id, rawRule, options.cacheAfterFetching);
@@ -146,11 +147,13 @@ export class FilteredStreamRuleManager extends BaseManager<
     options?: FetchFilteredStreamRulesOptions,
   ): Promise<Collection<Snowflake, FilteredStreamRule>> {
     const fetchedRules = new Collection<Snowflake, FilteredStreamRule>();
-    const query: GetFilteredTweetStreamRulesQuery = {
+    const query: GET_2_tweets_search_stream_rules_Query = {
       ids: ruleIds,
     };
     const requestData = new RequestData({ query });
-    const res: GetFilteredTweetStreamRulesResponse = await this.client._api.tweets.search.stream.rules.get(requestData);
+    const res: GET_2_tweets_search_stream_rules_Response = await this.client._api.tweets.search.stream.rules.get(
+      requestData,
+    );
     const rawRules = res.data;
     if (!rawRules?.length) return fetchedRules;
     for (const rawRule of rawRules) {

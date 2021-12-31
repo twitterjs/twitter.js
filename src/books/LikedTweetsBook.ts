@@ -5,7 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { LikedTweetsBookOptions } from '../typings';
-import type { GetUsersLikedTweetsQuery, GetUsersLikedTweetsResponse, Snowflake } from 'twitter-types';
+import type { GET_2_users_id_liked_tweets_Query, GET_2_users_id_liked_tweets_Response, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets liked by a twitter user
@@ -86,7 +86,7 @@ export class LikedTweetsBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
     const likedTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersLikedTweetsQuery = {
+    const query: GET_2_users_id_liked_tweets_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -97,7 +97,9 @@ export class LikedTweetsBook extends BaseBook {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
-    const data: GetUsersLikedTweetsResponse = await this.client._api.users(this.userId).liked_tweets.get(requestData);
+    const data: GET_2_users_id_liked_tweets_Response = await this.client._api
+      .users(this.userId)
+      .liked_tweets.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
