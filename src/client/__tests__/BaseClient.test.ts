@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { EventEmitter } from 'events';
 import { BaseClient } from '../BaseClient';
 

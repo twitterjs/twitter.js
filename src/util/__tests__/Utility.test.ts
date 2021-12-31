@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { objectHasKey, mergeDefault } from '../Utility';
 
 test('key is present', () => {
