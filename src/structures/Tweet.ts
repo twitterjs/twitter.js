@@ -13,7 +13,7 @@ import type {
   APITweet,
   APITweetReferencedTweetType,
   APIUser,
-  GetSingleTweetByIdResponse,
+  SingleTweetLookupResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -56,7 +56,7 @@ export class Tweet extends SimplifiedTweet {
    */
   media: Collection<string, Media>;
 
-  constructor(client: Client, data: GetSingleTweetByIdResponse) {
+  constructor(client: Client, data: SingleTweetLookupResponse) {
     super(client, data.data);
 
     this.author = this.#patchAuthor(data.includes?.users) ?? null;

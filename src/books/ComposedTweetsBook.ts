@@ -5,12 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { ComposedTweetsBookOptions } from '../typings';
-import type {
-  GetUsersTweetsQuery,
-  GetUsersTweetsResponse,
-  Snowflake,
-  TweetTypeExcludesRequestParameter,
-} from 'twitter-types';
+import type { GET_2_users_id_tweets_Query, GET_2_users_id_tweets_Response, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets composed by a twitter user
@@ -73,9 +68,9 @@ export class ComposedTweetsBook extends BaseBook {
   beforeTimestamp: number | null;
 
   /**
-   * The types of tweets that the book will not fetch
+   * The types of tweets that the book should not fetch
    */
-  exclude: Array<TweetTypeExcludesRequestParameter> | null;
+  exclude: GET_2_users_id_tweets_Query['exclude'] | null;
 
   /**
    * @param client The logged in {@link Client} instance
@@ -120,7 +115,7 @@ export class ComposedTweetsBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
     const tweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersTweetsQuery = {
+    const query: GET_2_users_id_tweets_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -136,7 +131,7 @@ export class ComposedTweetsBook extends BaseBook {
     if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
     if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
-    const data: GetUsersTweetsResponse = await this.client._api.users(this.userId).tweets.get(requestData);
+    const data: GET_2_users_id_tweets_Response = await this.client._api.users(this.userId).tweets.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;

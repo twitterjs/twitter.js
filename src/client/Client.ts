@@ -7,12 +7,12 @@ import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../str
 import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
-  GetFilteredTweetStreamQuery,
-  GetFilteredTweetStreamResponse,
-  GetSampledTweetStreamQuery,
-  GetSampledTweetStreamResponse,
-  GetSingleUserByUsernameQuery,
-  GetSingleUserByUsernameResponse,
+  GET_2_tweets_sample_stream_Query,
+  GET_2_tweets_sample_stream_Response,
+  GET_2_tweets_search_stream_Query,
+  GET_2_tweets_search_stream_Response,
+  GET_2_users_me_Query,
+  GET_2_users_me_Response,
   Snowflake,
 } from 'twitter-types';
 
@@ -151,10 +151,9 @@ export class Client extends BaseClient {
     this.token = this.credentials.bearerToken;
     this.readyAt = new Date();
 
-    this.me = await this.#fetchClientUser(credentials.username);
+    this.me = await this.#fetchClientUser();
 
-    if (this.me?.username !== this.credentials.username)
-      throw new CustomError('USER_CONTEXT_LOGIN_ERROR', this.credentials.username);
+    if (!this.me) throw new CustomError('USER_CONTEXT_LOGIN_ERROR');
 
     this.emit(ClientEvents.READY, this);
     if (this.options.events.includes('FILTERED_TWEET_CREATE')) {
@@ -168,21 +167,21 @@ export class Client extends BaseClient {
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
-  async #fetchClientUser(username: string): Promise<ClientUser> {
+  async #fetchClientUser(): Promise<ClientUser> {
     const queryParameters = this.options.queryParameters;
-    const query: GetSingleUserByUsernameQuery = {
+    const query: GET_2_users_me_Query = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
-    const requestData = new RequestData({ query });
-    const data: GetSingleUserByUsernameResponse = await this._api.users.by.username(username).get(requestData);
+    const requestData = new RequestData({ query, isUserContext: true });
+    const data: GET_2_users_me_Response = await this._api.users.me.get(requestData);
     return new ClientUser(this, data);
   }
 
   async #connectToFilteredStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
-    const query: GetFilteredTweetStreamQuery = {
+    const query: GET_2_tweets_search_stream_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -204,7 +203,7 @@ export class Client extends BaseClient {
           continue;
         }
         try {
-          const rawData: GetFilteredTweetStreamResponse = JSON.parse(data);
+          const rawData: GET_2_tweets_search_stream_Response = JSON.parse(data);
           const tweet = this.tweets._add(rawData.data.id, rawData, false);
           const matchingRules = rawData.matching_rules.reduce((col, rule) => {
             col.set(rule.id, new MatchingRule(rule));
@@ -223,7 +222,7 @@ export class Client extends BaseClient {
 
   async #connectToSampledStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
-    const query: GetSampledTweetStreamQuery = {
+    const query: GET_2_tweets_sample_stream_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -245,7 +244,7 @@ export class Client extends BaseClient {
           continue;
         }
         try {
-          const rawTweet: GetSampledTweetStreamResponse = JSON.parse(data);
+          const rawTweet: GET_2_tweets_sample_stream_Response = JSON.parse(data);
           const tweet = this.tweets._add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {

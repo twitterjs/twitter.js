@@ -3,7 +3,7 @@ import { CustomError } from '../errors';
 import { RequestData, TweetCountBucket } from '../structures';
 import type { Client } from '../client';
 import type { TweetsCountBookOptions } from '../typings';
-import type { GetTweetCountsQuery, GetTweetCountsResponse, Granularity, Snowflake } from 'twitter-types';
+import type { GET_2_tweets_counts_recent_Query, GET_2_tweets_counts_recent_Response, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching number of tweets matching a search query
@@ -36,7 +36,7 @@ export class TweetsCountBook extends BaseBook {
   /**
    * The book will group buckets according to this granularity
    */
-  granularity: Granularity | null;
+  granularity: GET_2_tweets_counts_recent_Query['granularity'] | null;
 
   /**
    * The book will fetch tweets that were created after this tweet ID
@@ -90,7 +90,7 @@ export class TweetsCountBook extends BaseBook {
 
   async #fetchPages(token?: string): Promise<Array<TweetCountBucket>> {
     const tweetCountBuckets: Array<TweetCountBucket> = [];
-    const query: GetTweetCountsQuery = {
+    const query: GET_2_tweets_counts_recent_Query = {
       query: this.query,
       next_token: token,
     };
@@ -100,7 +100,7 @@ export class TweetsCountBook extends BaseBook {
     if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
     if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
-    const data: GetTweetCountsResponse = await this.client._api.tweets.counts.recent.get(requestData);
+    const data: GET_2_tweets_counts_recent_Response = await this.client._api.tweets.counts.recent.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.total_tweet_count === 0) return tweetCountBuckets;

@@ -1,17 +1,17 @@
 import type { ClientOptions } from '../typings';
 import type {
-  MediaFieldsParameter,
-  PlaceFieldsParameter,
-  PollFieldsParameter,
-  SpaceExpansionsParameter,
-  SpaceFieldsParameter,
-  TweetExpansionsParameter,
-  TweetFieldsParameter,
-  UserExpansionsParameter,
-  UserFieldsParameter,
+  APIMediaFieldsParameter,
+  APIPlaceFieldsParameter,
+  APIPollFieldsParameter,
+  APISpaceExpansionsParameter,
+  APISpaceFieldsParameter,
+  APITweetExpansionsParameter,
+  APITweetFieldsParameter,
+  APIUserExpansionsParameter,
+  APIUserFieldsParameter,
 } from 'twitter-types';
 
-export const UserFields: Array<UserFieldsParameter> = [
+export const UserFields: Array<APIUserFieldsParameter> = [
   'created_at',
   'description',
   'entities',
@@ -28,7 +28,7 @@ export const UserFields: Array<UserFieldsParameter> = [
   'withheld',
 ];
 
-export const TweetFields: Array<TweetFieldsParameter> = [
+export const TweetFields: Array<APITweetFieldsParameter> = [
   'attachments',
   'author_id',
   'context_annotations',
@@ -48,7 +48,7 @@ export const TweetFields: Array<TweetFieldsParameter> = [
   'withheld',
 ];
 
-export const SpaceFields: Array<SpaceFieldsParameter> = [
+export const SpaceFields: Array<APISpaceFieldsParameter> = [
   'created_at',
   'creator_id',
   'host_ids',
@@ -65,7 +65,7 @@ export const SpaceFields: Array<SpaceFieldsParameter> = [
   'updated_at',
 ];
 
-export const MediaFields: Array<MediaFieldsParameter> = [
+export const MediaFields: Array<APIMediaFieldsParameter> = [
   'duration_ms',
   'height',
   'media_key',
@@ -77,7 +77,7 @@ export const MediaFields: Array<MediaFieldsParameter> = [
   'organic_metrics',
 ];
 
-export const PlaceFields: Array<PlaceFieldsParameter> = [
+export const PlaceFields: Array<APIPlaceFieldsParameter> = [
   'contained_within',
   'country',
   'country_code',
@@ -88,7 +88,7 @@ export const PlaceFields: Array<PlaceFieldsParameter> = [
   'place_type',
 ];
 
-export const PollFields: Array<PollFieldsParameter> = [
+export const PollFields: Array<APIPollFieldsParameter> = [
   'duration_minutes',
   'end_datetime',
   'id',
@@ -96,7 +96,7 @@ export const PollFields: Array<PollFieldsParameter> = [
   'voting_status',
 ];
 
-export const TweetExpansions: Array<TweetExpansionsParameter> = [
+export const TweetExpansions: Array<APITweetExpansionsParameter> = [
   'attachments.poll_ids',
   'attachments.media_keys',
   'author_id',
@@ -107,9 +107,9 @@ export const TweetExpansions: Array<TweetExpansionsParameter> = [
   'referenced_tweets.id.author_id',
 ];
 
-export const UserExpansions: Array<UserExpansionsParameter> = ['pinned_tweet_id'];
+export const UserExpansions: Array<APIUserExpansionsParameter> = ['pinned_tweet_id'];
 
-export const SpaceExpansions: Array<SpaceExpansionsParameter> = [
+export const SpaceExpansions: Array<APISpaceExpansionsParameter> = [
   'creator_id',
   'host_ids',
   'invited_user_ids',

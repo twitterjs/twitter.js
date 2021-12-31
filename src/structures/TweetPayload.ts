@@ -1,12 +1,6 @@
 import { CustomError } from '../errors';
 import type { Client } from '../client';
-import type {
-  PostTweetCreateGeoData,
-  PostTweetCreateJSONBody,
-  PostTweetCreateMediaData,
-  PostTweetCreatePollData,
-  PostTweetCreateReplyData,
-} from 'twitter-types';
+import type { POST_2_tweets_JSONBody } from 'twitter-types';
 import type {
   TweetCreateGeoOptions,
   TweetCreateMediaOptions,
@@ -24,11 +18,11 @@ export class TweetPayload {
     this.client = client;
   }
 
-  resolveGeo(geoData?: TweetCreateGeoOptions): PostTweetCreateGeoData | undefined {
+  resolveGeo(geoData?: TweetCreateGeoOptions): POST_2_tweets_JSONBody['geo'] | undefined {
     return geoData?.placeId ? { place_id: geoData.placeId } : undefined;
   }
 
-  resolveMedia(mediaData?: TweetCreateMediaOptions): PostTweetCreateMediaData | undefined {
+  resolveMedia(mediaData?: TweetCreateMediaOptions): POST_2_tweets_JSONBody['media'] | undefined {
     const taggedUserIds = mediaData?.taggedUsers?.map(user => {
       const userId = this.client.users.resolveId(user);
       if (!userId) throw new CustomError('USER_RESOLVE_ID', 'tag in the media');
@@ -37,11 +31,11 @@ export class TweetPayload {
     return mediaData ? { media_ids: mediaData.mediaIds, tagged_user_ids: taggedUserIds } : undefined;
   }
 
-  resolvePoll(pollData?: TweetCreatePollOptions): PostTweetCreatePollData | undefined {
+  resolvePoll(pollData?: TweetCreatePollOptions): POST_2_tweets_JSONBody['poll'] | undefined {
     return pollData ? { duration_minutes: pollData.durationMinutes, options: pollData.options } : undefined;
   }
 
-  resolveReply(): PostTweetCreateReplyData | undefined {
+  resolveReply(): POST_2_tweets_JSONBody['reply'] | undefined {
     const excludeUserIds = this.options?.excludeReplyUsers?.map(user => {
       const userId = this.client.users.resolveId(user);
       if (!userId) throw new CustomError('USER_RESOLVE_ID', 'exclude from the reply');
@@ -56,13 +50,13 @@ export class TweetPayload {
       : undefined;
   }
 
-  resolveData(): PostTweetCreateJSONBody {
+  resolveData(): POST_2_tweets_JSONBody {
     const text = this.options.text;
 
     const { quoteTweet } = this.options;
     const quote_tweet_id = quoteTweet ? this.client.tweets.resolveId(quoteTweet) ?? undefined : undefined;
 
-    const data: PostTweetCreateJSONBody = {
+    const data: POST_2_tweets_JSONBody = {
       text,
       direct_message_deep_link: this.options.directMessageDeepLink,
       for_super_followers_only: this.options.forSuperFollowersOnly,

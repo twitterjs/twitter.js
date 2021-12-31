@@ -5,7 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { MentionsBookOptions } from '../typings';
-import type { GetUsersMentionTweetsQuery, GetUsersMentionTweetsResponse, Snowflake } from 'twitter-types';
+import type { GET_2_users_id_mentions_Query, GET_2_users_id_mentions_Response, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets that mention a twitter user
@@ -109,7 +109,7 @@ export class MentionsBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
     const mentioningTweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GetUsersMentionTweetsQuery = {
+    const query: GET_2_users_id_mentions_Query = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -124,7 +124,7 @@ export class MentionsBook extends BaseBook {
     if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
     if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
-    const data: GetUsersMentionTweetsResponse = await this.client._api.users(this.userId).mentions.get(requestData);
+    const data: GET_2_users_id_mentions_Response = await this.client._api.users(this.userId).mentions.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
