@@ -2,7 +2,7 @@ import type { Client } from '../client';
 import type { FilteredStreamRuleResolvable } from './Types';
 import type { ClientEvents, Collection } from '../util';
 import type { Tweet, RequestData, MatchingRule } from '../structures';
-import type { TweetResolvable, UserResolvable, SpaceResolvable } from './Types';
+import type { TweetResolvable, UserResolvable, SpaceResolvable, ListResolvable } from './Types';
 import type {
   APITweetReplySettings,
   APIMediaFieldsParameter,
@@ -17,6 +17,8 @@ import type {
   APIUserFieldsParameter,
   GET_2_users_id_tweets_Query,
   GET_2_tweets_counts_recent_Query,
+  APIListExpansionsParameter,
+  APIListFieldsParameter,
 } from 'twitter-types';
 
 /**
@@ -202,6 +204,16 @@ export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCh
   maxResults?: number;
 }
 
+/**
+ * Options used to fetch a single list
+ */
+export interface FetchListOptions extends BaseFetchOptions {
+  /**
+   * The user to fetch
+   */
+  list: ListResolvable;
+}
+
 export interface QueryParameters {
   userFields?: Array<APIUserFieldsParameter>;
   tweetFields?: Array<APITweetFieldsParameter>;
@@ -209,9 +221,11 @@ export interface QueryParameters {
   mediaFields?: Array<APIMediaFieldsParameter>;
   placeFields?: Array<APIPlaceFieldsParameter>;
   pollFields?: Array<APIPollFieldsParameter>;
+  listFields?: Array<APIListFieldsParameter>;
   tweetExpansions?: Array<APITweetExpansionsParameter>;
   userExpansions?: Array<APIUserExpansionsParameter>;
   spaceExpansions?: Array<APISpaceExpansionsParameter>;
+  listExpansions?: Array<APIListExpansionsParameter>;
 }
 
 export interface StructureConstructable<T> {

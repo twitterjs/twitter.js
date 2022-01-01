@@ -1,31 +1,23 @@
-import { BaseStructure } from './BaseStructure';
+import { SimplifiedUser } from './SimplifiedUser';
+import { SimplifiedList } from './SimplifiedList';
 import type { Client } from '../client';
-import type { APIList } from 'twitter-types';
+import type { APIUser, SingleListLookupResponse } from 'twitter-types';
 
-export class List extends BaseStructure {
+export class List extends SimplifiedList {
   /**
-   * The name of the list
+   * The owner of the list
    */
-  name: string;
+  owner: SimplifiedUser | null;
 
-  /**
-   * The description of the list
-   */
-  description: string | null;
+  constructor(client: Client, data: SingleListLookupResponse) {
+    super(client, data.data);
+    this.owner = this.#patchOwner(data.includes?.users) ?? null;
+  }
 
-  /**
-   * Whether the list is private
-   */
-  private: boolean | null;
-
-  /**
-   * @param client The logged in {@link Client} instance
-   * @param data The raw data sent by the API for the list
-   */
-  constructor(client: Client, data: APIList) {
-    super(client, data);
-    this.name = data.name;
-    this.description = data.description ?? null;
-    this.private = data.private ?? null;
+  #patchOwner(users?: Array<APIUser>): SimplifiedUser | undefined {
+    if (!users) return;
+    const rawOwner = users.find(user => user.id === this.ownerId);
+    if (!rawOwner) return;
+    return new SimplifiedUser(this.client, rawOwner);
   }
 }

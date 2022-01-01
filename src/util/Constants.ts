@@ -1,5 +1,7 @@
 import type { ClientOptions } from '../typings';
 import type {
+  APIListExpansionsParameter,
+  APIListFieldsParameter,
   APIMediaFieldsParameter,
   APIPlaceFieldsParameter,
   APIPollFieldsParameter,
@@ -96,6 +98,17 @@ export const PollFields: Array<APIPollFieldsParameter> = [
   'voting_status',
 ];
 
+export const ListFields: Array<APIListFieldsParameter> = [
+  'created_at',
+  'description',
+  'follower_count',
+  'id',
+  'member_count',
+  'name',
+  'owner_id',
+  'private',
+];
+
 export const TweetExpansions: Array<APITweetExpansionsParameter> = [
   'attachments.poll_ids',
   'attachments.media_keys',
@@ -115,6 +128,8 @@ export const SpaceExpansions: Array<APISpaceExpansionsParameter> = [
   'invited_user_ids',
   'speaker_ids',
 ];
+
+export const ListExpansions: Array<APIListExpansionsParameter> = ['owner_id'];
 
 export const ClientEvents = {
   FILTERED_TWEET_CREATE: 'filteredTweetCreate',
@@ -146,9 +161,11 @@ export const defaultClientOptions: ClientOptions = {
     mediaFields: MediaFields,
     placeFields: PlaceFields,
     pollFields: PollFields,
+    listFields: ListFields,
     tweetExpansions: TweetExpansions,
     userExpansions: UserExpansions,
     spaceExpansions: SpaceExpansions,
+    listExpansions: ListExpansions,
   },
 
   /**

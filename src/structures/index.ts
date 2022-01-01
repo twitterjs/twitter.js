@@ -6,6 +6,7 @@ export * from './List';
 export * from './Media';
 export * from './Place';
 export * from './Poll';
+export * from './SimplifiedList';
 export * from './SimplifiedSpace';
 export * from './SimplifiedTweet';
 export * from './SimplifiedUser';

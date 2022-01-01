@@ -2,12 +2,20 @@ import { BaseManager } from './BaseManager';
 import { List, RequestData } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
-import type { CreateListOptions, ListResolvable, UpdateListOptions, UserResolvable } from '../typings';
+import type {
+  CreateListOptions,
+  ListResolvable,
+  UpdateListOptions,
+  UserResolvable,
+  FetchListOptions,
+} from '../typings';
 import type {
   DELETE_2_lists_id_members_user_id_Response,
   DELETE_2_lists_id_Response,
   DELETE_2_users_id_followed_lists_list_id_Response,
   DELETE_2_users_id_pinned_lists_list_id_Response,
+  GET_2_lists_id_Query,
+  GET_2_lists_id_Response,
   POST_2_lists_id_members_JSONBody,
   POST_2_lists_id_members_Response,
   POST_2_lists_JSONBody,
@@ -32,6 +40,19 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     super(client, List);
   }
 
+  /**
+   * Fetches a list from Twitter.
+   * @param options The options for fetching list
+   * @returns A {@link List} as a `Promise`
+   */
+  async fetch(options: FetchListOptions): Promise<List> {
+    if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
+    const listId = this.resolveId(options.list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'fetch');
+    return this.#fetchSingleList(listId, options);
+  }
+
+  // TODO: look into the return type of this method
   /**
    * Creates a new list.
    * @param options The options for creating a list
@@ -195,5 +216,21 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
       .pinned_lists(listId)
       .delete(requestData);
     return res.data.pinned;
+  }
+
+  async #fetchSingleList(listId: Snowflake, options: FetchListOptions) {
+    if (!options.skipCacheCheck) {
+      const cachedList = this.cache.get(listId);
+      if (cachedList) return cachedList;
+    }
+    const queryParameters = this.client.options.queryParameters;
+    const query: GET_2_lists_id_Query = {
+      expansions: queryParameters?.listExpansions,
+      'list.fields': queryParameters?.listFields,
+      'user.fields': queryParameters?.userFields,
+    };
+    const requestData = new RequestData({ query });
+    const { data }: GET_2_lists_id_Response = await this.client._api.lists(listId).get(requestData);
+    return this._add(data.id, data, options.cacheAfterFetching);
   }
 }
