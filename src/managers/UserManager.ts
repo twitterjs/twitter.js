@@ -30,23 +30,23 @@ import type {
   MentionsBookOptions,
 } from '../typings';
 import type {
-  DELETE_2_users_source_user_id_blocking_target_user_id_Response,
-  DELETE_2_users_source_user_id_following_target_user_id_Response,
-  DELETE_2_users_source_user_id_muting_target_user_id_Response,
-  GET_2_users_by_Query,
-  GET_2_users_by_Response,
-  GET_2_users_by_username_username_Query,
-  GET_2_users_by_username_username_Response,
-  GET_2_users_id_Query,
-  GET_2_users_id_Response,
-  GET_2_users_Query,
-  GET_2_users_Response,
-  POST_2_users_id_blocking_JSONBody,
-  POST_2_users_id_blocking_Response,
-  POST_2_users_id_following_JSONBody,
-  POST_2_users_id_following_Response,
-  POST_2_users_id_muting_JSONBody,
-  POST_2_users_id_muting_Response,
+  DELETEUsersSourceUserIdBlockingTargetUserIdResponse,
+  DELETEUsersSourceUserIdFollowingTargetUserIdResponse,
+  DELETEUsersSourceUserIdMutingTargetUserIdResponse,
+  GETUsersByQuery,
+  GETUsersByResponse,
+  GETUsersByUsernameUsernameQuery,
+  GETUsersByUsernameUsernameResponse,
+  GETUsersIdQuery,
+  GETUsersIdResponse,
+  GETUsersQuery,
+  GETUsersResponse,
+  POSTUsersIdBlockingJSONBody,
+  POSTUsersIdBlockingResponse,
+  POSTUsersIdFollowingJSONBody,
+  POSTUsersIdFollowingResponse,
+  POSTUsersIdMutingJSONBody,
+  POSTUsersIdMutingResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -151,11 +151,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: POST_2_users_id_following_JSONBody = {
+    const body: POSTUsersIdFollowingJSONBody = {
       target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: POST_2_users_id_following_Response = await this.client._api
+    const data: POSTUsersIdFollowingResponse = await this.client._api
       .users(loggedInUser.id)
       .following.post(requestData);
     return new UserFollowResponse(data);
@@ -172,7 +172,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const loggedInUserId = this.client.me?.id;
     if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const data: DELETE_2_users_source_user_id_following_target_user_id_Response = await this.client._api
+    const data: DELETEUsersSourceUserIdFollowingTargetUserIdResponse = await this.client._api
       .users(loggedInUserId)
       .following(userId)
       .delete(requestData);
@@ -189,13 +189,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'block');
     const loggedInUserId = this.client.me?.id;
     if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: POST_2_users_id_blocking_JSONBody = {
+    const body: POSTUsersIdBlockingJSONBody = {
       target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: POST_2_users_id_blocking_Response = await this.client._api
-      .users(loggedInUserId)
-      .blocking.post(requestData);
+    const data: POSTUsersIdBlockingResponse = await this.client._api.users(loggedInUserId).blocking.post(requestData);
     return new UserBlockResponse(data);
   }
 
@@ -210,7 +208,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const loggedInUserId = this.client.me?.id;
     if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const data: DELETE_2_users_source_user_id_blocking_target_user_id_Response = await this.client._api
+    const data: DELETEUsersSourceUserIdBlockingTargetUserIdResponse = await this.client._api
       .users(loggedInUserId)
       .blocking(userId)
       .delete(requestData);
@@ -227,11 +225,11 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'mute');
     const loggedInUserId = this.client.me?.id;
     if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: POST_2_users_id_muting_JSONBody = {
+    const body: POSTUsersIdMutingJSONBody = {
       target_user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const data: POST_2_users_id_muting_Response = await this.client._api.users(loggedInUserId).muting.post(requestData);
+    const data: POSTUsersIdMutingResponse = await this.client._api.users(loggedInUserId).muting.post(requestData);
     return new UserMuteResponse(data);
   }
 
@@ -246,7 +244,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const loggedInUserId = this.client.me?.id;
     if (!loggedInUserId) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const data: DELETE_2_users_source_user_id_muting_target_user_id_Response = await this.client._api
+    const data: DELETEUsersSourceUserIdMutingTargetUserIdResponse = await this.client._api
       .users(loggedInUserId)
       .muting(userId)
       .delete(requestData);
@@ -389,27 +387,27 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       if (cachedUser) return cachedUser;
     }
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_id_Query = {
+    const query: GETUsersIdQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_users_id_Response = await this.client._api.users(userId).get(requestData);
+    const data: GETUsersIdResponse = await this.client._api.users(userId).get(requestData);
     return new User(this.client, data);
   }
 
   async #fetchMultipleUsers(userIds: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
     const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_Query = {
+    const query: GETUsersQuery = {
       ids: userIds,
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_users_Response = await this.client._api.users.get(requestData);
+    const data: GETUsersResponse = await this.client._api.users.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {
@@ -425,13 +423,13 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       if (cachedUser) return cachedUser;
     }
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_by_username_username_Query = {
+    const query: GETUsersByUsernameUsernameQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_users_by_username_username_Response = await this.client._api.users.by
+    const data: GETUsersByUsernameUsernameResponse = await this.client._api.users.by
       .username(username)
       .get(requestData);
     return new User(this.client, data);
@@ -443,14 +441,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   ): Promise<Collection<string, User>> {
     const fetchedUserCollection = new Collection<string, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_by_Query = {
+    const query: GETUsersByQuery = {
       usernames,
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_users_by_Response = await this.client._api.users.by.get(requestData);
+    const data: GETUsersByResponse = await this.client._api.users.by.get(requestData);
     const rawUsers = data.data;
     const rawUsersIncludes = data.includes;
     for (const rawUser of rawUsers) {

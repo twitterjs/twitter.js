@@ -7,12 +7,12 @@ import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../str
 import type { Response } from 'undici';
 import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
-  GET_2_tweets_sample_stream_Query,
-  GET_2_tweets_sample_stream_Response,
-  GET_2_tweets_search_stream_Query,
-  GET_2_tweets_search_stream_Response,
-  GET_2_users_me_Query,
-  GET_2_users_me_Response,
+  GETTweetsSampleStreamQuery,
+  GETTweetsSampleStreamResponse,
+  GETTweetsSearchStreamQuery,
+  GETTweetsSearchStreamResponse,
+  GETUsersMeQuery,
+  GETUsersMeResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -169,19 +169,19 @@ export class Client extends BaseClient {
 
   async #fetchClientUser(): Promise<ClientUser> {
     const queryParameters = this.options.queryParameters;
-    const query: GET_2_users_me_Query = {
+    const query: GETUsersMeQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query, isUserContext: true });
-    const data: GET_2_users_me_Response = await this._api.users.me.get(requestData);
+    const data: GETUsersMeResponse = await this._api.users.me.get(requestData);
     return new ClientUser(this, data);
   }
 
   async #connectToFilteredStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
-    const query: GET_2_tweets_search_stream_Query = {
+    const query: GETTweetsSearchStreamQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -203,7 +203,7 @@ export class Client extends BaseClient {
           continue;
         }
         try {
-          const rawData: GET_2_tweets_search_stream_Response = JSON.parse(data);
+          const rawData: GETTweetsSearchStreamResponse = JSON.parse(data);
           const tweet = this.tweets._add(rawData.data.id, rawData, false);
           const matchingRules = rawData.matching_rules.reduce((col, rule) => {
             col.set(rule.id, new MatchingRule(rule));
@@ -222,7 +222,7 @@ export class Client extends BaseClient {
 
   async #connectToSampledStream(): Promise<void> {
     const queryParameters = this.options.queryParameters;
-    const query: GET_2_tweets_sample_stream_Query = {
+    const query: GETTweetsSampleStreamQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -244,7 +244,7 @@ export class Client extends BaseClient {
           continue;
         }
         try {
-          const rawTweet: GET_2_tweets_sample_stream_Response = JSON.parse(data);
+          const rawTweet: GETTweetsSampleStreamResponse = JSON.parse(data);
           const tweet = this.tweets._add(rawTweet.data.id, rawTweet, false);
           this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
         } catch (error) {

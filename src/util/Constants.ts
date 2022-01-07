@@ -1,135 +1,17 @@
 import type { ClientOptions } from '../typings';
-import type {
-  APIListExpansionsParameter,
-  APIListFieldsParameter,
-  APIMediaFieldsParameter,
-  APIPlaceFieldsParameter,
-  APIPollFieldsParameter,
-  APISpaceExpansionsParameter,
-  APISpaceFieldsParameter,
-  APITweetExpansionsParameter,
-  APITweetFieldsParameter,
-  APIUserExpansionsParameter,
-  APIUserFieldsParameter,
+import {
+  APIListExpansionsParameters,
+  APIListFieldsParameters,
+  APIMediaFieldsParameters,
+  APIPlaceFieldsParameters,
+  APIPollFieldsParameters,
+  APISpaceExpansionsParameters,
+  APISpaceFieldsParameters,
+  APITweetExpansionsParameters,
+  APITweetFieldsParameters,
+  APIUserExpansionsParameters,
+  APIUserFieldsParameters,
 } from 'twitter-types';
-
-export const UserFields: Array<APIUserFieldsParameter> = [
-  'created_at',
-  'description',
-  'entities',
-  'id',
-  'location',
-  'name',
-  'pinned_tweet_id',
-  'profile_image_url',
-  'protected',
-  'public_metrics',
-  'url',
-  'username',
-  'verified',
-  'withheld',
-];
-
-export const TweetFields: Array<APITweetFieldsParameter> = [
-  'attachments',
-  'author_id',
-  'context_annotations',
-  'conversation_id',
-  'created_at',
-  'entities',
-  'geo',
-  'id',
-  'in_reply_to_user_id',
-  'lang',
-  'public_metrics',
-  'possibly_sensitive',
-  'referenced_tweets',
-  'reply_settings',
-  'source',
-  'text',
-  'withheld',
-];
-
-export const SpaceFields: Array<APISpaceFieldsParameter> = [
-  'created_at',
-  'creator_id',
-  'host_ids',
-  'id',
-  'invited_user_ids',
-  'is_ticketed',
-  'lang',
-  'participant_count',
-  'scheduled_start',
-  'speaker_ids',
-  'started_at',
-  'state',
-  'title',
-  'updated_at',
-];
-
-export const MediaFields: Array<APIMediaFieldsParameter> = [
-  'duration_ms',
-  'height',
-  'media_key',
-  'preview_image_url',
-  'type',
-  'url',
-  'width',
-  'public_metrics',
-  'organic_metrics',
-];
-
-export const PlaceFields: Array<APIPlaceFieldsParameter> = [
-  'contained_within',
-  'country',
-  'country_code',
-  'full_name',
-  'geo',
-  'id',
-  'name',
-  'place_type',
-];
-
-export const PollFields: Array<APIPollFieldsParameter> = [
-  'duration_minutes',
-  'end_datetime',
-  'id',
-  'options',
-  'voting_status',
-];
-
-export const ListFields: Array<APIListFieldsParameter> = [
-  'created_at',
-  'description',
-  'follower_count',
-  'id',
-  'member_count',
-  'name',
-  'owner_id',
-  'private',
-];
-
-export const TweetExpansions: Array<APITweetExpansionsParameter> = [
-  'attachments.poll_ids',
-  'attachments.media_keys',
-  'author_id',
-  'entities.mentions.username',
-  'geo.place_id',
-  'in_reply_to_user_id',
-  'referenced_tweets.id',
-  'referenced_tweets.id.author_id',
-];
-
-export const UserExpansions: Array<APIUserExpansionsParameter> = ['pinned_tweet_id'];
-
-export const SpaceExpansions: Array<APISpaceExpansionsParameter> = [
-  'creator_id',
-  'host_ids',
-  'invited_user_ids',
-  'speaker_ids',
-];
-
-export const ListExpansions: Array<APIListExpansionsParameter> = ['owner_id'];
 
 export const ClientEvents = {
   FILTERED_TWEET_CREATE: 'filteredTweetCreate',
@@ -155,17 +37,17 @@ export const defaultClientOptions: ClientOptions = {
    * The parameters to pass in the query of a request
    */
   queryParameters: {
-    userFields: UserFields,
-    tweetFields: TweetFields,
-    spaceFields: SpaceFields,
-    mediaFields: MediaFields,
-    placeFields: PlaceFields,
-    pollFields: PollFields,
-    listFields: ListFields,
-    tweetExpansions: TweetExpansions,
-    userExpansions: UserExpansions,
-    spaceExpansions: SpaceExpansions,
-    listExpansions: ListExpansions,
+    userFields: APIUserFieldsParameters,
+    tweetFields: APITweetFieldsParameters,
+    spaceFields: APISpaceFieldsParameters,
+    mediaFields: APIMediaFieldsParameters,
+    placeFields: APIPlaceFieldsParameters,
+    pollFields: APIPollFieldsParameters,
+    listFields: APIListFieldsParameters,
+    tweetExpansions: APITweetExpansionsParameters,
+    userExpansions: APIUserExpansionsParameters,
+    spaceExpansions: APISpaceExpansionsParameters,
+    listExpansions: APIListExpansionsParameters,
   },
 
   /**

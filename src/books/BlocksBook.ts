@@ -5,7 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { User } from '../structures';
 import type { BlocksBookOptions } from '../typings';
-import type { GET_2_users_id_blocking_Query, GET_2_users_id_blocking_Response, Snowflake } from 'twitter-types';
+import type { GETUsersIdBlockingQuery, GETUsersIdBlockingResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching users blocked by the authorized user
@@ -85,7 +85,7 @@ export class BlocksBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
     const blockedUsersCollection = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_id_blocking_Query = {
+    const query: GETUsersIdBlockingQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
@@ -93,7 +93,7 @@ export class BlocksBook extends BaseBook {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query, isUserContext: true });
-    const data: GET_2_users_id_blocking_Response = await this.client._api.users(this.userId).blocking.get(requestData);
+    const data: GETUsersIdBlockingResponse = await this.client._api.users(this.userId).blocking.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
