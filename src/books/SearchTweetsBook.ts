@@ -5,7 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { SearchTweetsBookOptions } from '../typings';
-import type { GET_2_tweets_search_recent_Query, GET_2_tweets_search_recent_Response, Snowflake } from 'twitter-types';
+import type { GETTweetsSearchRecentQuery, GETTweetsSearchRecentResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets using search query
@@ -95,7 +95,7 @@ export class SearchTweetsBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
     const tweetsCollection = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_tweets_search_recent_Query = {
+    const query: GETTweetsSearchRecentQuery = {
       expansions: queryParameters?.tweetExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
@@ -111,7 +111,7 @@ export class SearchTweetsBook extends BaseBook {
     if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
     if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
     const requestData = new RequestData({ query });
-    const data: GET_2_tweets_search_recent_Response = await this.client._api.tweets.search.recent.get(requestData);
+    const data: GETTweetsSearchRecentResponse = await this.client._api.tweets.search.recent.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.result_count === 0) return tweetsCollection;

@@ -4,21 +4,21 @@ import type { ClientEvents, Collection } from '../util';
 import type { Tweet, RequestData, MatchingRule } from '../structures';
 import type { TweetResolvable, UserResolvable, SpaceResolvable, ListResolvable } from './Types';
 import type {
+  APIListExpansionsParameterType,
+  APIListFieldsParameterType,
+  APIMediaFieldsParameterType,
+  APIPlaceFieldsParameterType,
+  APIPollFieldsParameterType,
+  APISpaceExpansionsParameterType,
+  APISpaceFieldsParameterType,
+  APITweetExpansionsParameterType,
+  APITweetFieldsParameterType,
   APITweetReplySettings,
-  APIMediaFieldsParameter,
-  APIPlaceFieldsParameter,
-  APIPollFieldsParameter,
+  APIUserExpansionsParameterType,
+  APIUserFieldsParameterType,
+  GETTweetsCountsRecentQuery,
+  GETUsersIdTweetsQuery,
   Snowflake,
-  APISpaceExpansionsParameter,
-  APISpaceFieldsParameter,
-  APITweetExpansionsParameter,
-  APITweetFieldsParameter,
-  APIUserExpansionsParameter,
-  APIUserFieldsParameter,
-  GET_2_users_id_tweets_Query,
-  GET_2_tweets_counts_recent_Query,
-  APIListExpansionsParameter,
-  APIListFieldsParameter,
 } from 'twitter-types';
 
 /**
@@ -215,17 +215,17 @@ export interface FetchListOptions extends BaseFetchOptions {
 }
 
 export interface QueryParameters {
-  userFields?: Array<APIUserFieldsParameter>;
-  tweetFields?: Array<APITweetFieldsParameter>;
-  spaceFields?: Array<APISpaceFieldsParameter>;
-  mediaFields?: Array<APIMediaFieldsParameter>;
-  placeFields?: Array<APIPlaceFieldsParameter>;
-  pollFields?: Array<APIPollFieldsParameter>;
-  listFields?: Array<APIListFieldsParameter>;
-  tweetExpansions?: Array<APITweetExpansionsParameter>;
-  userExpansions?: Array<APIUserExpansionsParameter>;
-  spaceExpansions?: Array<APISpaceExpansionsParameter>;
-  listExpansions?: Array<APIListExpansionsParameter>;
+  userFields?: Array<APIUserFieldsParameterType>;
+  tweetFields?: Array<APITweetFieldsParameterType>;
+  spaceFields?: Array<APISpaceFieldsParameterType>;
+  mediaFields?: Array<APIMediaFieldsParameterType>;
+  placeFields?: Array<APIPlaceFieldsParameterType>;
+  pollFields?: Array<APIPollFieldsParameterType>;
+  listFields?: Array<APIListFieldsParameterType>;
+  tweetExpansions?: Array<APITweetExpansionsParameterType>;
+  userExpansions?: Array<APIUserExpansionsParameterType>;
+  spaceExpansions?: Array<APISpaceExpansionsParameterType>;
+  listExpansions?: Array<APIListExpansionsParameterType>;
 }
 
 export interface StructureConstructable<T> {
@@ -334,7 +334,7 @@ export interface FetchComposedTweetsOptions {
   /**
    * The types of tweet to exclude from fetching
    */
-  exclude?: GET_2_users_id_tweets_Query['exclude'];
+  exclude?: GETUsersIdTweetsQuery['exclude'];
 
   /**
    * The maximum number of tweets to fetch per page
@@ -359,7 +359,7 @@ export interface ComposedTweetsBookOptions extends BookOptions {
   /**
    * The types of tweets to exclude
    */
-  exclude?: GET_2_users_id_tweets_Query['exclude'];
+  exclude?: GETUsersIdTweetsQuery['exclude'];
 
   /**
    * Return tweets that were created after this tweet ID
@@ -511,7 +511,7 @@ export interface TweetsCountBookOptions {
   /**
    * The granularity of the {@link TweetCountBucket}
    */
-  granularity?: GET_2_tweets_counts_recent_Query['granularity'];
+  granularity?: GETTweetsCountsRecentQuery['granularity'];
 
   /**
    * Match tweets that were created after this tweet ID
@@ -551,7 +551,7 @@ export interface CountTweetsOptions {
   /**
    * The granularity of the {@link TweetCountBucket}
    */
-  granularity?: GET_2_tweets_counts_recent_Query['granularity'];
+  granularity?: GETTweetsCountsRecentQuery['granularity'];
 }
 
 /**

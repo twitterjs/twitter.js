@@ -5,7 +5,7 @@ import { RequestData } from '../structures';
 import type { Client } from '../client';
 import type { User } from '../structures';
 import type { MutesBookOptions } from '../typings';
-import type { GET_2_users_id_muting_Query, GET_2_users_id_muting_Response, Snowflake } from 'twitter-types';
+import type { GETUsersIdMutingQuery, GETUsersIdMutingResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching users muted by the authorized user
@@ -85,7 +85,7 @@ export class MutesBook extends BaseBook {
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
     const mutedUsersCollection = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_users_id_muting_Query = {
+    const query: GETUsersIdMutingQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
@@ -93,7 +93,7 @@ export class MutesBook extends BaseBook {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query, isUserContext: true });
-    const data: GET_2_users_id_muting_Response = await this.client._api.users(this.userId).muting.get(requestData);
+    const data: GETUsersIdMutingResponse = await this.client._api.users(this.userId).muting.get(requestData);
     this.#nextToken = data.meta.next_token;
     this.#previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;

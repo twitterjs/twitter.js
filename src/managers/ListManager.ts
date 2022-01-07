@@ -10,22 +10,22 @@ import type {
   FetchListOptions,
 } from '../typings';
 import type {
-  DELETE_2_lists_id_members_user_id_Response,
-  DELETE_2_lists_id_Response,
-  DELETE_2_users_id_followed_lists_list_id_Response,
-  DELETE_2_users_id_pinned_lists_list_id_Response,
-  GET_2_lists_id_Query,
-  GET_2_lists_id_Response,
-  POST_2_lists_id_members_JSONBody,
-  POST_2_lists_id_members_Response,
-  POST_2_lists_JSONBody,
-  POST_2_lists_Response,
-  POST_2_users_id_followed_lists_JSONBody,
-  POST_2_users_id_followed_lists_Response,
-  POST_2_users_id_pinned_lists_JSONBody,
-  POST_2_users_id_pinned_lists_Response,
-  PUT_2_lists_id_JSONBody,
-  PUT_2_lists_id_Response,
+  DELETEListsIdMembersUserIdResponse,
+  DELETEListsIdResponse,
+  DELETEUsersIdFollowedListsListIdResponse,
+  DELETEUsersIdPinnedListsListIdResponse,
+  GETListsIdQuery,
+  GETListsIdResponse,
+  POSTListsIdMembersJSONBody,
+  POSTListsIdMembersResponse,
+  POSTListsJSONBody,
+  POSTListsResponse,
+  POSTUsersIdFollowedListsJSONBody,
+  POSTUsersIdFollowedListsResponse,
+  POSTUsersIdPinnedListsJSONBody,
+  POSTUsersIdPinnedListsResponse,
+  PUTListsIdJSONBody,
+  PUTListsIdResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -60,13 +60,13 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
    */
   async create(options: CreateListOptions): Promise<List> {
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-    const body: POST_2_lists_JSONBody = {
+    const body: POSTListsJSONBody = {
       name: options.name,
       description: options.description,
       private: options.private,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const res: POST_2_lists_Response = await this.client._api.lists.post(requestData);
+    const res: POSTListsResponse = await this.client._api.lists.post(requestData);
     const list = this._add(res.data.id, res.data);
     return list;
   }
@@ -80,7 +80,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const listId = this.resolveId(list);
     if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'delete');
     const requestData = new RequestData({ isUserContext: true });
-    const res: DELETE_2_lists_id_Response = await this.client._api.lists(listId).delete(requestData);
+    const res: DELETEListsIdResponse = await this.client._api.lists(listId).delete(requestData);
     return res.data.deleted;
   }
 
@@ -94,13 +94,13 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const listId = this.resolveId(list);
     if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'update');
     if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-    const body: PUT_2_lists_id_JSONBody = {
+    const body: PUTListsIdJSONBody = {
       name: options.name,
       description: options.description,
       private: options.private,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const res: PUT_2_lists_id_Response = await this.client._api.lists(listId).put(requestData);
+    const res: PUTListsIdResponse = await this.client._api.lists(listId).put(requestData);
     return res.data.updated;
   }
 
@@ -115,11 +115,11 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'add member to');
     const userId = this.client.users.resolveId(member);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'add to the list');
-    const body: POST_2_lists_id_members_JSONBody = {
+    const body: POSTListsIdMembersJSONBody = {
       user_id: userId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const res: POST_2_lists_id_members_Response = await this.client._api.lists(listId).members.post(requestData);
+    const res: POSTListsIdMembersResponse = await this.client._api.lists(listId).members.post(requestData);
     return res.data.is_member;
   }
 
@@ -135,7 +135,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const userId = this.client.users.resolveId(member);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'remove from the list');
     const requestData = new RequestData({ isUserContext: true });
-    const res: DELETE_2_lists_id_members_user_id_Response = await this.client._api
+    const res: DELETEListsIdMembersUserIdResponse = await this.client._api
       .lists(listId)
       .members(userId)
       .delete(requestData);
@@ -152,11 +152,11 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: POST_2_users_id_followed_lists_JSONBody = {
+    const body: POSTUsersIdFollowedListsJSONBody = {
       list_id: listId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const res: POST_2_users_id_followed_lists_Response = await this.client._api
+    const res: POSTUsersIdFollowedListsResponse = await this.client._api
       .users(loggedInUser.id)
       .followed_lists.post(requestData);
     return res.data.following;
@@ -173,7 +173,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const res: DELETE_2_users_id_followed_lists_list_id_Response = await this.client._api
+    const res: DELETEUsersIdFollowedListsListIdResponse = await this.client._api
       .users(loggedInUser.id)
       .followed_lists(listId)
       .delete(requestData);
@@ -190,11 +190,11 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'pin');
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
-    const body: POST_2_users_id_pinned_lists_JSONBody = {
+    const body: POSTUsersIdPinnedListsJSONBody = {
       list_id: listId,
     };
     const requestData = new RequestData({ body, isUserContext: true });
-    const res: POST_2_users_id_pinned_lists_Response = await this.client._api
+    const res: POSTUsersIdPinnedListsResponse = await this.client._api
       .users(loggedInUser.id)
       .pinned_lists.post(requestData);
     return res.data.pinned;
@@ -211,7 +211,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
     const loggedInUser = this.client.me;
     if (!loggedInUser) throw new CustomError('NO_LOGGED_IN_USER');
     const requestData = new RequestData({ isUserContext: true });
-    const res: DELETE_2_users_id_pinned_lists_list_id_Response = await this.client._api
+    const res: DELETEUsersIdPinnedListsListIdResponse = await this.client._api
       .users(loggedInUser.id)
       .pinned_lists(listId)
       .delete(requestData);
@@ -224,13 +224,13 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
       if (cachedList) return cachedList;
     }
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_lists_id_Query = {
+    const query: GETListsIdQuery = {
       expansions: queryParameters?.listExpansions,
       'list.fields': queryParameters?.listFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const { data }: GET_2_lists_id_Response = await this.client._api.lists(listId).get(requestData);
+    const { data }: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
     return this._add(data.id, data, options.cacheAfterFetching);
   }
 }

@@ -12,19 +12,19 @@ import type {
   APITweetWithheld,
   APIUserPublicMetrics,
   APIUserWithheld,
-  DELETE_2_users_id_likes_tweet_id_Response,
-  DELETE_2_users_id_retweets_source_tweet_id_Response,
-  DELETE_2_users_source_user_id_blocking_target_user_id_Response,
-  DELETE_2_users_source_user_id_following_target_user_id_Response,
-  DELETE_2_users_source_user_id_muting_target_user_id_Response,
-  GET_2_tweets_counts_recent_Query,
-  GET_2_tweets_counts_recent_Response,
-  POST_2_users_id_blocking_Response,
-  POST_2_users_id_following_Response,
-  POST_2_users_id_likes_Response,
-  POST_2_users_id_muting_Response,
-  POST_2_users_id_retweets_Response,
-  PUT_2_tweets_id_hidden_Response,
+  DELETEUsersIdLikesTweetIdResponse,
+  DELETEUsersIdRetweetsSourceTweetIdResponse,
+  DELETEUsersSourceUserIdBlockingTargetUserIdResponse,
+  DELETEUsersSourceUserIdFollowingTargetUserIdResponse,
+  DELETEUsersSourceUserIdMutingTargetUserIdResponse,
+  GETTweetsCountsRecentQuery,
+  GETTweetsCountsRecentResponse,
+  POSTUsersIdBlockingResponse,
+  POSTUsersIdFollowingResponse,
+  POSTUsersIdLikesResponse,
+  POSTUsersIdMutingResponse,
+  POSTUsersIdRetweetsResponse,
+  PUTTweetsIdHiddenResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -161,7 +161,7 @@ export class UserFollowResponse {
    */
   pendingFollow: boolean;
 
-  constructor(data: POST_2_users_id_following_Response) {
+  constructor(data: POSTUsersIdFollowingResponse) {
     this.following = data.data.following;
     this.pendingFollow = data.data.pending_follow;
   }
@@ -176,7 +176,7 @@ export class UserUnfollowResponse {
    */
   following: boolean;
 
-  constructor(data: DELETE_2_users_source_user_id_following_target_user_id_Response) {
+  constructor(data: DELETEUsersSourceUserIdFollowingTargetUserIdResponse) {
     this.following = data.data.following;
   }
 }
@@ -190,7 +190,7 @@ export class UserBlockResponse {
    */
   blocking: boolean;
 
-  constructor(data: POST_2_users_id_blocking_Response) {
+  constructor(data: POSTUsersIdBlockingResponse) {
     this.blocking = data.data.blocking;
   }
 }
@@ -204,7 +204,7 @@ export class UserUnblockResponse {
    */
   blocking: boolean;
 
-  constructor(data: DELETE_2_users_source_user_id_blocking_target_user_id_Response) {
+  constructor(data: DELETEUsersSourceUserIdBlockingTargetUserIdResponse) {
     this.blocking = data.data.blocking;
   }
 }
@@ -218,7 +218,7 @@ export class UserMuteResponse {
    */
   muting: boolean;
 
-  constructor(data: POST_2_users_id_muting_Response) {
+  constructor(data: POSTUsersIdMutingResponse) {
     this.muting = data.data.muting;
   }
 }
@@ -232,7 +232,7 @@ export class UserUnmuteResponse {
    */
   muting: boolean;
 
-  constructor(data: DELETE_2_users_source_user_id_muting_target_user_id_Response) {
+  constructor(data: DELETEUsersSourceUserIdMutingTargetUserIdResponse) {
     this.muting = data.data.muting;
   }
 }
@@ -246,7 +246,7 @@ export class TweetLikeResponse {
    */
   liked: boolean;
 
-  constructor(data: POST_2_users_id_likes_Response) {
+  constructor(data: POSTUsersIdLikesResponse) {
     this.liked = data.data.liked;
   }
 }
@@ -260,7 +260,7 @@ export class TweetUnlikeResponse {
    */
   liked: boolean;
 
-  constructor(data: DELETE_2_users_id_likes_tweet_id_Response) {
+  constructor(data: DELETEUsersIdLikesTweetIdResponse) {
     this.liked = data.data.liked;
   }
 }
@@ -274,7 +274,7 @@ export class TweetReplyHideUnhideResponse {
    */
   hidden: boolean;
 
-  constructor(data: PUT_2_tweets_id_hidden_Response) {
+  constructor(data: PUTTweetsIdHiddenResponse) {
     this.hidden = data.data.hidden;
   }
 }
@@ -285,7 +285,7 @@ export class TweetReplyHideUnhideResponse {
 export class RetweetResponse {
   retweeted: boolean;
 
-  constructor(data: POST_2_users_id_retweets_Response) {
+  constructor(data: POSTUsersIdRetweetsResponse) {
     this.retweeted = data.data.retweeted;
   }
 }
@@ -296,7 +296,7 @@ export class RetweetResponse {
 export class RemovedRetweetResponse {
   retweeted: boolean;
 
-  constructor(data: DELETE_2_users_id_retweets_source_tweet_id_Response) {
+  constructor(data: DELETEUsersIdRetweetsSourceTweetIdResponse) {
     this.retweeted = data.data.retweeted;
   }
 }
@@ -355,11 +355,11 @@ export class TweetCountBucket {
   /**
    * The timespan between start and end time of this bucket
    */
-  granularity: GET_2_tweets_counts_recent_Query['granularity'];
+  granularity: GETTweetsCountsRecentQuery['granularity'];
 
   constructor(
-    data: GET_2_tweets_counts_recent_Response['data'][0],
-    granularity: GET_2_tweets_counts_recent_Query['granularity'] | null,
+    data: GETTweetsCountsRecentResponse['data'][0],
+    granularity: GETTweetsCountsRecentQuery['granularity'] | null,
   ) {
     this.start = new Date(data.start);
     this.end = new Date(data.end);

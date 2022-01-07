@@ -13,14 +13,14 @@ import type {
   UserResolvable,
 } from '../typings';
 import type {
-  GET_2_spaces_by_creator_ids_Query,
-  GET_2_spaces_by_creator_ids_Response,
-  GET_2_spaces_id_Query,
-  GET_2_spaces_id_Response,
-  GET_2_spaces_Query,
-  GET_2_spaces_Response,
-  GET_2_spaces_search_Query,
-  GET_2_spaces_search_Response,
+  GETSpacesByCreatorIdsQuery,
+  GETSpacesByCreatorIdsResponse,
+  GETSpacesIdQuery,
+  GETSpacesIdResponse,
+  GETSpacesQuery,
+  GETSpacesResponse,
+  GETSpacesSearchQuery,
+  GETSpacesSearchResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -71,14 +71,14 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
       return userId;
     });
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_spaces_by_creator_ids_Query = {
+    const query: GETSpacesByCreatorIdsQuery = {
       user_ids: userIds,
       expansions: queryParameters?.spaceExpansions,
       'user.fields': queryParameters?.userFields,
       'space.fields': queryParameters?.spaceFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_spaces_by_creator_ids_Response = await this.client._api.spaces.by.creator_ids.get(requestData);
+    const data: GETSpacesByCreatorIdsResponse = await this.client._api.spaces.by.creator_ids.get(requestData);
     if (data.meta.result_count === 0) return fetchedSpaceCollection;
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
@@ -97,7 +97,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
   async search(options: SearchSpacesOptions): Promise<Collection<Snowflake, Space>> {
     const fetchedSpaceCollection = new Collection<Snowflake, Space>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_spaces_search_Query = {
+    const query: GETSpacesSearchQuery = {
       query: options.query,
       expansions: queryParameters?.spaceExpansions,
       max_results: options.maxResults,
@@ -106,7 +106,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_spaces_search_Response = await this.client._api.spaces.search.get(requestData);
+    const data: GETSpacesSearchResponse = await this.client._api.spaces.search.get(requestData);
     if (data.meta.result_count === 0) return fetchedSpaceCollection;
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
@@ -125,13 +125,13 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
       if (cachedSpace) return cachedSpace;
     }
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_spaces_id_Query = {
+    const query: GETSpacesIdQuery = {
       expansions: queryParameters?.spaceExpansions,
       'space.fields': queryParameters?.spaceFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_spaces_id_Response = await this.client._api.spaces(spaceId).get(requestData);
+    const data: GETSpacesIdResponse = await this.client._api.spaces(spaceId).get(requestData);
     return this._add(data.data.id, data, options.cacheAfterFetching);
   }
 
@@ -141,14 +141,14 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
   ): Promise<Collection<Snowflake, Space>> {
     const fetchedSpaceCollection = new Collection<Snowflake, Space>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GET_2_spaces_Query = {
+    const query: GETSpacesQuery = {
       ids: spaceIds,
       expansions: queryParameters?.spaceExpansions,
       'space.fields': queryParameters?.spaceFields,
       'user.fields': queryParameters?.userFields,
     };
     const requestData = new RequestData({ query });
-    const data: GET_2_spaces_Response = await this.client._api.spaces.get(requestData);
+    const data: GETSpacesResponse = await this.client._api.spaces.get(requestData);
     const rawSpaces = data.data;
     const rawSpacesIncludes = data.includes;
     for (const rawSpace of rawSpaces) {
