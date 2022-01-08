@@ -1,7 +1,7 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData } from '../structures';
+import { BaseRangeBook } from './BaseRangeBook';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { MentionsBookOptions } from '../typings';
@@ -10,76 +10,21 @@ import type { GETUsersIdMentionsQuery, GETUsersIdMentionsResponse, Snowflake } f
 /**
  * A class for fetching tweets that mention a twitter user
  */
-export class MentionsBook extends BaseBook {
-  /**
-   * The token for fetching next page
-   */
-  #nextToken?: string;
-
-  /**
-   * The token for fetching previous page
-   */
-  #previousToken?: string;
-
-  /**
-   * Whether an initial request for fetching the first page has already been made
-   *
-   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link FollowersBook.fetchNextPage}
-   */
-  #hasMadeInitialRequest?: boolean;
-
+export class MentionsBook extends BaseRangeBook {
   /**
    * The ID of the user this book belongs to
    */
   userId: Snowflake;
 
   /**
-   * The maximum amount of tweets that will be fetched per page.
-   *
-   * **Note:** This is the max count and will **not** always be equal to the number of tweets fetched in a page
-   */
-  maxResultsPerPage: number | null;
-
-  /**
-   * Whether there are more pages of tweets to be fetched
-   *
-   * **Note:** Use this as a check for deciding whether to fetch more pages
-   */
-  hasMore: boolean;
-
-  /**
-   * The book will fetch tweets that were created after this tweet ID
-   */
-  afterTweetId: Snowflake | null;
-
-  /**
-   * The book will fetch tweets that were created before this tweet ID
-   */
-  beforeTweetId: Snowflake | null;
-
-  /**
-   * The book will fetch tweets that were created after this timestamp
-   */
-  afterTimestamp: number | null;
-
-  /**
-   * The book will fetch tweets that were created before this timestamp
-   */
-  beforeTimestamp: number | null;
-
-  /**
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the mentions book with
    */
   constructor(client: Client, options: MentionsBookOptions) {
-    super(client);
-    this.hasMore = true;
-    this.userId = options.userId;
-    this.afterTweetId = options.afterTweetId ?? null;
-    this.beforeTweetId = options.beforeTweetId ?? null;
-    this.afterTimestamp = options.afterTimestamp ?? null;
-    this.beforeTimestamp = options.beforeTimestamp ?? null;
-    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
+    super(client, options);
+    const userId = client.users.resolveId(options.user);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create LikedTweetsBook for');
+    this.userId = userId;
   }
 
   /**
@@ -87,12 +32,12 @@ export class MentionsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#hasMadeInitialRequest) {
-      this.#hasMadeInitialRequest = true;
+    if (!this._hasMadeInitialRequest) {
+      this._hasMadeInitialRequest = true;
       return this.#fetchPages();
     }
-    if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken);
+    if (!this._nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
+    return this.#fetchPages(this._nextToken);
   }
 
   /**
@@ -100,8 +45,8 @@ export class MentionsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
-    return this.#fetchPages(this.#previousToken);
+    if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
+    return this.#fetchPages(this._previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
@@ -121,12 +66,12 @@ export class MentionsBook extends BaseBook {
     if (this.afterTweetId) query.since_id = this.afterTweetId;
     if (this.beforeTweetId) query.until_id = this.beforeTweetId;
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
-    if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
+    if (this.startTimestamp) query.start_time = new Date(this.startTimestamp).toISOString();
+    if (this.endTimestamp) query.end_time = new Date(this.endTimestamp).toISOString();
     const requestData = new RequestData({ query });
     const data: GETUsersIdMentionsResponse = await this.client._api.users(this.userId).mentions.get(requestData);
-    this.#nextToken = data.meta.next_token;
-    this.#previousToken = data.meta.previous_token;
+    this._nextToken = data.meta.next_token;
+    this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.result_count === 0) return mentioningTweetsCollection;
     const rawTweets = data.data;

@@ -1,7 +1,7 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData } from '../structures';
+import { BaseRangeBook } from './BaseRangeBook';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
 import type { ComposedTweetsBookOptions } from '../typings';
@@ -10,62 +10,11 @@ import type { GETUsersIdTweetsQuery, GETUsersIdTweetsResponse, Snowflake } from 
 /**
  * A class for fetching tweets composed by a twitter user
  */
-export class ComposedTweetsBook extends BaseBook {
-  /**
-   * The token for fetching next page
-   */
-  #nextToken?: string;
-
-  /**
-   * The token for fetching previous page
-   */
-  #previousToken?: string;
-
-  /**
-   * Whether an initial request for fetching the first page has already been made
-   *
-   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link ComposedTweetsBook.fetchNextPage}
-   */
-  #hasMadeInitialRequest?: boolean;
-
+export class ComposedTweetsBook extends BaseRangeBook {
   /**
    * The ID of the user this book belongs to
    */
   userId: Snowflake;
-
-  /**
-   * The maximum amount of tweets that will be fetched per page.
-   *
-   * **Note:** This is the max count and will **not** always be equal to the number of tweets fetched in a page
-   */
-  maxResultsPerPage: number | null;
-
-  /**
-   * Whether there are more pages of tweets to be fetched
-   *
-   * **Note:** Use this as a check for deciding whether to fetch more pages
-   */
-  hasMore: boolean;
-
-  /**
-   * The book will fetch tweets that were created after this tweet ID
-   */
-  afterTweetId: Snowflake | null;
-
-  /**
-   * The book will fetch tweets that were created before this tweet ID
-   */
-  beforeTweetId: Snowflake | null;
-
-  /**
-   * The book will fetch tweets that were created after this timestamp
-   */
-  afterTimestamp: number | null;
-
-  /**
-   * The book will fetch tweets that were created before this timestamp
-   */
-  beforeTimestamp: number | null;
 
   /**
    * The types of tweets that the book should not fetch
@@ -77,15 +26,11 @@ export class ComposedTweetsBook extends BaseBook {
    * @param options The options to initialize the composed tweets book with
    */
   constructor(client: Client, options: ComposedTweetsBookOptions) {
-    super(client);
-    this.hasMore = true;
-    this.userId = options.userId;
+    super(client, options);
+    const userId = client.users.resolveId(options.user);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create ComposedTweetsBook for');
+    this.userId = userId;
     this.exclude = options.exclude ?? null;
-    this.afterTweetId = options.afterTweetId ?? null;
-    this.beforeTweetId = options.beforeTweetId ?? null;
-    this.afterTimestamp = options.afterTimestamp ?? null;
-    this.beforeTimestamp = options.beforeTimestamp ?? null;
-    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
   }
 
   /**
@@ -93,12 +38,12 @@ export class ComposedTweetsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweet} objects composed by the owner of this book
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#hasMadeInitialRequest) {
-      this.#hasMadeInitialRequest = true;
+    if (!this._hasMadeInitialRequest) {
+      this._hasMadeInitialRequest = true;
       return this.#fetchPages();
     }
-    if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken);
+    if (!this._nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
+    return this.#fetchPages(this._nextToken);
   }
 
   /**
@@ -106,8 +51,8 @@ export class ComposedTweetsBook extends BaseBook {
    * @returns A {@link Collection} of {@link Tweet} objects composed by the owner of this book
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
-    if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
-    return this.#fetchPages(this.#previousToken);
+    if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
+    return this.#fetchPages(this._previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
@@ -128,12 +73,12 @@ export class ComposedTweetsBook extends BaseBook {
     if (this.afterTweetId) query.since_id = this.afterTweetId;
     if (this.beforeTweetId) query.until_id = this.beforeTweetId;
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    if (this.afterTimestamp) query.start_time = new Date(this.afterTimestamp).toISOString();
-    if (this.beforeTimestamp) query.end_time = new Date(this.beforeTimestamp).toISOString();
+    if (this.startTimestamp) query.start_time = new Date(this.startTimestamp).toISOString();
+    if (this.endTimestamp) query.end_time = new Date(this.endTimestamp).toISOString();
     const requestData = new RequestData({ query });
     const data: GETUsersIdTweetsResponse = await this.client._api.users(this.userId).tweets.get(requestData);
-    this.#nextToken = data.meta.next_token;
-    this.#previousToken = data.meta.previous_token;
+    this._nextToken = data.meta.next_token;
+    this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.result_count === 0) return tweetsCollection;
     const rawTweets = data.data;

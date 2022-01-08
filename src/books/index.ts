@@ -1,4 +1,5 @@
 export * from './BaseBook';
+export * from './BaseRangeBook';
 export * from './BlocksBook';
 export * from './ComposedTweetsBook';
 export * from './FollowersBook';
