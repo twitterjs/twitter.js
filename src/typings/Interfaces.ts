@@ -317,6 +317,10 @@ export interface ComposedTweetsBookOptions extends BaseRangeBookOptions {
   exclude?: GETUsersIdTweetsQuery['exclude'];
 }
 
+export interface FollowedListsBookOptions extends BaseBookOptions {
+  user: UserResolvable;
+}
+
 export interface FollowersBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
@@ -329,11 +333,35 @@ export interface LikedTweetsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
+export interface ListFollowersBookOptions extends BaseBookOptions {
+  list: ListResolvable;
+}
+
+export interface ListMembersBookOptions extends BaseBookOptions {
+  list: ListResolvable;
+}
+
+export interface ListMembershipsBookOptions extends BaseBookOptions {
+  user: UserResolvable;
+}
+
+export interface ListTweetsBookOptions extends BaseBookOptions {
+  list: ListResolvable;
+}
+
 export interface MentionsBookOptions extends BaseRangeBookOptions {
   user: UserResolvable;
 }
 
 export interface MutesBookOptions extends BaseBookOptions {
+  user: UserResolvable;
+}
+
+export interface OwnedListsBookOptions extends BaseBookOptions {
+  user: UserResolvable;
+}
+
+export interface PinnedListsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
