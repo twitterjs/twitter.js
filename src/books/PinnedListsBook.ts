@@ -57,22 +57,15 @@ export class PinnedListsBook extends BaseBook {
       expansions: queryParameters?.listExpansions,
       'user.fields': queryParameters?.userFields,
       'list.fields': queryParameters?.listFields,
-      // TODO: remove these once twitter-types adds the correct types
-      // @ts-expect-error
       pagination_token: token,
     };
-    // @ts-expect-error
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
     const data: GETUsersIdPinnedListsResponse = await this.client._api
       .users(this.userId)
       .followed_lists.get(requestData);
-    console.log(data);
-    // @ts-expect-error
     this._nextToken = data.meta.next_token;
-    // @ts-expect-error
     this._previousToken = data.meta.previous_token;
-    // @ts-expect-error
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.result_count === 0) return pinnedLists;
     const rawLists = data.data;
