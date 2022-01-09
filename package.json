@@ -3,10 +3,10 @@
   "version": "0.10.1",
   "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
   "description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "build": "tsc",
     "build:dev": "tsc -w",
     "doc": "typedoc",
     "test": "vitest",
@@ -15,14 +15,13 @@
     "lint:fix": "eslint src --ext ts --fix",
     "format": "prettier --write **/*.{json,yml,yaml}",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "zx": "zx ./script.mjs",
-    "prepublishOnly": "npm run build && npm run zx"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@discordjs/collection": "^0.4.0",
     "@sapphire/async-queue": "^1.1.9",
     "oauth-1.0a": "^2.2.6",
-    "twitter-types": "^0.20.0",
+    "twitter-types": "^0.20.2",
     "undici": "^4.12.1"
   },
   "devDependencies": {
@@ -39,8 +38,7 @@
     "prettier": "^2.5.1",
     "typedoc": "^0.22.10",
     "typescript": "^4.5.4",
-    "vitest": "^0.0.136",
-    "zx": "^4.2.0"
+    "vitest": "^0.0.136"
   },
   "files": [
     "/dist"

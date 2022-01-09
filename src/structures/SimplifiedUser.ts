@@ -1,9 +1,6 @@
 import { BaseStructure } from './BaseStructure';
 import { UserPublicMetrics, UserEntities, UserWitheld } from './misc';
-import { FollowersBook, FollowingsBook } from '../books';
-import type { User } from './User';
 import type { Client } from '../client';
-import type { Collection } from '../util';
 import type { APIUser, Snowflake } from 'twitter-types';
 import type {
   UserFollowResponse,
@@ -152,23 +149,5 @@ export class SimplifiedUser extends BaseStructure {
    */
   async unmute(): Promise<UserUnmuteResponse> {
     return this.client.users.unmute(this.id);
-  }
-
-  /**
-   * Fetches followers of this user.
-   * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
-   * @returns A tuple containing {@link FollowersBook} object and a {@link Collection} of {@link User} objects representing the first page
-   */
-  async fetchFollowers(maxResultsPerPage?: number): Promise<[FollowersBook, Collection<Snowflake, User>]> {
-    return this.client.users.fetchFollowers(this.id, maxResultsPerPage);
-  }
-
-  /**
-   * Fetches users followed by this user.
-   * @param maxResultsPerPage The maximum amount of users to fetch per page of the book. The API will default this to `100` if not provided
-   * @returns A tuple containing {@link FollowingsBook} object and a {@link Collection} of {@link User} objects representing the first page
-   */
-  async fetchFollowings(maxResultsPerPage?: number): Promise<[FollowingsBook, Collection<Snowflake, User>]> {
-    return this.client.users.fetchFollowings(this.id, maxResultsPerPage);
   }
 }

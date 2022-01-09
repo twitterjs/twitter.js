@@ -38,7 +38,10 @@ export const defaultClientOptions: ClientOptions = {
    */
   queryParameters: {
     userFields: APIUserFieldsParameters,
-    tweetFields: APITweetFieldsParameters,
+    // TODO: remove this once twitter fixes the bug where unauthorized request of these fields result in an error instead of a partial error
+    tweetFields: APITweetFieldsParameters.filter(
+      f => !['promoted_metrics', 'organic_metrics', 'non_public_metrics'].includes(f),
+    ),
     spaceFields: APISpaceFieldsParameters,
     mediaFields: APIMediaFieldsParameters,
     placeFields: APIPlaceFieldsParameters,

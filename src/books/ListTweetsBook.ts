@@ -1,35 +1,34 @@
 import { Collection } from '../util';
 import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
-import type { Tweet } from '../structures';
-import type { LikedTweetsBookOptions } from '../typings';
-import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse, Snowflake } from 'twitter-types';
+import type { ListTweetsBookOptions } from '../typings';
+import type { GETListsIdTweetsQuery, GETListsIdtweetsResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class for fetching tweets liked by a twitter user
+ * A class for fetching tweets from a list
  */
-export class LikedTweetsBook extends BaseBook {
+export class ListTweetsBook extends BaseBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the list this book belongs to
    */
-  userId: Snowflake;
+  listId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the liked tweets book with
+   * @param options The options to initialize the list tweets book with
    */
-  constructor(client: Client, options: LikedTweetsBookOptions) {
+  constructor(client: Client, options: ListTweetsBookOptions) {
     super(client, options);
-    const userId = client.users.resolveId(options.user);
-    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create LikedTweetsBook for');
-    this.userId = userId;
+    const listId = client.lists.resolveId(options.list);
+    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'create ListTweetsBook for');
+    this.listId = listId;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} objects belonging to the given list
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._hasMadeInitialRequest) {
@@ -42,7 +41,7 @@ export class LikedTweetsBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} objects belonging to the given list
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
@@ -52,9 +51,9 @@ export class LikedTweetsBook extends BaseBook {
   // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const likedTweetsCollection = new Collection<Snowflake, Tweet>();
+    const listTweets = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GETUsersIdLikedTweetsQuery = {
+    const query: GETListsIdTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
       'media.fields': queryParameters?.mediaFields,
       'place.fields': queryParameters?.placeFields,
@@ -65,17 +64,17 @@ export class LikedTweetsBook extends BaseBook {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
-    const data: GETUsersIdLikedTweetsResponse = await this.client._api.users(this.userId).liked_tweets.get(requestData);
+    const data: GETListsIdtweetsResponse = await this.client._api.lists(this.listId).tweets.get(requestData);
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return likedTweetsCollection;
+    if (data.meta.result_count === 0) return listTweets;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
       const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
-      likedTweetsCollection.set(tweet.id, tweet);
+      listTweets.set(tweet.id, tweet);
     }
-    return likedTweetsCollection;
+    return listTweets;
   }
 }

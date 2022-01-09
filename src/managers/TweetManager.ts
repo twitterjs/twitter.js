@@ -1,6 +1,5 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
-import { SearchTweetsBook, TweetsCountBook } from '../books';
 import {
   RemovedRetweetResponse,
   RequestData,
@@ -11,7 +10,6 @@ import {
   SimplifiedTweet,
   User,
   Tweet,
-  TweetCountBucket,
   TweetPayload,
 } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
@@ -21,10 +19,6 @@ import type {
   TweetResolvable,
   FetchTweetOptions,
   FetchTweetsOptions,
-  SearchTweetsOptions,
-  SearchTweetsBookOptions,
-  TweetsCountBookOptions,
-  CountTweetsOptions,
   TweetCreateOptions,
 } from '../typings';
 import type {
@@ -250,73 +244,6 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       likedByUsersCollection.set(user.id, user);
     }
     return likedByUsersCollection;
-  }
-
-  /**
-   * Fetches tweets using a search query.
-   * @param query The query to match tweets with
-   * @param options The options for searching tweets
-   * @returns A tuple containing {@link SearchTweetsBook} object and a {@link Collection} of {@link Tweet} objects representing the first page
-   */
-  async search(
-    query: string,
-    options?: SearchTweetsOptions,
-  ): Promise<[SearchTweetsBook, Collection<Snowflake, Tweet>]> {
-    const bookData: SearchTweetsBookOptions = { query };
-    if (options?.afterTweet) {
-      const afterTweetId = this.client.tweets.resolveId(options.afterTweet);
-      if (afterTweetId) bookData.afterTweetId = afterTweetId;
-    }
-    if (options?.beforeTweet) {
-      const beforeTweetId = this.client.tweets.resolveId(options.beforeTweet);
-      if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
-    }
-    if (options?.afterTime) {
-      const afterTimestamp = new Date(options.afterTime).getTime();
-      if (afterTimestamp) bookData.afterTimestamp = afterTimestamp;
-    }
-    if (options?.beforeTime) {
-      const beforeTimestamp = new Date(options.beforeTime).getTime();
-      if (beforeTimestamp) bookData.beforeTimestamp = beforeTimestamp;
-    }
-    if (options?.maxResultsPerPage) {
-      bookData.maxResultsPerPage = options.maxResultsPerPage;
-    }
-    const searchTweetsBook = new SearchTweetsBook(this.client, bookData);
-    const firstPage = await searchTweetsBook.fetchNextPage();
-    return [searchTweetsBook, firstPage];
-  }
-
-  /**
-   * Fetches count of tweets matching a search query.
-   * @param query The query to match the tweets with
-   * @param options The options for searching tweets
-   * @returns A tuple containing {@link TweetsCountBook} object and an array of {@link TweetCountBucket} objects representing the first page
-   */
-  async count(query: string, options?: CountTweetsOptions): Promise<[TweetsCountBook, Array<TweetCountBucket>]> {
-    const bookData: TweetsCountBookOptions = { query };
-    if (options?.afterTweet) {
-      const afterTweetId = this.client.tweets.resolveId(options.afterTweet);
-      if (afterTweetId) bookData.afterTweetId = afterTweetId;
-    }
-    if (options?.beforeTweet) {
-      const beforeTweetId = this.client.tweets.resolveId(options.beforeTweet);
-      if (beforeTweetId) bookData.beforeTweetId = beforeTweetId;
-    }
-    if (options?.afterTime) {
-      const afterTimestamp = new Date(options.afterTime).getTime();
-      if (afterTimestamp) bookData.afterTimestamp = afterTimestamp;
-    }
-    if (options?.beforeTime) {
-      const beforeTimestamp = new Date(options.beforeTime).getTime();
-      if (beforeTimestamp) bookData.beforeTimestamp = beforeTimestamp;
-    }
-    if (options?.granularity) {
-      bookData.granularity = options.granularity;
-    }
-    const tweetsCountBook = new TweetsCountBook(this.client, bookData);
-    const firstPage = await tweetsCountBook.fetchNextPage();
-    return [tweetsCountBook, firstPage];
   }
 
   /**

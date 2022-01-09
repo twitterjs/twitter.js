@@ -12,50 +12,19 @@ import type { GETUsersIdMutingQuery, GETUsersIdMutingResponse, Snowflake } from 
  */
 export class MutesBook extends BaseBook {
   /**
-   * The token for fetching next page
-   */
-  #nextToken?: string;
-
-  /**
-   * The token for fetching previous page
-   */
-  #previousToken?: string;
-
-  /**
-   * Whether an initial request for fetching the first page has already been made
-   *
-   * **Note**: Use this to not throw `PAGINATED_RESPONSE_TAIL_REACHED` error for initial page request in {@link BlocksBook.fetchNextPage}
-   */
-  #hasMadeInitialRequest?: boolean;
-
-  /**
    * The ID of the user this book belongs to
    */
   userId: Snowflake;
-
-  /**
-   * The maximum amount of users that will be fetched per page
-   *
-   * **Note:** This is the max count and will **not** always be equal to the number of users fetched in a page
-   */
-  maxResultsPerPage: number | null;
-
-  /**
-   * Whether there are more pages of users to be fetched
-   *
-   * **Note:** Use this as a check for deciding whether to fetch more pages
-   */
-  hasMore: boolean;
 
   /**
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the mutes book with
    */
   constructor(client: Client, options: MutesBookOptions) {
-    super(client);
-    this.userId = options.userId;
-    this.maxResultsPerPage = options.maxResultsPerPage ?? null;
-    this.hasMore = true;
+    super(client, options);
+    const userId = client.users.resolveId(options.user);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create LikedTweetsBook for');
+    this.userId = userId;
   }
 
   /**
@@ -63,12 +32,12 @@ export class MutesBook extends BaseBook {
    * @returns A {@link Collection} of {@link User} objects that have been muted by the authorized user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
-    if (!this.#hasMadeInitialRequest) {
-      this.#hasMadeInitialRequest = true;
+    if (!this._hasMadeInitialRequest) {
+      this._hasMadeInitialRequest = true;
       return this.#fetchPages();
     }
-    if (!this.#nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
-    return this.#fetchPages(this.#nextToken);
+    if (!this._nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
+    return this.#fetchPages(this._nextToken);
   }
 
   /**
@@ -76,8 +45,8 @@ export class MutesBook extends BaseBook {
    * @returns A {@link Collection} of {@link User} objects that have been muted by the authorized user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
-    if (!this.#previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
-    return this.#fetchPages(this.#previousToken);
+    if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
+    return this.#fetchPages(this._previousToken);
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
@@ -94,8 +63,8 @@ export class MutesBook extends BaseBook {
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query, isUserContext: true });
     const data: GETUsersIdMutingResponse = await this.client._api.users(this.userId).muting.get(requestData);
-    this.#nextToken = data.meta.next_token;
-    this.#previousToken = data.meta.previous_token;
+    this._nextToken = data.meta.next_token;
+    this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
     if (data.meta.result_count === 0) return mutedUsersCollection;
     const rawUsers = data.data;
