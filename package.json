@@ -21,7 +21,7 @@
     "@discordjs/collection": "^0.4.0",
     "@sapphire/async-queue": "^1.1.9",
     "oauth-1.0a": "^2.2.6",
-    "twitter-types": "^0.20.2",
+    "twitter-types": "^0.20.3",
     "undici": "^4.12.1"
   },
   "devDependencies": {
@@ -43,7 +43,6 @@
   "files": [
     "/dist"
   ],
-  "type": "module",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
