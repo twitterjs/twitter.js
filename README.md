@@ -63,7 +63,10 @@ const client = new Client({ events: ['FILTERED_TWEET_CREATE'] });
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-  await client.filteredStreamRules.create({ value: '@tjs_test', tag: 'Tweets mentioning the user tjs_test' });
+  await client.filteredStreamRules.create({
+    value: '@tjs_test',
+    tag: 'Tweets mentioning the user tjs_test',
+  });
 });
 
 client.on('filteredTweetCreate', async tweet => {
