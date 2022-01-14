@@ -1,18 +1,40 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
-    "declaration": true,
-    "outDir": "dist",
-    "strict": true,
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "noImplicitOverride": true,
-    "strictNullChecks": true,
+    /* Projects */
     "incremental": true,
+    /* Language and Environment */
+    "lib": ["ES2020"],
+    "target": "ES2020",
+    /* Modules */
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    /* Emit */
+    "declaration": true,
+    "declarationMap": true,
+    "importsNotUsedAsValues": "error",
+    "outDir": "dist",
+    "stripInternal": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "sourceMap": true,
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "lib": ["ESNext"],
-    "stripInternal": true
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "allowUnreachableCode": false,
+    /* Completeness */
+    "skipLibCheck": false
   },
   "compileOnSave": true,
   "include": ["src"],
