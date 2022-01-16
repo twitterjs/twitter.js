@@ -22,9 +22,6 @@ jobs:
       - name: Build package
         run: npm run build
 
-      - name: Execute zx
-        run: npm run zx
-
       - name: Publish to npm
         run: npm publish
         env:
