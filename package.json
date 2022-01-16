@@ -22,23 +22,23 @@
     "@sapphire/async-queue": "^1.1.9",
     "oauth-1.0a": "^2.2.6",
     "twitter-types": "^0.20.3",
-    "undici": "^4.12.1"
+    "undici": "^4.12.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.0.1",
+    "@commitlint/cli": "^16.0.2",
     "@commitlint/config-angular": "^16.0.0",
     "@types/node": "^17.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
-    "@typescript-eslint/parser": "^5.9.0",
-    "eslint": "^8.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
-    "lint-staged": "^12.1.6",
+    "lint-staged": "^12.1.7",
     "prettier": "^2.5.1",
     "typedoc": "^0.22.10",
     "typescript": "^4.5.4",
-    "vitest": "^0.0.136"
+    "vitest": "^0.1.17"
   },
   "files": [
     "/dist"
