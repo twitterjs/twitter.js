@@ -282,7 +282,7 @@ export interface BaseBookOptions {
   maxResultsPerPage?: number;
 }
 
-export interface BlocksBookOptions extends BaseBookOptions {
+export interface BlockedUsersBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
@@ -321,11 +321,11 @@ export interface FollowedListsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
-export interface FollowersBookOptions extends BaseBookOptions {
+export interface UserFollowersBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
-export interface FollowingsBookOptions extends BaseBookOptions {
+export interface UserFollowingsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
@@ -341,7 +341,7 @@ export interface ListMembersBookOptions extends BaseBookOptions {
   list: ListResolvable;
 }
 
-export interface ListMembershipsBookOptions extends BaseBookOptions {
+export interface MemberOfListsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
@@ -349,11 +349,11 @@ export interface ListTweetsBookOptions extends BaseBookOptions {
   list: ListResolvable;
 }
 
-export interface MentionsBookOptions extends BaseRangeBookOptions {
+export interface UserMentioningTweetsBookOptions extends BaseRangeBookOptions {
   user: UserResolvable;
 }
 
-export interface MutesBookOptions extends BaseBookOptions {
+export interface MutedUsersBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
@@ -367,6 +367,10 @@ export interface PinnedListsBookOptions extends BaseBookOptions {
 
 export interface SearchTweetsBookOptions extends BaseRangeBookOptions {
   query: string;
+}
+
+export interface SpaceTicketBuyersBookOptions extends BaseBookOptions {
+  space: SpaceResolvable;
 }
 
 export interface TweetsCountBookOptions extends BaseRangeBookOptions {

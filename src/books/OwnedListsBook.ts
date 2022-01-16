@@ -17,7 +17,7 @@ export class OwnedListsBook extends BaseBook {
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the blocks book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: OwnedListsBookOptions) {
     super(client, options);
@@ -28,7 +28,7 @@ export class OwnedListsBook extends BaseBook {
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link List} objects owned by the user
+   * @returns A {@link Collection} of {@link List} owned by the given user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, List>> {
     if (!this._hasMadeInitialRequest) {
@@ -41,14 +41,12 @@ export class OwnedListsBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link List} objects owned by the user
+   * @returns A {@link Collection} of {@link List} owned by the given user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, List>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
-
-  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
     const ownedLists = new Collection<Snowflake, List>();

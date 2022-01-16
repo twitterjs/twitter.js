@@ -3,32 +3,32 @@ import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { ListMembersBookOptions } from '../typings';
-import type { GETListsIdMembersQuery, GETUsersIdFollowersResponse, Snowflake } from 'twitter-types';
+import type { UserFollowersBookOptions } from '../typings';
+import type { GETUsersIdFollowersQuery, GETUsersIdFollowersResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class for fetching users who are members of a list
+ * A class for fetching followers of a twitter user
  */
-export class ListMembersBook extends BaseBook {
+export class UserFollowersBook extends BaseBook {
   /**
-   * The Id of the list this book belongs to
+   * The Id of the user this book belongs to
    */
-  listId: Snowflake;
+  userId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the book with
+   * @param options The options to initialize the with
    */
-  constructor(client: Client, options: ListMembersBookOptions) {
+  constructor(client: Client, options: UserFollowersBookOptions) {
     super(client, options);
-    const listId = client.lists.resolveId(options.list);
-    if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'create ListMembersBook for');
-    this.listId = listId;
+    const userId = client.users.resolveId(options.user);
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create FollowersBook for');
+    this.userId = userId;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} who are members of the given list
+   * @returns A {@link Collection} of {@link User} who follow the given user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this._hasMadeInitialRequest) {
@@ -41,7 +41,7 @@ export class ListMembersBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} who are members of the given list
+   * @returns A {@link Collection} of {@link User} who follow the given user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
@@ -49,9 +49,9 @@ export class ListMembersBook extends BaseBook {
   }
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-    const listMembers = new Collection<Snowflake, User>();
+    const followers = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GETListsIdMembersQuery = {
+    const query: GETUsersIdFollowersQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
@@ -59,17 +59,17 @@ export class ListMembersBook extends BaseBook {
     };
     if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
     const requestData = new RequestData({ query });
-    const data: GETUsersIdFollowersResponse = await this.client._api.users(this.listId).followers.get(requestData);
+    const data: GETUsersIdFollowersResponse = await this.client._api.users(this.userId).followers.get(requestData);
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return listMembers;
+    if (data.meta.result_count === 0) return followers;
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
       const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
-      listMembers.set(user.id, user);
+      followers.set(user.id, user);
     }
-    return listMembers;
+    return followers;
   }
 }

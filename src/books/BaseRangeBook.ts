@@ -26,7 +26,7 @@ export class BaseRangeBook extends BaseBook {
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the composed tweets book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: BaseRangeBookOptions) {
     super(client, options);

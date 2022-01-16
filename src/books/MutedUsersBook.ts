@@ -1,35 +1,34 @@
 import { Collection } from '../util';
 import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { User } from '../structures';
-import type { MutesBookOptions } from '../typings';
+import type { MutedUsersBookOptions } from '../typings';
 import type { GETUsersIdMutingQuery, GETUsersIdMutingResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching users muted by the authorized user
  */
-export class MutesBook extends BaseBook {
+export class MutedUsersBook extends BaseBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the user this book belongs to
    */
   userId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the mutes book with
+   * @param options The options to initialize the book with
    */
-  constructor(client: Client, options: MutesBookOptions) {
+  constructor(client: Client, options: MutedUsersBookOptions) {
     super(client, options);
     const userId = client.users.resolveId(options.user);
-    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create LikedTweetsBook for');
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create MutedUsersBook for');
     this.userId = userId;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} objects that have been muted by the authorized user
+   * @returns A {@link Collection} of {@link User} muted by the given user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this._hasMadeInitialRequest) {
@@ -42,17 +41,15 @@ export class MutesBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} objects that have been muted by the authorized user
+   * @returns A {@link Collection} of {@link User} muted by the given user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-    const mutedUsersCollection = new Collection<Snowflake, User>();
+    const mutedUsers = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
     const query: GETUsersIdMutingQuery = {
       expansions: queryParameters?.userExpansions,
@@ -66,13 +63,13 @@ export class MutesBook extends BaseBook {
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return mutedUsersCollection;
+    if (data.meta.result_count === 0) return mutedUsers;
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
       const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
-      mutedUsersCollection.set(user.id, user);
+      mutedUsers.set(user.id, user);
     }
-    return mutedUsersCollection;
+    return mutedUsers;
   }
 }

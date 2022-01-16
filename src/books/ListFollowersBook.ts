@@ -48,8 +48,6 @@ export class ListFollowersBook extends BaseBook {
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
     const listFollowers = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
@@ -69,7 +67,7 @@ export class ListFollowersBook extends BaseBook {
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
-      const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes });
+      const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes }, false);
       listFollowers.set(user.id, user);
     }
     return listFollowers;

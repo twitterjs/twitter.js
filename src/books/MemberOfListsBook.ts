@@ -3,13 +3,13 @@ import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
-import type { ListMembershipsBookOptions } from '../typings';
+import type { MemberOfListsBookOptions } from '../typings';
 import type { GETUsersIdListMembershipsQuery, GETUsersIdListMembershipsResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching lists in which a user is a member
  */
-export class ListMembershipsBook extends BaseBook {
+export class MemberOfListsBook extends BaseBook {
   /**
    * The Id of the user this book belongs to
    */
@@ -19,10 +19,10 @@ export class ListMembershipsBook extends BaseBook {
    * @param client The logged in {@link Client} instance
    * @param options The options to initialize the book with
    */
-  constructor(client: Client, options: ListMembershipsBookOptions) {
+  constructor(client: Client, options: MemberOfListsBookOptions) {
     super(client, options);
     const userId = client.users.resolveId(options.user);
-    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create ListMembershipsBook for');
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create MemberOfListsBook for');
     this.userId = userId;
   }
 
@@ -47,8 +47,6 @@ export class ListMembershipsBook extends BaseBook {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
-
-  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
     const lists = new Collection<Snowflake, List>();

@@ -17,7 +17,7 @@ export class ListTweetsBook extends BaseBook {
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the list tweets book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: ListTweetsBookOptions) {
     super(client, options);
@@ -28,7 +28,7 @@ export class ListTweetsBook extends BaseBook {
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects belonging to the given list
+   * @returns A {@link Collection} of {@link Tweet} belonging to the given list
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._hasMadeInitialRequest) {
@@ -41,17 +41,15 @@ export class ListTweetsBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects belonging to the given list
+   * @returns A {@link Collection} of {@link Tweet} belonging to the given list
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const listTweets = new Collection<Snowflake, Tweet>();
+    const tweets = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GETListsIdTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -68,13 +66,13 @@ export class ListTweetsBook extends BaseBook {
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return listTweets;
+    if (data.meta.result_count === 0) return tweets;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
-      listTweets.set(tweet.id, tweet);
+      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
+      tweets.set(tweet.id, tweet);
     }
-    return listTweets;
+    return tweets;
   }
 }

@@ -48,8 +48,6 @@ export class PinnedListsBook extends BaseBook {
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
     const pinnedLists = new Collection<Snowflake, List>();
     const queryParameters = this.client.options.queryParameters;

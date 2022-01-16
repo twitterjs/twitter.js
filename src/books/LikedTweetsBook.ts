@@ -1,9 +1,8 @@
 import { Collection } from '../util';
 import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
-import type { Tweet } from '../structures';
 import type { LikedTweetsBookOptions } from '../typings';
 import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse, Snowflake } from 'twitter-types';
 
@@ -12,13 +11,13 @@ import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse, Snowfla
  */
 export class LikedTweetsBook extends BaseBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the user this book belongs to
    */
   userId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the liked tweets book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: LikedTweetsBookOptions) {
     super(client, options);
@@ -29,7 +28,7 @@ export class LikedTweetsBook extends BaseBook {
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} liked by the given user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._hasMadeInitialRequest) {
@@ -42,17 +41,15 @@ export class LikedTweetsBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects liked by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} liked by the given user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const likedTweetsCollection = new Collection<Snowflake, Tweet>();
+    const likedTweets = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GETUsersIdLikedTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -69,13 +66,13 @@ export class LikedTweetsBook extends BaseBook {
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return likedTweetsCollection;
+    if (data.meta.result_count === 0) return likedTweets;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
-      likedTweetsCollection.set(tweet.id, tweet);
+      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
+      likedTweets.set(tweet.id, tweet);
     }
-    return likedTweetsCollection;
+    return likedTweets;
   }
 }

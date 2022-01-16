@@ -1,35 +1,34 @@
 import { Collection } from '../util';
 import { BaseBook } from './BaseBook';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { User } from '../structures';
-import type { FollowersBookOptions } from '../typings';
-import type { GETUsersIdFollowersQuery, GETUsersIdFollowersResponse, Snowflake } from 'twitter-types';
+import type { SpaceTicketBuyersBookOptions } from '../typings';
+import type { GETSpacesIdBuyersQuery, GETSpacesIdBuyersResponse, Snowflake } from 'twitter-types';
 
 /**
- * A class for fetching followers of a twitter user
+ * A class for fetching users who purchased a ticket for a space
  */
-export class FollowersBook extends BaseBook {
+export class SpaceTicketBuyersBook extends BaseBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the space this book belongs to
    */
-  userId: Snowflake;
+  spaceId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the followers book with
+   * @param options The options to initialize the book with
    */
-  constructor(client: Client, options: FollowersBookOptions) {
+  constructor(client: Client, options: SpaceTicketBuyersBookOptions) {
     super(client, options);
-    const userId = client.users.resolveId(options.user);
-    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create FollowersBook for');
-    this.userId = userId;
+    const spaceId = client.spaces.resolveId(options.space);
+    if (!spaceId) throw new CustomError('SPACE_RESOLVE_ID');
+    this.spaceId = spaceId;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} objects who have been following the owner of this book
+   * @returns A {@link Collection} of {@link User} who purchased a ticket for the Space
    */
   async fetchNextPage(): Promise<Collection<Snowflake, User>> {
     if (!this._hasMadeInitialRequest) {
@@ -42,37 +41,34 @@ export class FollowersBook extends BaseBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link User} objects who have been following the owner of this book
+   * @returns A {@link Collection} of {@link User} who purchased a ticket for the Space
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-    const followersCollection = new Collection<Snowflake, User>();
+    const buyers = new Collection<Snowflake, User>();
     const queryParameters = this.client.options.queryParameters;
-    const query: GETUsersIdFollowersQuery = {
+    const query: GETSpacesIdBuyersQuery = {
       expansions: queryParameters?.userExpansions,
       'tweet.fields': queryParameters?.tweetFields,
       'user.fields': queryParameters?.userFields,
       pagination_token: token,
     };
-    if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-    const requestData = new RequestData({ query });
-    const data: GETUsersIdFollowersResponse = await this.client._api.users(this.userId).followers.get(requestData);
+    const requestData = new RequestData({ query, isUserContext: true });
+    const data: GETSpacesIdBuyersResponse = await this.client._api.spaces(this.spaceId).buyers.get(requestData);
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return followersCollection;
+    if (data.meta.result_count === 0) return buyers;
     const rawUsers = data.data;
     const rawIncludes = data.includes;
     for (const rawUser of rawUsers) {
       const user = this.client.users._add(rawUser.id, { data: rawUser, includes: rawIncludes });
-      followersCollection.set(user.id, user);
+      buyers.set(user.id, user);
     }
-    return followersCollection;
+    return buyers;
   }
 }

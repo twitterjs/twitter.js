@@ -10,7 +10,7 @@ import type { GETTweetsCountsRecentQuery, GETTweetsCountsRecentResponse } from '
  */
 export class TweetsCountBook extends BaseRangeBook {
   /**
-   * The query for searching tweets
+   * The query for searching the tweets
    */
   query: string;
 
@@ -21,7 +21,7 @@ export class TweetsCountBook extends BaseRangeBook {
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the count tweets book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: TweetsCountBookOptions) {
     super(client, options);
@@ -41,8 +41,6 @@ export class TweetsCountBook extends BaseRangeBook {
     if (!this._nextToken) throw new CustomError('PAGINATED_RESPONSE_TAIL_REACHED');
     return this.#fetchPages(this._nextToken);
   }
-
-  // #### 🚧 PRIVATE METHODS 🚧 ####
 
   async #fetchPages(token?: string): Promise<Array<TweetCountBucket>> {
     const tweetCountBuckets: Array<TweetCountBucket> = [];

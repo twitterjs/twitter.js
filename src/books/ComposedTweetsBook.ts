@@ -1,9 +1,8 @@
 import { Collection } from '../util';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type Tweet } from '../structures';
 import { BaseRangeBook } from './BaseRangeBook';
 import type { Client } from '../client';
-import type { Tweet } from '../structures';
 import type { ComposedTweetsBookOptions } from '../typings';
 import type { GETUsersIdTweetsQuery, GETUsersIdTweetsResponse, Snowflake } from 'twitter-types';
 
@@ -12,18 +11,18 @@ import type { GETUsersIdTweetsQuery, GETUsersIdTweetsResponse, Snowflake } from 
  */
 export class ComposedTweetsBook extends BaseRangeBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the user this book belongs to
    */
   userId: Snowflake;
 
   /**
-   * The types of tweets that the book should not fetch
+   * The types of tweets that the book should **not** fetch
    */
   exclude: GETUsersIdTweetsQuery['exclude'] | null;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the composed tweets book with
+   * @param options The options to initialize the book with
    */
   constructor(client: Client, options: ComposedTweetsBookOptions) {
     super(client, options);
@@ -35,7 +34,7 @@ export class ComposedTweetsBook extends BaseRangeBook {
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects composed by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} composed by the user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._hasMadeInitialRequest) {
@@ -48,17 +47,15 @@ export class ComposedTweetsBook extends BaseRangeBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweet} objects composed by the owner of this book
+   * @returns A {@link Collection} of {@link Tweet} composed by the user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const tweetsCollection = new Collection<Snowflake, Tweet>();
+    const composedTweets = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GETUsersIdTweetsQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -80,13 +77,13 @@ export class ComposedTweetsBook extends BaseRangeBook {
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return tweetsCollection;
+    if (data.meta.result_count === 0) return composedTweets;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
       const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
-      tweetsCollection.set(tweet.id, tweet);
+      composedTweets.set(tweet.id, tweet);
     }
-    return tweetsCollection;
+    return composedTweets;
   }
 }

@@ -1,35 +1,34 @@
 import { Collection } from '../util';
 import { CustomError } from '../errors';
-import { RequestData } from '../structures';
+import { RequestData, type Tweet } from '../structures';
 import { BaseRangeBook } from './BaseRangeBook';
 import type { Client } from '../client';
-import type { Tweet } from '../structures';
-import type { MentionsBookOptions } from '../typings';
+import type { UserMentioningTweetsBookOptions } from '../typings';
 import type { GETUsersIdMentionsQuery, GETUsersIdMentionsResponse, Snowflake } from 'twitter-types';
 
 /**
  * A class for fetching tweets that mention a twitter user
  */
-export class MentionsBook extends BaseRangeBook {
+export class UserMentioningTweetsBook extends BaseRangeBook {
   /**
-   * The ID of the user this book belongs to
+   * The Id of the user this book belongs to
    */
   userId: Snowflake;
 
   /**
    * @param client The logged in {@link Client} instance
-   * @param options The options to initialize the mentions book with
+   * @param options The options to initialize the book with
    */
-  constructor(client: Client, options: MentionsBookOptions) {
+  constructor(client: Client, options: UserMentioningTweetsBookOptions) {
     super(client, options);
     const userId = client.users.resolveId(options.user);
-    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create LikedTweetsBook for');
+    if (!userId) throw new CustomError('USER_RESOLVE_ID', 'create UserMentioningTweetsBook for');
     this.userId = userId;
   }
 
   /**
    * Fetches the next page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
+   * @returns A {@link Collection} of {@link Tweets} that mention the given user
    */
   async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._hasMadeInitialRequest) {
@@ -42,17 +41,15 @@ export class MentionsBook extends BaseRangeBook {
 
   /**
    * Fetches the previous page of the book if there is one.
-   * @returns A {@link Collection} of {@link Tweets} mentioning the owner of this book
+   * @returns A {@link Collection} of {@link Tweets} that mention the given user
    */
   async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
     if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
     return this.#fetchPages(this._previousToken);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-    const mentioningTweetsCollection = new Collection<Snowflake, Tweet>();
+    const tweets = new Collection<Snowflake, Tweet>();
     const queryParameters = this.client.options.queryParameters;
     const query: GETUsersIdMentionsQuery = {
       expansions: queryParameters?.tweetExpansions,
@@ -73,13 +70,13 @@ export class MentionsBook extends BaseRangeBook {
     this._nextToken = data.meta.next_token;
     this._previousToken = data.meta.previous_token;
     this.hasMore = data.meta.next_token ? true : false;
-    if (data.meta.result_count === 0) return mentioningTweetsCollection;
+    if (data.meta.result_count === 0) return tweets;
     const rawTweets = data.data;
     const rawIncludes = data.includes;
     for (const rawTweet of rawTweets) {
-      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes });
-      mentioningTweetsCollection.set(tweet.id, tweet);
+      const tweet = this.client.tweets._add(rawTweet.id, { data: rawTweet, includes: rawIncludes }, false);
+      tweets.set(tweet.id, tweet);
     }
-    return mentioningTweetsCollection;
+    return tweets;
   }
 }
