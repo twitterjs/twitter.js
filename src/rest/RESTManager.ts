@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import OAuth from 'oauth-1.0a';
 import { Collection } from '../util';
 import { CustomError } from '../errors';

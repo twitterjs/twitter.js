@@ -1,4 +1,4 @@
-import { setTimeout } from 'timers/promises';
+import { setTimeout } from 'node:timers/promises';
 import { AsyncQueue } from '@sapphire/async-queue';
 import { TwitterAPIError } from './TwitterAPIError';
 import { parseResponse, ClientEvents } from '../util';
