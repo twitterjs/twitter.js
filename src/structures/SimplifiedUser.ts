@@ -1,15 +1,16 @@
 import { BaseStructure } from './BaseStructure';
 import { UserPublicMetrics, UserEntities, UserWitheld } from './misc';
 import type { Client } from '../client';
-import type { APIUser, Snowflake } from 'twitter-types';
 import type {
-  UserFollowResponse,
-  UserUnfollowResponse,
-  UserBlockResponse,
-  UserUnblockResponse,
-  UserMuteResponse,
-  UserUnmuteResponse,
-} from './misc';
+  APIUser,
+  DELETEUsersSourceUserIdBlockingTargetUserIdResponse,
+  DELETEUsersSourceUserIdFollowingTargetUserIdResponse,
+  DELETEUsersSourceUserIdMutingTargetUserIdResponse,
+  POSTUsersIdBlockingResponse,
+  POSTUsersIdFollowingResponse,
+  POSTUsersIdMutingResponse,
+  Snowflake,
+} from 'twitter-types';
 
 /**
  * A simplified version of {@link User} class
@@ -105,49 +106,43 @@ export class SimplifiedUser extends BaseStructure {
 
   /**
    * Follows this user on twitter.
-   * @returns A {@link UserFollowResponse} object
    */
-  async follow(): Promise<UserFollowResponse> {
+  async follow(): Promise<POSTUsersIdFollowingResponse> {
     return this.client.users.follow(this.id);
   }
 
   /**
    * Unfollows this user on twitter.
-   * @returns A {@link UserUnfollowResponse} object
    */
-  async unfollow(): Promise<UserUnfollowResponse> {
+  async unfollow(): Promise<DELETEUsersSourceUserIdFollowingTargetUserIdResponse> {
     return this.client.users.unfollow(this.id);
   }
 
   /**
    * Blocks this user on twitter.
-   * @returns A {@link UserBlockResponse} object
    */
-  async block(): Promise<UserBlockResponse> {
+  async block(): Promise<POSTUsersIdBlockingResponse> {
     return this.client.users.block(this.id);
   }
 
   /**
    * Unblocks this user on twitter.
-   * @returns A {@link UserUnblockResponse} object
    */
-  async unblock(): Promise<UserUnblockResponse> {
+  async unblock(): Promise<DELETEUsersSourceUserIdBlockingTargetUserIdResponse> {
     return this.client.users.unblock(this.id);
   }
 
   /**
    * Mutes this user on twitter.
-   * @returns A {@link UserMuteResponse} object
    */
-  async mute(): Promise<UserMuteResponse> {
+  async mute(): Promise<POSTUsersIdMutingResponse> {
     return this.client.users.mute(this.id);
   }
 
   /**
    * Unmutes this user on twitter.
-   * @returns A {@link UserUnmuteResponse} object
    */
-  async unmute(): Promise<UserUnmuteResponse> {
+  async unmute(): Promise<DELETEUsersSourceUserIdMutingTargetUserIdResponse> {
     return this.client.users.unmute(this.id);
   }
 }

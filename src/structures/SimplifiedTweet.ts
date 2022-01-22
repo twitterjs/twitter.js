@@ -13,17 +13,14 @@ import {
 } from './misc';
 import type { Client } from '../client';
 import type {
-  TweetLikeResponse,
-  TweetUnlikeResponse,
-  TweetReplyHideUnhideResponse,
-  RetweetResponse,
-  RemovedRetweetResponse,
-} from './misc';
-import type {
   APITweet,
   APITweetContextAnnotation,
   APITweetReferencedTweet,
   APITweetReplySettings,
+  DELETEUsersIdLikesTweetIdResponse,
+  DELETEUsersIdRetweetsSourceTweetIdResponse,
+  POSTUsersIdRetweetsResponse,
+  PUTTweetsIdHiddenResponse,
   Snowflake,
 } from 'twitter-types';
 
@@ -159,17 +156,15 @@ export class SimplifiedTweet extends BaseStructure {
 
   /**
    * Likes this tweet.
-   * @returns A {@link TweetLikeResponse} object
    */
-  async like(): Promise<TweetLikeResponse> {
+  async like() {
     return this.client.tweets.like(this.id);
   }
 
   /**
    * Unlikes this tweet.
-   * @returns A {@link TweetUnlikeResponse} object
    */
-  async unlike(): Promise<TweetUnlikeResponse> {
+  async unlike(): Promise<DELETEUsersIdLikesTweetIdResponse> {
     return this.client.tweets.unlike(this.id);
   }
 
@@ -177,10 +172,8 @@ export class SimplifiedTweet extends BaseStructure {
    * Hides this tweet from the tweet replies section.
    *
    * **Note:** This tweet should be a reply to a tweet of the authorized user
-   *
-   * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async hide(): Promise<TweetReplyHideUnhideResponse> {
+  async hide(): Promise<PUTTweetsIdHiddenResponse> {
     return this.client.tweets.hide(this.id);
   }
 
@@ -188,26 +181,22 @@ export class SimplifiedTweet extends BaseStructure {
    * Unhides this tweet.
    *
    * **Note:** This tweet should be a reply to a tweet of the authorized user
-   *
-   * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async unhide(): Promise<TweetReplyHideUnhideResponse> {
+  async unhide(): Promise<PUTTweetsIdHiddenResponse> {
     return this.client.tweets.unhide(this.id);
   }
 
   /**
    * Retweets this tweet.
-   * @returns A {@link RetweetResponse} object
    */
-  async retweet(): Promise<RetweetResponse> {
+  async retweet(): Promise<POSTUsersIdRetweetsResponse> {
     return this.client.tweets.retweet(this.id);
   }
 
   /**
    * Removes the retweet of this tweet.
-   * @returns A {@link RemovedRetweetResponse} object
    */
-  async unRetweet(): Promise<RemovedRetweetResponse> {
+  async unRetweet(): Promise<DELETEUsersIdRetweetsSourceTweetIdResponse> {
     return this.client.tweets.unRetweet(this.id);
   }
 
