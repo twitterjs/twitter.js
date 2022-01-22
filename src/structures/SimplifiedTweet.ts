@@ -11,9 +11,7 @@ import {
   TweetEntities,
   TweetWithheld,
 } from './misc';
-import type { User } from './User';
 import type { Client } from '../client';
-import type { Collection } from '../util';
 import type {
   TweetLikeResponse,
   TweetUnlikeResponse,
@@ -211,14 +209,6 @@ export class SimplifiedTweet extends BaseStructure {
    */
   async unRetweet(): Promise<RemovedRetweetResponse> {
     return this.client.tweets.unRetweet(this.id);
-  }
-
-  /**
-   * Fetches users who have retweeted this tweet.
-   * @returns A {@link Collection} of {@link User} objects
-   */
-  async fetchRetweetedBy(): Promise<Collection<Snowflake, User>> {
-    return this.client.tweets.fetchRetweetedBy(this.id) as Promise<Collection<Snowflake, User>>;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####

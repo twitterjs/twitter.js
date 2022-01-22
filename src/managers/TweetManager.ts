@@ -8,7 +8,6 @@ import {
   TweetReplyHideUnhideResponse,
   TweetUnlikeResponse,
   SimplifiedTweet,
-  User,
   Tweet,
   TweetPayload,
 } from '../structures';
@@ -25,12 +24,8 @@ import type {
   DELETETweetsIdResponse,
   DELETEUsersIdLikesTweetIdResponse,
   DELETEUsersIdRetweetsSourceTweetIdResponse,
-  GETTweetsIdLikingUsersQuery,
-  GETTweetsIdLikingUsersResponse,
   GETTweetsIdQuery,
   GETTweetsIdResponse,
-  GETTweetsIdRetweetedByQuery,
-  GETTweetsIdRetweetedByResponse,
   GETTweetsQuery,
   GETTweetsResponse,
   POSTTweetsResponse,
@@ -190,60 +185,6 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       .retweets(tweetId)
       .delete(requestData);
     return new RemovedRetweetResponse(data);
-  }
-
-  /**
-   * Fetches users who have retweeted a tweet.
-   * @param targetTweet The tweet whose retweeters are to be fetched
-   * @returns A {@link Collection} of {@link User} objects
-   */
-  async fetchRetweetedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
-    const tweetId = this.resolveId(targetTweet);
-    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
-    const queryParameters = this.client.options.queryParameters;
-    const query: GETTweetsIdRetweetedByQuery = {
-      expansions: queryParameters?.userExpansions,
-      'user.fields': queryParameters?.userFields,
-      'tweet.fields': queryParameters?.tweetFields,
-    };
-    const requestData = new RequestData({ query });
-    const data: GETTweetsIdRetweetedByResponse = await this.client._api.tweets(tweetId).retweeted_by.get(requestData);
-    const retweetedByUsersCollection = new Collection<Snowflake, User>();
-    if (data.meta.result_count === 0) return retweetedByUsersCollection;
-    const rawUsers = data.data;
-    const rawIncludes = data.includes;
-    for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
-      retweetedByUsersCollection.set(user.id, user);
-    }
-    return retweetedByUsersCollection;
-  }
-
-  /**
-   * Fetches a collection of users who liked a tweet.
-   * @param targetTweet The tweet whose liking users are to be fetched
-   * @returns A {@link Collection} of {@link User} objects who liked the specified tweet
-   */
-  async fetchLikedBy(targetTweet: TweetResolvable): Promise<Collection<Snowflake, User>> {
-    const tweetId = this.resolveId(targetTweet);
-    if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch liking users');
-    const queryParameters = this.client.options.queryParameters;
-    const query: GETTweetsIdLikingUsersQuery = {
-      expansions: queryParameters?.userExpansions,
-      'user.fields': queryParameters?.userFields,
-      'tweet.fields': queryParameters?.tweetFields,
-    };
-    const requestData = new RequestData({ query });
-    const data: GETTweetsIdLikingUsersResponse = await this.client._api.tweets(tweetId).liking_users.get(requestData);
-    const likedByUsersCollection = new Collection<Snowflake, User>();
-    if (data.meta.result_count === 0) return likedByUsersCollection;
-    const rawUsers = data.data;
-    const rawIncludes = data.includes;
-    for (const rawUser of rawUsers) {
-      const user = new User(this.client, { data: rawUser, includes: rawIncludes });
-      likedByUsersCollection.set(user.id, user);
-    }
-    return likedByUsersCollection;
   }
 
   /**

@@ -16,3 +16,5 @@ export * from './SearchTweetsBook';
 export * from './TweetsCountBook';
 export * from './OwnedListsBook';
 export * from './PinnedListsBook';
+export * from './RetweetedByUsersBook';
+export * from './LikedByUsersBook';

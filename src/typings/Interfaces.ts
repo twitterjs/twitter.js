@@ -321,6 +321,10 @@ export interface FollowedListsBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
 
+export interface LikedByUsersBookOptions extends BaseBookOptions {
+  tweet: TweetResolvable;
+}
+
 export interface UserFollowersBookOptions extends BaseBookOptions {
   user: UserResolvable;
 }
@@ -363,6 +367,10 @@ export interface OwnedListsBookOptions extends BaseBookOptions {
 
 export interface PinnedListsBookOptions extends BaseBookOptions {
   user: UserResolvable;
+}
+
+export interface RetweetedByUsersBookOptions extends BaseBookOptions {
+  tweet: TweetResolvable;
 }
 
 export interface SearchTweetsBookOptions extends BaseRangeBookOptions {
