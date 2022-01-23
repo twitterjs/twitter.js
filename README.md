@@ -14,6 +14,12 @@
 
 An object-oriented Node.js and TypeScript library for interacting with Twitter API v2
 
+## Install
+
+```bash
+npm i twitter.js
+```
+
 ## Usage
 
 Fetching details about a twitter user is as easy as this with `twitter.js` library:
