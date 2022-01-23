@@ -94,8 +94,6 @@ export class Tweet extends SimplifiedTweet {
     return this.client.tweets.delete(this.id);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   #patchAuthor(users?: Array<APIUser>): SimplifiedUser | undefined {
     if (!users) return;
     const rawAuthor = users.find(user => user.id === this.authorId);

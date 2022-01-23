@@ -18,8 +18,6 @@ export class User extends SimplifiedUser {
     this.pinnedTweet = this.#patchPinnedTweet(data.includes?.tweets) ?? null;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   #patchPinnedTweet(tweets?: Array<APITweet>): SimplifiedTweet | undefined {
     if (!tweets) return;
     const rawPinnedTweet = tweets.find(tweet => tweet.id === this.pinnedTweetId);

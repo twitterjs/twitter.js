@@ -228,8 +228,6 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     return data;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchSingleUser(userId: Snowflake, options: FetchUserOptions): Promise<User> {
     if (!options.skipCacheCheck) {
       const cachedUser = this.cache.get(userId);

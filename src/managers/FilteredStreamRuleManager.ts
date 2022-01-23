@@ -113,8 +113,6 @@ export class FilteredStreamRuleManager extends BaseManager<
     return this.#deleteRules(body);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #deleteRules(body: POSTTweetsSearchStreamRulesJSONBody): Promise<POSTTweetsSearchStreamRulesResponse> {
     const requestData = new RequestData({ body });
     const res: POSTTweetsSearchStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(

@@ -165,8 +165,6 @@ export class Client extends BaseClient {
     return this.credentials;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchClientUser(): Promise<ClientUser> {
     const queryParameters = this.options.queryParameters;
     const query: GETUsersMeQuery = {

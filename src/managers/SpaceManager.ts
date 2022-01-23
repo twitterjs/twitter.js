@@ -117,8 +117,6 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
     return fetchedSpaceCollection;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchSingleSpace(spaceId: Snowflake, options: FetchSpaceOptions): Promise<Space> {
     if (!options.skipCacheCheck) {
       const cachedSpace = this.cache.get(spaceId);

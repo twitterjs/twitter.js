@@ -196,8 +196,6 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     return res.data.deleted;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   async #fetchSingleTweet(tweetId: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
     if (!options.skipCacheCheck) {
       const cachedTweet = this.cache.get(tweetId);

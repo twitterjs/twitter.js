@@ -48,8 +48,6 @@ export class TwitterAPIError extends Error {
     return `${this.constructor.name} [${this.title}]`;
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   #patchErrors(errors: Array<APIInvalidRequestProblemErrors>): Record<string, string> {
     const errorsObject: Record<string, string> = {};
     for (const [i, error] of errors.entries()) {

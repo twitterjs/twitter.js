@@ -200,8 +200,6 @@ export class SimplifiedTweet extends BaseStructure {
     return this.client.tweets.unRetweet(this.id);
   }
 
-  // #### 🚧 PRIVATE METHODS 🚧 ####
-
   /**
    * Converts raw tweet references data into desired shape to patch {@link SimplifiedTweet.referencedTweets} property
    * @param rawTweetReferences The raw data for tweet references
