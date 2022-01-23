@@ -1,16 +1,6 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
-import {
-  RemovedRetweetResponse,
-  RequestData,
-  RetweetResponse,
-  TweetLikeResponse,
-  TweetReplyHideUnhideResponse,
-  TweetUnlikeResponse,
-  SimplifiedTweet,
-  Tweet,
-  TweetPayload,
-} from '../structures';
+import { RequestData, SimplifiedTweet, Tweet, TweetPayload } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
 import type {
@@ -100,9 +90,8 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
   /**
    * Likes a tweet.
    * @param targetTweet The tweet to like
-   * @returns A {@link TweetLikeResponse} object
    */
-  async like(targetTweet: TweetResolvable): Promise<TweetLikeResponse> {
+  async like(targetTweet: TweetResolvable): Promise<POSTUsersIdLikesResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'like');
     const loggedInUser = this.client.me;
@@ -112,15 +101,14 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: POSTUsersIdLikesResponse = await this.client._api.users(loggedInUser.id).likes.post(requestData);
-    return new TweetLikeResponse(data);
+    return data;
   }
 
   /**
    * Unlikes a tweet.
    * @param targetTweet The tweet to unlike
-   * @returns A {@link TweetUnlikeResponse} object
    */
-  async unlike(targetTweet: TweetResolvable): Promise<TweetUnlikeResponse> {
+  async unlike(targetTweet: TweetResolvable): Promise<DELETEUsersIdLikesTweetIdResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'unlike');
     const loggedInUser = this.client.me;
@@ -130,33 +118,30 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       .users(loggedInUser.id)
       .likes(tweetId)
       .delete(requestData);
-    return new TweetUnlikeResponse(data);
+    return data;
   }
 
   /**
    * Hides a reply to a tweet of the authorized user.
    * @param targetTweet The reply to hide. This should be a tweet reply to a tweet of the authorized user
-   * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async hide(targetTweet: TweetResolvable): Promise<TweetReplyHideUnhideResponse> {
+  async hide(targetTweet: TweetResolvable): Promise<PUTTweetsIdHiddenResponse> {
     return this.#editTweetReplyVisibility(targetTweet, true);
   }
 
   /**
    * Unhides a reply to a tweet of the authorized user.
    * @param targetTweet The reply to unhide. This should be a tweet reply to one of the tweets of the authorized user
-   * @returns A {@link TweetReplyHideUnhideResponse} object
    */
-  async unhide(targetTweet: TweetResolvable): Promise<TweetReplyHideUnhideResponse> {
+  async unhide(targetTweet: TweetResolvable): Promise<PUTTweetsIdHiddenResponse> {
     return this.#editTweetReplyVisibility(targetTweet, false);
   }
 
   /**
    * Retweets a tweet.
    * @param targetTweet The tweet to retweet
-   * @returns A {@link RetweetResponse} object
    */
-  async retweet(targetTweet: TweetResolvable): Promise<RetweetResponse> {
+  async retweet(targetTweet: TweetResolvable): Promise<POSTUsersIdRetweetsResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'retweet');
     const loggedInUser = this.client.me;
@@ -166,15 +151,14 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: POSTUsersIdRetweetsResponse = await this.client._api.users(loggedInUser.id).retweets.post(requestData);
-    return new RetweetResponse(data);
+    return data;
   }
 
   /**
    * Removes the retweet of a tweet.
    * @param targetTweet The tweet whose retweet is to be removed
-   * @returns A {@link RemovedRetweetResponse} object
    */
-  async unRetweet(targetTweet: TweetResolvable): Promise<RemovedRetweetResponse> {
+  async unRetweet(targetTweet: TweetResolvable): Promise<DELETEUsersIdRetweetsSourceTweetIdResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'remove retweet');
     const loggedInUser = this.client.me;
@@ -184,7 +168,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
       .users(loggedInUser.id)
       .retweets(tweetId)
       .delete(requestData);
-    return new RemovedRetweetResponse(data);
+    return data;
   }
 
   /**
@@ -259,10 +243,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     return fetchedTweetCollection;
   }
 
-  async #editTweetReplyVisibility(
-    targetTweet: TweetResolvable,
-    isHidden: boolean,
-  ): Promise<TweetReplyHideUnhideResponse> {
+  async #editTweetReplyVisibility(targetTweet: TweetResolvable, isHidden: boolean): Promise<PUTTweetsIdHiddenResponse> {
     const tweetId = this.resolveId(targetTweet);
     if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', `${isHidden ? 'hide' : 'unhide'}`);
     const body: PUTTweetsIdHiddenJSONBody = {
@@ -270,6 +251,6 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: PUTTweetsIdHiddenResponse = await this.client._api.tweets(tweetId).hidden.put(requestData);
-    return new TweetReplyHideUnhideResponse(data);
+    return data;
   }
 }

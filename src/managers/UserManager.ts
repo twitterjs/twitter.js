@@ -1,19 +1,7 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
 import { CustomError, CustomTypeError } from '../errors';
-import {
-  RequestData,
-  UserBlockResponse,
-  UserFollowResponse,
-  UserMuteResponse,
-  UserUnblockResponse,
-  UserUnfollowResponse,
-  UserUnmuteResponse,
-  User,
-  Tweet,
-  SimplifiedUser,
-  SimplifiedTweet,
-} from '../structures';
+import { RequestData, User, Tweet, SimplifiedUser, SimplifiedTweet } from '../structures';
 import type { Client } from '../client';
 import type {
   UserManagerFetchByUsernameResult,
@@ -139,9 +127,8 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
   /**
    * Follows a user on twitter.
    * @param targetUser The user to follow
-   * @returns A {@link UserFollowResponse} object
    */
-  async follow(targetUser: UserResolvable): Promise<UserFollowResponse> {
+  async follow(targetUser: UserResolvable): Promise<POSTUsersIdFollowingResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'follow');
     const loggedInUser = this.client.me;
@@ -153,15 +140,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     const data: POSTUsersIdFollowingResponse = await this.client._api
       .users(loggedInUser.id)
       .following.post(requestData);
-    return new UserFollowResponse(data);
+    return data;
   }
 
   /**
    * Unfollows a user on twitter.
    * @param targetUser The user to unfollow
-   * @returns A {@link UserUnfollowResponse} object
    */
-  async unfollow(targetUser: UserResolvable): Promise<UserUnfollowResponse> {
+  async unfollow(targetUser: UserResolvable): Promise<DELETEUsersSourceUserIdFollowingTargetUserIdResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unfollow');
     const loggedInUserId = this.client.me?.id;
@@ -171,15 +157,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       .users(loggedInUserId)
       .following(userId)
       .delete(requestData);
-    return new UserUnfollowResponse(data);
+    return data;
   }
 
   /**
    * Blocks a user on twitter.
    * @param targetUser The user to block
-   * @returns A {@link UserBlockResponse} object
    */
-  async block(targetUser: UserResolvable): Promise<UserBlockResponse> {
+  async block(targetUser: UserResolvable): Promise<POSTUsersIdBlockingResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'block');
     const loggedInUserId = this.client.me?.id;
@@ -189,15 +174,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: POSTUsersIdBlockingResponse = await this.client._api.users(loggedInUserId).blocking.post(requestData);
-    return new UserBlockResponse(data);
+    return data;
   }
 
   /**
    * Unblocks a user on twitter.
    * @param targetUser The user to unblock
-   * @returns A {@link UserUnblockResponse} object
    */
-  async unblock(targetUser: UserResolvable): Promise<UserUnblockResponse> {
+  async unblock(targetUser: UserResolvable): Promise<DELETEUsersSourceUserIdBlockingTargetUserIdResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unblock');
     const loggedInUserId = this.client.me?.id;
@@ -207,15 +191,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       .users(loggedInUserId)
       .blocking(userId)
       .delete(requestData);
-    return new UserUnblockResponse(data);
+    return data;
   }
 
   /**
    * Mutes a user on twitter.
    * @param targetUser The user to mute
-   * @returns A {@link UserMuteResponse} object
    */
-  async mute(targetUser: UserResolvable): Promise<UserMuteResponse> {
+  async mute(targetUser: UserResolvable): Promise<POSTUsersIdMutingResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'mute');
     const loggedInUserId = this.client.me?.id;
@@ -225,15 +208,14 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
     };
     const requestData = new RequestData({ body, isUserContext: true });
     const data: POSTUsersIdMutingResponse = await this.client._api.users(loggedInUserId).muting.post(requestData);
-    return new UserMuteResponse(data);
+    return data;
   }
 
   /**
    * Unmutes a user on twitter.
    * @param targetUser The user to unmute
-   * @returns A {@link UserUnmuteResponse} object
    */
-  async unmute(targetUser: UserResolvable): Promise<UserUnmuteResponse> {
+  async unmute(targetUser: UserResolvable): Promise<DELETEUsersSourceUserIdMutingTargetUserIdResponse> {
     const userId = this.resolveId(targetUser);
     if (!userId) throw new CustomError('USER_RESOLVE_ID', 'unmute');
     const loggedInUserId = this.client.me?.id;
@@ -243,7 +225,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
       .users(loggedInUserId)
       .muting(userId)
       .delete(requestData);
-    return new UserUnmuteResponse(data);
+    return data;
   }
 
   // #### 🚧 PRIVATE METHODS 🚧 ####
