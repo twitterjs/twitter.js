@@ -1,43 +1,18 @@
 {
-  "editor.formatOnSave": true,
-  "[markdown]": {
-    "editor.wordWrap": "on",
-    "editor.quickSuggestions": false,
-    "editor.formatOnSave": false
-  },
-  "[javascript]": {
-    "editor.formatOnSave": false
-  },
-  "javascript.format.enable": false,
-  "eslint.alwaysShowStatus": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "workbench.editor.highlightModifiedTabs": true,
-  "editor.cursorStyle": "line",
-  "editor.cursorSmoothCaretAnimation": true,
-  "editor.cursorBlinking": "phase",
-  "editor.minimap.enabled": false,
-  "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.cursorWidth": 2,
-  "editor.insertSpaces": true,
-  "editor.detectIndentation": false,
-  "editor.tabSize": 2,
-  "files.eol": "\n",
-  "editor.smoothScrolling": true,
-  "eslint.validate": ["typescript"],
-  "editor.quickSuggestions": {
-    "comments": true
-  },
-  "explorer.compactFolders": false,
-  "files.insertFinalNewline": true,
-  "typescript.format.enable": false,
-  "[typescript]": {
-    "editor.formatOnSave": false
-  },
-  "typescript.suggest.autoImports": true,
-  "typescript.referencesCodeLens.enabled": true,
-  "typescript.implementationsCodeLens.enabled": true,
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+	"files.eol": "\n",
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"files.insertFinalNewline": true,
+
+	// eslint
+	"eslint.alwaysShowStatus": true,
+	"eslint.validate": ["typescript"],
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true,
+		"source.organizeImports": false
+	},
+
+	// prettier
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode"
 }

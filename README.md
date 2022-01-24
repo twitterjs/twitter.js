@@ -31,10 +31,10 @@ import { bearerToken } from './secrets.js';
 const client = new Client();
 
 client.on('ready', async () => {
-  const user = await client.users.fetchByUsername({
-    username: 'iShiibi',
-  });
-  console.log(user.description);  // Contributing to open-source 🌐
+	const user = await client.users.fetchByUsername({
+		username: 'iShiibi',
+	});
+	console.log(user.description); // Contributing to open-source 🌐
 });
 
 client.loginWithBearerToken(bearerToken);
@@ -49,11 +49,11 @@ import { credentials } from './secrets.js';
 const client = new Client();
 
 client.on('ready', async () => {
-  console.log(`Logged in as ${client.me.username}`);  // Logged in as tjs_test
-  const user = await client.users.fetchByUsername({
-    username: 'iShiibi'
-  });
-  await user.follow();
+	console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
+	const user = await client.users.fetchByUsername({
+		username: 'iShiibi',
+	});
+	await user.follow();
 });
 
 client.login(credentials);
@@ -68,16 +68,16 @@ import { credentials } from './secrets.js';
 const client = new Client({ events: ['FILTERED_TWEET_CREATE'] });
 
 client.on('ready', async () => {
-  console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-  await client.filteredStreamRules.create({
-    value: '@tjs_test',
-    tag: 'Tweets mentioning the user tjs_test',
-  });
+	console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
+	await client.filteredStreamRules.create({
+		value: '@tjs_test',
+		tag: 'Tweets mentioning the user tjs_test',
+	});
 });
 
 client.on('filteredTweetCreate', async tweet => {
-  console.log(`${tweet.text}`); // hey @tjs_test, like this tweet if you're listening!
-  await tweet.like();
+	console.log(`${tweet.text}`); // hey @tjs_test, like this tweet if you're listening!
+	await tweet.like();
 });
 
 client.login(credentials);

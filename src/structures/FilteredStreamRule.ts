@@ -3,16 +3,16 @@ import type { Client } from '../client';
 import type { APIFilteredTweetStreamRule } from 'twitter-types';
 
 export class FilteredStreamRule extends BaseStructure {
-  tag: string | null;
+	tag: string | null;
 
-  /**
-   * The value of the rule
-   */
-  value: string;
+	/**
+	 * The value of the rule
+	 */
+	value: string;
 
-  constructor(client: Client, data: APIFilteredTweetStreamRule) {
-    super(client, data);
-    this.tag = data.tag ?? null;
-    this.value = data.value;
-  }
+	constructor(client: Client, data: APIFilteredTweetStreamRule) {
+		super(client, data);
+		this.tag = data.tag ?? null;
+		this.value = data.value;
+	}
 }

@@ -1,67 +1,67 @@
 {
-  "name": "twitter.js",
-  "version": "0.11.0",
-  "author": "Shubham Parihar <shubhamparihar391@gmail.com>",
-  "description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "build:dev": "tsc -w",
-    "doc": "typedoc",
-    "test": "vitest",
-    "prepare": "husky install",
-    "lint": "eslint src --ext ts",
-    "lint:fix": "eslint src --ext ts --fix",
-    "format": "prettier --write **/*.{json,yml,yaml}",
-    "changelog": "git cliff --output CHANGELOG.md",
-    "prepublishOnly": "npm run build"
-  },
-  "dependencies": {
-    "@discordjs/collection": "^0.4.0",
-    "@sapphire/async-queue": "^1.1.9",
-    "oauth-1.0a": "^2.2.6",
-    "twitter-types": "^0.21.0",
-    "undici": "^4.12.2"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^16.0.2",
-    "@commitlint/config-angular": "^16.0.0",
-    "@types/node": "^17.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
-    "eslint": "^8.7.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.1.7",
-    "prettier": "^2.5.1",
-    "typedoc": "^0.22.11",
-    "typescript": "^4.5.4",
-    "vitest": "^0.1.17"
-  },
-  "files": [
-    "/dist"
-  ],
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/twitterjs/twitter.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/twitterjs/twitter.js/issues"
-  },
-  "license": "Apache-2.0",
-  "homepage": "https://github.com/twitterjs/twitter.js#readme",
-  "keywords": [
-    "twitter.js",
-    "twitter",
-    "tjs",
-    "typescript",
-    "bots",
-    "api"
-  ]
+	"name": "twitter.js",
+	"version": "0.11.0",
+	"author": "Shubham Parihar <shubhamparihar391@gmail.com>",
+	"description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"build:dev": "tsc -w",
+		"doc": "typedoc",
+		"test": "vitest",
+		"prepare": "husky install",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --check .",
+		"format:fix": "prettier --write .",
+		"changelog": "git cliff --output CHANGELOG.md",
+		"prepublishOnly": "npm run build"
+	},
+	"dependencies": {
+		"@discordjs/collection": "^0.4.0",
+		"@sapphire/async-queue": "^1.1.9",
+		"oauth-1.0a": "^2.2.6",
+		"twitter-types": "^0.21.0",
+		"undici": "^4.12.2"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^16.0.2",
+		"@commitlint/config-angular": "^16.0.0",
+		"@types/node": "^17.0.8",
+		"@typescript-eslint/eslint-plugin": "^5.9.1",
+		"@typescript-eslint/parser": "^5.9.1",
+		"eslint": "^8.7.0",
+		"eslint-config-prettier": "^8.3.0",
+		"husky": "^7.0.4",
+		"lint-staged": "^12.1.7",
+		"prettier": "^2.5.1",
+		"typedoc": "^0.22.11",
+		"typescript": "^4.5.4",
+		"vitest": "^0.1.17"
+	},
+	"files": [
+		"/dist"
+	],
+	"engines": {
+		"node": ">=16.0.0",
+		"npm": ">=7.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/twitterjs/twitter.js.git"
+	},
+	"bugs": {
+		"url": "https://github.com/twitterjs/twitter.js/issues"
+	},
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/twitterjs/twitter.js#readme",
+	"keywords": [
+		"twitter.js",
+		"twitter",
+		"tjs",
+		"typescript",
+		"bots",
+		"api"
+	]
 }
