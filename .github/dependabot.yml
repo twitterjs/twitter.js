@@ -5,6 +5,6 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     versioning-strategy: increase
     open-pull-requests-limit: 10
