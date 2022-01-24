@@ -12,23 +12,23 @@ const baseStructure = baseManager._add(id, rawData);
 
 // BaseManager#_add
 test('Add base structure to cache', () => {
-  expect(baseManager._add(id, rawData)).toBeInstanceOf(BaseStructure);
+	expect(baseManager._add(id, rawData)).toBeInstanceOf(BaseStructure);
 });
 
 // BaseManager#resolveId
 test('Resolve id from a base structure', () => {
-  expect(baseManager.resolveId(baseStructure)).toBe(id);
+	expect(baseManager.resolveId(baseStructure)).toBe(id);
 });
 
 test('Resolve id from an id', () => {
-  expect(baseManager.resolveId(id)).toBe(id);
+	expect(baseManager.resolveId(id)).toBe(id);
 });
 
 // BaseManager#resolve
 test('Resolve base structure from a base structure', () => {
-  expect(baseManager.resolve(baseStructure)).toStrictEqual(baseStructure);
+	expect(baseManager.resolve(baseStructure)).toStrictEqual(baseStructure);
 });
 
 test('Resolve base structure from an id', () => {
-  expect(baseManager.resolve(id)).toStrictEqual(baseStructure);
+	expect(baseManager.resolve(id)).toStrictEqual(baseStructure);
 });
