@@ -11,9 +11,9 @@
 		"doc": "typedoc",
 		"test": "vitest",
 		"prepare": "husky install",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix",
-		"format": "prettier --check .",
+		"lint:check": "eslint . --ext .js,.ts",
+		"lint:fix": "eslint . --ext .js,.ts --fix",
+		"format:check": "prettier --check .",
 		"format:fix": "prettier --write .",
 		"changelog": "git cliff --output CHANGELOG.md",
 		"prepublishOnly": "npm run build"
