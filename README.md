@@ -14,7 +14,7 @@
 
 An object-oriented Node.js and TypeScript library for interacting with Twitter API v2
 
-## Install
+## Installation
 
 ```bash
 npm i twitter.js
