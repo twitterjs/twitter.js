@@ -41,26 +41,14 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	}
 
 	/**
-	 * Fetches a list from Twitter.
-	 * @param options The options for fetching list
-	 * @returns A {@link List} as a `Promise`
-	 * @example
-	 * const list = await client.lists.fetch({ list: '1487049903255666689' });
-	 */
-	async fetch(options: FetchListOptions): Promise<List> {
-		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-		const listId = this.resolveId(options.list);
-		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'fetch');
-		return this.#fetchSingleList(listId, options);
-	}
-
-	// TODO: look into the return type of this method
-	/**
 	 * Creates a new list.
-	 * @param options The options for creating a list
-	 * @returns The created {@link List} object
+	 * @param options The options for creating the list
+	 * @returns An object containing `id` and `name` of the created list
+	 * @example
+	 * const data = await client.lists.create({ name: 'Twitter.js Community', description: 'A nice place' });
+	 * console.log(data); // { id: '1487049903255666689', name: 'Twitter.js Community' }
 	 */
-	async create(options: CreateListOptions): Promise<List> {
+	async create(options: CreateListOptions): Promise<POSTListsResponse['data']> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
 		const body: POSTListsJSONBody = {
 			name: options.name,
@@ -69,14 +57,31 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTListsResponse = await this.client._api.lists.post(requestData);
-		const list = this._add(res.data.id, res.data);
-		return list;
+		return { ...res.data };
+	}
+
+	/**
+	 * Fetches a list from Twitter.
+	 * @param options The options for fetching list
+	 * @returns A {@link List} as a `Promise`
+	 * @example
+	 * const list = await client.lists.fetch({ list: '1487049903255666689' });
+	 * console.log(`Fetched a list named: ${list.name}`); // Fetched a list named: Twitter.js Community
+	 */
+	async fetch(options: FetchListOptions): Promise<List> {
+		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
+		const listId = this.resolveId(options.list);
+		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'fetch');
+		return this.#fetchSingleList(listId, options);
 	}
 
 	/**
 	 * Deletes a list.
 	 * @param list The list to delete
 	 * @returns A boolean representing whether the specified list has been deleted
+	 * @example
+	 * const isDeleted = await client.lists.delete('1487090844578377729');
+	 * console.log(isDeleted); // true
 	 */
 	async delete(list: ListResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -91,6 +96,9 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * @param list The list to update
 	 * @param options The options for updating the list
 	 * @returns A boolean representing whether the specified list has been updated
+	 * @example
+	 * const isUpdated = await client.lists.update('1487049903255666689', { description: 'A nice place for everyone' });
+	 * console.log(isUpdated); // true
 	 */
 	async update(list: ListResolvable, options: UpdateListOptions): Promise<boolean> {
 		const listId = this.resolveId(list);
