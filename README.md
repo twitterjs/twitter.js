@@ -22,7 +22,7 @@ npm i twitter.js
 
 ## Usage
 
-Fetch details about a twitter user in no time using `twitter.js` library:
+🚀 Fetch details about a twitter user in no time:
 
 ```js
 import { Client } from 'twitter.js';
@@ -39,7 +39,7 @@ const user = await client.users.fetchByUsername({
 console.log(user.description); // Contributing to open-source 🌐
 ```
 
-Make [`user-context`](https://developer.twitter.com/en/docs/authentication/oauth-1-0a) authorized requests without any hassle:
+🔒 Make [`user-context`](https://developer.twitter.com/en/docs/authentication/oauth-1-0a) authorized requests without any hassle:
 
 ```js
 import { Client } from 'twitter.js';
@@ -56,7 +56,7 @@ const user = await client.users.fetchByUsername({
 await user.follow();
 ```
 
-Want real-time events listening? We got you covered:
+📈 Want real-time events listening? We got you covered:
 
 ```js
 import { Client } from 'twitter.js';
