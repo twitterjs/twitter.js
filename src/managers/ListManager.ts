@@ -118,7 +118,11 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Adds a member to a list.
 	 * @param list The list to add the member to
 	 * @param user The user to add as a member of the list
-	 * @returns A boolean representing whether the specified user has been added to the List
+	 * @returns A boolean representing whether the specified user has been added to the list
+	 * @example
+	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const isAdded = await client.lists.addMember('1487049903255666689', user);
+	 * console.log(isAdded); // true
 	 */
 	async addMember(list: ListResolvable, user: UserResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -138,6 +142,10 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * @param list The list to remove the member from
 	 * @param member The member to remove from the list
 	 * @returns A boolean representing whether the specified member has been removed from the list
+	 * @example
+	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const isRemoved = await client.lists.removeMember('1487049903255666689', user);
+	 * console.log(isRemoved); // true
 	 */
 	async removeMember(list: ListResolvable, member: UserResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -156,6 +164,9 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Follows a list.
 	 * @param list The list to follow
 	 * @returns A boolean representing whether the authorized user followed the list
+	 * @example
+	 * const followed = await client.lists.follow('1487049903255666689');
+	 * console.log(followed); // true
 	 */
 	async follow(list: ListResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -176,6 +187,9 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Unfollows a list.
 	 * @param list The list to unfollow
 	 * @returns A boolean representing whether the authorized user unfollowed the list
+	 * @example
+	 * const unfollowed = await client.lists.unfollow('1487049903255666689');
+	 * console.log(unfollowed); // true
 	 */
 	async unfollow(list: ListResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -194,6 +208,9 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Pins a list.
 	 * @param list The list to pin
 	 * @returns A boolean representing whether the authorized user pinned the list
+	 * @example
+	 * const pinned = await client.lists.pin('1487049903255666689');
+	 * console.log(pinned); // true
 	 */
 	async pin(list: ListResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -214,6 +231,9 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Unpins a list.
 	 * @param list The list to unpin
 	 * @returns A boolean representing whether the authorized user unpinned the list
+	 * @example
+	 * const unPinned = await client.lists.unpin('1487049903255666689');
+	 * console.log(unPinned); // true
 	 */
 	async unpin(list: ListResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -225,7 +245,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			.users(loggedInUser.id)
 			.pinned_lists(listId)
 			.delete(requestData);
-		return res.data.pinned;
+		return !res.data.pinned;
 	}
 
 	/**
