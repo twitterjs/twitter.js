@@ -22,7 +22,7 @@ npm i twitter.js
 
 ## Usage
 
-Fetching details about a twitter user is as easy as this with `twitter.js` library:
+🚀 Fetch details about a twitter user in no time:
 
 ```js
 import { Client } from 'twitter.js';
@@ -30,17 +30,16 @@ import { bearerToken } from './secrets.js';
 
 const client = new Client();
 
-client.on('ready', async () => {
-	const user = await client.users.fetchByUsername({
-		username: 'iShiibi',
-	});
-	console.log(user.description); // Contributing to open-source 🌐
+await client.loginWithBearerToken(bearerToken);
+
+const user = await client.users.fetchByUsername({
+	username: 'iShiibi',
 });
 
-client.loginWithBearerToken(bearerToken);
+console.log(user.description); // Contributing to open-source 🌐
 ```
 
-`twitter.js` also provides you the ability to make [`user-context`](https://developer.twitter.com/en/docs/authentication/oauth-1-0a) authorized requests without any hassle:
+🔒 Make [`user-context`](https://developer.twitter.com/en/docs/authentication/oauth-1-0a) authorized requests without any hassle:
 
 ```js
 import { Client } from 'twitter.js';
@@ -48,18 +47,16 @@ import { credentials } from './secrets.js';
 
 const client = new Client();
 
-client.on('ready', async () => {
-	console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-	const user = await client.users.fetchByUsername({
-		username: 'iShiibi',
-	});
-	await user.follow();
+await client.login(credentials);
+
+const user = await client.users.fetchByUsername({
+	username: 'iShiibi',
 });
 
-client.login(credentials);
+await user.follow();
 ```
 
-And did we tell you that you can opt-in for real-time events listening? With `twitter.js`, you can set rules that tell Twitter API to send you tweets matching those rules in real-time. Here is a sample code for a bot that likes every tweet it gets mentioned in:
+📈 Want real-time events listening? We got you covered:
 
 ```js
 import { Client } from 'twitter.js';
@@ -67,20 +64,12 @@ import { credentials } from './secrets.js';
 
 const client = new Client({ events: ['FILTERED_TWEET_CREATE'] });
 
-client.on('ready', async () => {
-	console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-	await client.filteredStreamRules.create({
-		value: '@tjs_test',
-		tag: 'Tweets mentioning the user tjs_test',
-	});
-});
+await client.login(credentials);
 
 client.on('filteredTweetCreate', async tweet => {
 	console.log(`${tweet.text}`); // hey @tjs_test, like this tweet if you're listening!
 	await tweet.like();
 });
-
-client.login(credentials);
 ```
 
 ## Future
