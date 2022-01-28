@@ -44,6 +44,8 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Fetches a list from Twitter.
 	 * @param options The options for fetching list
 	 * @returns A {@link List} as a `Promise`
+	 * @example
+	 * const list = await client.lists.fetch({ list: '1487049903255666689' });
 	 */
 	async fetch(options: FetchListOptions): Promise<List> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
@@ -105,15 +107,15 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	}
 
 	/**
-	 * Adds a member to a list
+	 * Adds a member to a list.
 	 * @param list The list to add the member to
-	 * @param member The user to add as a member of the list
+	 * @param user The user to add as a member of the list
 	 * @returns A boolean representing whether the specified user has been added to the List
 	 */
-	async addMember(list: ListResolvable, member: UserResolvable): Promise<boolean> {
+	async addMember(list: ListResolvable, user: UserResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'add member to');
-		const userId = this.client.users.resolveId(member);
+		const userId = this.client.users.resolveId(user);
 		if (!userId) throw new CustomError('USER_RESOLVE_ID', 'add to the list');
 		const body: POSTListsIdMembersJSONBody = {
 			user_id: userId,
@@ -127,7 +129,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * Removes a member from a list.
 	 * @param list The list to remove the member from
 	 * @param member The member to remove from the list
-	 * @returns A boolean representing whether the specified user has been removed from the list
+	 * @returns A boolean representing whether the specified member has been removed from the list
 	 */
 	async removeMember(list: ListResolvable, member: UserResolvable): Promise<boolean> {
 		const listId = this.resolveId(list);
@@ -218,6 +220,13 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		return res.data.pinned;
 	}
 
+	/**
+	 * Fetches a single list.
+	 * @param listId The id of the list to fetch
+	 * @param options The options for fetching the list
+	 * @returns A {@link List} as a `Promise`
+	 * @internal
+	 */
 	async #fetchSingleList(listId: Snowflake, options: FetchListOptions) {
 		if (!options.skipCacheCheck) {
 			const cachedList = this.cache.get(listId);
