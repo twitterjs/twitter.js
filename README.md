@@ -22,7 +22,7 @@ npm i twitter.js
 
 ## Usage
 
-Fetching details about a twitter user is as easy as this with `twitter.js` library:
+Fetch details about a twitter user in no time using `twitter.js` library:
 
 ```js
 import { Client } from 'twitter.js';
@@ -30,14 +30,13 @@ import { bearerToken } from './secrets.js';
 
 const client = new Client();
 
-client.on('ready', async () => {
-	const user = await client.users.fetchByUsername({
-		username: 'iShiibi',
-	});
-	console.log(user.description); // Contributing to open-source 🌐
+await client.loginWithBearerToken(bearerToken);
+
+const user = await client.users.fetchByUsername({
+	username: 'iShiibi',
 });
 
-client.loginWithBearerToken(bearerToken);
+console.log(user.description); // Contributing to open-source 🌐
 ```
 
 `twitter.js` also provides you the ability to make [`user-context`](https://developer.twitter.com/en/docs/authentication/oauth-1-0a) authorized requests without any hassle:
@@ -48,15 +47,13 @@ import { credentials } from './secrets.js';
 
 const client = new Client();
 
-client.on('ready', async () => {
-	console.log(`Logged in as ${client.me.username}`); // Logged in as tjs_test
-	const user = await client.users.fetchByUsername({
-		username: 'iShiibi',
-	});
-	await user.follow();
+await client.login(credentials);
+
+const user = await client.users.fetchByUsername({
+	username: 'iShiibi',
 });
 
-client.login(credentials);
+await user.follow();
 ```
 
 And did we tell you that you can opt-in for real-time events listening? With `twitter.js`, you can set rules that tell Twitter API to send you tweets matching those rules in real-time. Here is a sample code for a bot that likes every tweet it gets mentioned in:
