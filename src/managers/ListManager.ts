@@ -230,7 +230,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query });
-		const { data }: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
-		return this._add(data.id, data, options.cacheAfterFetching);
+		const data: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
+		return this._add(data.data.id, data, options.cacheAfterFetching);
 	}
 }
