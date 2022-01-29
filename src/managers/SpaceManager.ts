@@ -24,6 +24,9 @@ import type {
 	Snowflake,
 } from 'twitter-types';
 
+/**
+ * The manager class that holds API methods for {@link Space} objects and stores their cache
+ */
 export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
 	/**
 	 * @param client The logged in {@link Client} instance

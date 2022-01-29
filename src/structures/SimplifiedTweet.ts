@@ -17,10 +17,6 @@ import type {
 	APITweetContextAnnotation,
 	APITweetReferencedTweet,
 	APITweetReplySettings,
-	DELETEUsersIdLikesTweetIdResponse,
-	DELETEUsersIdRetweetsSourceTweetIdResponse,
-	POSTUsersIdRetweetsResponse,
-	PUTTweetsIdHiddenResponse,
 	Snowflake,
 } from 'twitter-types';
 
@@ -157,14 +153,14 @@ export class SimplifiedTweet extends BaseStructure {
 	/**
 	 * Likes this tweet.
 	 */
-	async like() {
+	async like(): Promise<boolean> {
 		return this.client.tweets.like(this.id);
 	}
 
 	/**
 	 * Unlikes this tweet.
 	 */
-	async unlike(): Promise<DELETEUsersIdLikesTweetIdResponse> {
+	async unlike(): Promise<boolean> {
 		return this.client.tweets.unlike(this.id);
 	}
 
@@ -173,7 +169,7 @@ export class SimplifiedTweet extends BaseStructure {
 	 *
 	 * **Note:** This tweet should be a reply to a tweet of the authorized user
 	 */
-	async hide(): Promise<PUTTweetsIdHiddenResponse> {
+	async hide(): Promise<boolean> {
 		return this.client.tweets.hide(this.id);
 	}
 
@@ -182,21 +178,21 @@ export class SimplifiedTweet extends BaseStructure {
 	 *
 	 * **Note:** This tweet should be a reply to a tweet of the authorized user
 	 */
-	async unhide(): Promise<PUTTweetsIdHiddenResponse> {
+	async unhide(): Promise<boolean> {
 		return this.client.tweets.unhide(this.id);
 	}
 
 	/**
 	 * Retweets this tweet.
 	 */
-	async retweet(): Promise<POSTUsersIdRetweetsResponse> {
+	async retweet(): Promise<boolean> {
 		return this.client.tweets.retweet(this.id);
 	}
 
 	/**
 	 * Removes the retweet of this tweet.
 	 */
-	async unRetweet(): Promise<DELETEUsersIdRetweetsSourceTweetIdResponse> {
+	async unRetweet(): Promise<boolean> {
 		return this.client.tweets.unRetweet(this.id);
 	}
 
