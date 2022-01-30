@@ -107,42 +107,42 @@ export class SimplifiedUser extends BaseStructure {
 	/**
 	 * Follows this user on twitter.
 	 */
-	async follow(): Promise<POSTUsersIdFollowingResponse> {
+	async follow(): Promise<POSTUsersIdFollowingResponse['data']> {
 		return this.client.users.follow(this.id);
 	}
 
 	/**
 	 * Unfollows this user on twitter.
 	 */
-	async unfollow(): Promise<DELETEUsersSourceUserIdFollowingTargetUserIdResponse> {
+	async unfollow(): Promise<DELETEUsersSourceUserIdFollowingTargetUserIdResponse['data']> {
 		return this.client.users.unfollow(this.id);
 	}
 
 	/**
 	 * Blocks this user on twitter.
 	 */
-	async block(): Promise<POSTUsersIdBlockingResponse> {
+	async block(): Promise<POSTUsersIdBlockingResponse['data']> {
 		return this.client.users.block(this.id);
 	}
 
 	/**
 	 * Unblocks this user on twitter.
 	 */
-	async unblock(): Promise<DELETEUsersSourceUserIdBlockingTargetUserIdResponse> {
+	async unblock(): Promise<DELETEUsersSourceUserIdBlockingTargetUserIdResponse['data']> {
 		return this.client.users.unblock(this.id);
 	}
 
 	/**
 	 * Mutes this user on twitter.
 	 */
-	async mute(): Promise<POSTUsersIdMutingResponse> {
+	async mute(): Promise<POSTUsersIdMutingResponse['data']> {
 		return this.client.users.mute(this.id);
 	}
 
 	/**
 	 * Unmutes this user on twitter.
 	 */
-	async unmute(): Promise<DELETEUsersSourceUserIdMutingTargetUserIdResponse> {
+	async unmute(): Promise<DELETEUsersSourceUserIdMutingTargetUserIdResponse['data']> {
 		return this.client.users.unmute(this.id);
 	}
 }
