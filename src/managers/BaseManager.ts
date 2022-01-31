@@ -19,7 +19,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 	/**
 	 * The structure that this manager stores in its cache
 	 */
-	protected _holds: StructureConstructable<T>;
+	#holds: StructureConstructable<T>;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -28,11 +28,8 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 	constructor(client: Client, structureType: StructureConstructable<T>) {
 		Object.defineProperty(this, 'client', { writable: true, enumerable: false });
 		this.client = client;
-
 		this.cache = new Collection<K, T>();
-
-		Object.defineProperty(this, '_holds', { writable: true, enumerable: false });
-		this._holds = structureType;
+		this.#holds = structureType;
 	}
 
 	/**
@@ -40,7 +37,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 	 * @param idOrInstance The ID or instance of the structure held by this manager
 	 */
 	resolve(idOrInstance: K | R): T | null {
-		if (idOrInstance instanceof this._holds) return idOrInstance;
+		if (idOrInstance instanceof this.#holds) return idOrInstance;
 		if (typeof idOrInstance === 'string') return this.cache.get(idOrInstance as K) ?? null;
 		return null;
 	}
@@ -50,7 +47,7 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 	 * @param idOrInstance The ID or instance of the strucutre held by this manager
 	 */
 	resolveId(idOrInstance: K | R): K | null {
-		if (idOrInstance instanceof this._holds) return idOrInstance.id;
+		if (idOrInstance instanceof this.#holds) return idOrInstance.id;
 		if (typeof idOrInstance === 'string') return idOrInstance as K;
 		return null;
 	}
@@ -61,9 +58,10 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 	 * @param id The ID of the structure
 	 * @param data The raw data returned by the API for this structure
 	 * @param cacheAfterFetching Whether to store the structure in the manager's cache
+	 * @internal
 	 */
 	_add<RawData>(id: K, data: RawData, cacheAfterFetching = true): T {
-		const entry = new this._holds(this.client, data);
+		const entry = new this.#holds(this.client, data);
 		if (cacheAfterFetching) this.cache.set(id, entry);
 		return entry;
 	}

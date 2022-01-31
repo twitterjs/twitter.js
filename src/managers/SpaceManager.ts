@@ -24,6 +24,9 @@ import type {
 	Snowflake,
 } from 'twitter-types';
 
+/**
+ * The manager class that holds API methods for {@link Space} objects and stores their cache
+ */
 export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -36,6 +39,9 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	 * Fetches spaces from twitter.
 	 * @param options The options for fetching spaces
 	 * @returns A {@link Space} or a {@link Collection} of them as a `Promise`
+	 * @example
+	 * const space = await client.spaces.fetch({ space: '1OdJrBwXgjXJX' });
+	 * console.log(`Fetched a space named: ${space.title}`); // Fetched a space named: Test Twitter Spaces
 	 */
 	async fetch<T extends FetchSpaceOptions | FetchSpacesOptions>(options: T): Promise<SpaceManagerFetchResult<T>> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
@@ -57,14 +63,24 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	}
 
 	/**
-	 * Fetches spaces of creators using their user ids.
+	 * Fetches live or scheduled spaces of users.
 	 * @param options The options for fetching spaces
 	 * @returns A {@link Collection} of {@link Space} as a `Promise`
+	 * @example
+	 * // Fetch spaces of a user using id
+	 * const spaces = await client.spaces.fetchByCreators({ users: ['1253316035878375424'] });
+	 *
+	 * // Fetch spaces of a user using user object
+	 * const creator = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const spaces = await client.spaces.fetchByCreators({ users: [creator] });
+	 *
+	 * // Fetch spaces of multiple users
+	 * const spaces = await client.spaces.fetchByCreators({ users: ['1253316035878375424', '6253282'] });
 	 */
-	async fetchByCreatorIds(options: FetchSpacesByCreatorIdsOptions): Promise<Collection<Snowflake, Space>> {
+	async fetchByCreators(options: FetchSpacesByCreatorIdsOptions): Promise<Collection<Snowflake, Space>> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
 		if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
-		const fetchedSpaceCollection = new Collection<Snowflake, Space>();
+		const fetchedSpaces = new Collection<Snowflake, Space>();
 		const userIds = options.users.map(user => {
 			const userId = this.client.users.resolveId(user as UserResolvable);
 			if (!userId) throw new CustomTypeError('USER_RESOLVE_ID', 'fetch spaces of');
@@ -79,23 +95,25 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 		};
 		const requestData = new RequestData({ query });
 		const data: GETSpacesByCreatorIdsResponse = await this.client._api.spaces.by.creator_ids.get(requestData);
-		if (data.meta.result_count === 0) return fetchedSpaceCollection;
+		if (data.meta.result_count === 0) return fetchedSpaces;
 		const rawSpaces = data.data;
 		const rawSpacesIncludes = data.includes;
 		for (const rawSpace of rawSpaces) {
 			const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
-			fetchedSpaceCollection.set(space.id, space);
+			fetchedSpaces.set(space.id, space);
 		}
-		return fetchedSpaceCollection;
+		return fetchedSpaces;
 	}
 
 	/**
 	 * Fetches spaces using search query.
 	 * @param options Option used to search spaces
 	 * @returns A {@link Collection} of {@link Space} as a `Promise`
+	 * @example
+	 * const spaces = await client.spaces.search({ query: 'Twitter', state: 'live' });
 	 */
 	async search(options: SearchSpacesOptions): Promise<Collection<Snowflake, Space>> {
-		const fetchedSpaceCollection = new Collection<Snowflake, Space>();
+		const fetchedSpaces = new Collection<Snowflake, Space>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETSpacesSearchQuery = {
 			query: options.query,
@@ -107,16 +125,22 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 		};
 		const requestData = new RequestData({ query });
 		const data: GETSpacesSearchResponse = await this.client._api.spaces.search.get(requestData);
-		if (data.meta.result_count === 0) return fetchedSpaceCollection;
+		if (data.meta.result_count === 0) return fetchedSpaces;
 		const rawSpaces = data.data;
 		const rawSpacesIncludes = data.includes;
 		for (const rawSpace of rawSpaces) {
 			const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
-			fetchedSpaceCollection.set(space.id, space);
+			fetchedSpaces.set(space.id, space);
 		}
-		return fetchedSpaceCollection;
+		return fetchedSpaces;
 	}
 
+	/**
+	 * Fetches a single space by id.
+	 * @param spaceId The id of the space to fetch
+	 * @param options The options for fetching the space
+	 * @returns A {@link Space} as a `Promise`
+	 */
 	async #fetchSingleSpace(spaceId: Snowflake, options: FetchSpaceOptions): Promise<Space> {
 		if (!options.skipCacheCheck) {
 			const cachedSpace = this.cache.get(spaceId);
@@ -133,11 +157,17 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 		return this._add(data.data.id, data, options.cacheAfterFetching);
 	}
 
+	/**
+	 * Fetches multiple spaces by ids
+	 * @param spaceIds The ids of the spaces to fetch
+	 * @param options The options for fetching the spaces
+	 * @returns A {@link Collection} of {@link Space} as a `Promise`
+	 */
 	async #fetchMultipleSpaces(
 		spaceIds: Array<Snowflake>,
 		options: FetchSpacesOptions,
 	): Promise<Collection<Snowflake, Space>> {
-		const fetchedSpaceCollection = new Collection<Snowflake, Space>();
+		const fetchedSpaces = new Collection<Snowflake, Space>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETSpacesQuery = {
 			ids: spaceIds,
@@ -151,8 +181,8 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 		const rawSpacesIncludes = data.includes;
 		for (const rawSpace of rawSpaces) {
 			const space = this._add(rawSpace.id, { data: rawSpace, includes: rawSpacesIncludes }, options.cacheAfterFetching);
-			fetchedSpaceCollection.set(space.id, space);
+			fetchedSpaces.set(space.id, space);
 		}
-		return fetchedSpaceCollection;
+		return fetchedSpaces;
 	}
 }
