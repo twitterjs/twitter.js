@@ -244,6 +244,7 @@ export interface TwitterjsErrorConstructor {
 export interface FilteredStreamRuleData {
 	/**
 	 * The value of the rule
+	 * @see https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
 	 */
 	value: string;
 

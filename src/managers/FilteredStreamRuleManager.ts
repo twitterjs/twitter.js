@@ -34,6 +34,15 @@ export class FilteredStreamRuleManager extends BaseManager<
 	 * Fetches one or multiple rules that are currently active.
 	 * @param options The options for fetching rules
 	 * @returns A {@link FilteredStreamRule} or a {@link Collection} of them
+	 * @example
+	 * // Fetch all active rules
+	 * const rules = await client.filteredStreamRules.fetch();
+	 *
+	 * // Fetch a single active rule
+	 * const rule = await client.filteredStreamRules.fetch({ rule: '1459555165208338435' });
+	 *
+	 * // Fetch multiple active rules
+	 * const rules = await client.filteredStreamRules.fetch({ rules: ['1459555165208338435', '1488046998351925250'] });
 	 */
 	async fetch<T extends FetchFilteredStreamRuleOptions | FetchFilteredStreamRulesOptions>(
 		options?: T,
@@ -62,9 +71,18 @@ export class FilteredStreamRuleManager extends BaseManager<
 	}
 
 	/**
-	 * Creates one or multiple rules for the filtered stream.
+	 * Creates rules for the filtered stream.
 	 * @param data The data for creating rules
-	 * @returns A {@link Collection} of {@link FilteredStreamRule} objects
+	 * @returns A {@link Collection} of {@link FilteredStreamRule}
+	 * @example
+	 * // Create a single rule
+	 * const rule = await client.filteredStreamRules.create({ value: '@iShiibi', tag: 'Tweets mentioning the user iShiibi' });
+	 *
+	 * // Create multiple rules
+	 * const rules = await client.filteredStreamRules.create([
+	 * { value: 'from:iShiibi', tag: 'Tweets created by the user iShiibi' },
+	 * { value: 'to:TwitterAPI', tag: 'Tweets that are replies to tweets created by the user TwitterAPI' },
+	 * ]);
 	 */
 	async create(
 		data: FilteredStreamRuleData | Array<FilteredStreamRuleData>,
@@ -86,8 +104,14 @@ export class FilteredStreamRuleManager extends BaseManager<
 	}
 
 	/**
-	 * Deletes one or multiple rules for the filtered stream using their ids.
+	 * Deletes rules for the filtered stream using their ids.
 	 * @param ruleId The id or ids of the rules to delete
+	 * @example
+	 * // Delete a single rule
+	 * const data = await client.filteredStreamRules.deleteById('1488053806785245187');
+	 *
+	 * // Delete multiple rules
+	 * const data = await client.filteredStreamRules.deleteById(['1488048453506957314', '1488053806785245186']);
 	 */
 	async deleteById(ruleId: Snowflake | Array<Snowflake>): Promise<POSTTweetsSearchStreamRulesResponse> {
 		const ids = Array.isArray(ruleId) ? ruleId : [ruleId];
@@ -100,8 +124,14 @@ export class FilteredStreamRuleManager extends BaseManager<
 	}
 
 	/**
-	 * Deletes one or multiple rules for the filtered stream using their values.
+	 * Deletes rules for the filtered stream using their values.
 	 * @param ruleValue The value or values of the rules to delete
+	 * @example
+	 * // Delete a single rule
+	 * const data = await client.filteredStreamRules.deleteByValue('@iShiibi');
+	 *
+	 * // Delete multiple rules
+	 * const data = await client.filteredStreamRules.deleteByValue(['from:iShiibi', 'to:TwitterAPI']);
 	 */
 	async deleteByValue(ruleValue: string | Array<string>): Promise<POSTTweetsSearchStreamRulesResponse> {
 		const values = Array.isArray(ruleValue) ? ruleValue : [ruleValue];
@@ -113,6 +143,11 @@ export class FilteredStreamRuleManager extends BaseManager<
 		return this.#deleteRules(body);
 	}
 
+	/**
+	 * Delete rules for the filtered stream.
+	 * @param body The request body
+	 * @returns // TODO
+	 */
 	async #deleteRules(body: POSTTweetsSearchStreamRulesJSONBody): Promise<POSTTweetsSearchStreamRulesResponse> {
 		const requestData = new RequestData({ body });
 		const res: POSTTweetsSearchStreamRulesResponse = await this.client._api.tweets.search.stream.rules.post(
@@ -121,6 +156,12 @@ export class FilteredStreamRuleManager extends BaseManager<
 		return res;
 	}
 
+	/**
+	 * Fetches a single rule by using its id.
+	 * @param ruleId The id of the rule to fetch
+	 * @param options The options for fetching the rule
+	 * @returns A {@link FilteredStreamRule}
+	 */
 	async #fetchSingleRule(ruleId: Snowflake, options: FetchFilteredStreamRuleOptions): Promise<FilteredStreamRule> {
 		if (!options.skipCacheCheck) {
 			const cachedRule = this.cache.get(ruleId);
@@ -136,6 +177,12 @@ export class FilteredStreamRuleManager extends BaseManager<
 		return this._add(rawRule.id, rawRule, options.cacheAfterFetching);
 	}
 
+	/**
+	 * Fetches multiple rules by using their ids.
+	 * @param ruleIds The ids of the rules to fetch
+	 * @param options The options for fetching the rules
+	 * @returns A {@link Collection} of {@link FilteredStreamRule}
+	 */
 	async #fetchMultipleRules(
 		ruleIds?: Array<Snowflake>,
 		options?: FetchFilteredStreamRulesOptions,

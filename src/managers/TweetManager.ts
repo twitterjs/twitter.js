@@ -253,8 +253,8 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query });
-		const data: GETTweetsIdResponse = await this.client._api.tweets(tweetId).get(requestData);
-		return this._add(data.data.id, data, options.cacheAfterFetching);
+		const res: GETTweetsIdResponse = await this.client._api.tweets(tweetId).get(requestData);
+		return this._add(res.data.id, res, options.cacheAfterFetching);
 	}
 
 	/**
@@ -279,9 +279,9 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query });
-		const data: GETTweetsResponse = await this.client._api.tweets.get(requestData);
-		const rawTweets = data.data;
-		const rawTweetsIncludes = data.includes;
+		const res: GETTweetsResponse = await this.client._api.tweets.get(requestData);
+		const rawTweets = res.data;
+		const rawTweetsIncludes = res.includes;
 		for (const rawTweet of rawTweets) {
 			const tweet = this._add(rawTweet.id, { data: rawTweet, includes: rawTweetsIncludes }, options.cacheAfterFetching);
 			fetchedTweets.set(tweet.id, tweet);

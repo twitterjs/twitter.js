@@ -293,7 +293,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	 * @returns A {@link Collection} of {@link User}
 	 */
 	async #fetchMultipleUsers(userIds: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
-		const fetchedUserCollection = new Collection<string, User>();
+		const fetchedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersQuery = {
 			ids: userIds,
@@ -307,9 +307,9 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		const rawUsersIncludes = res.includes;
 		for (const rawUser of rawUsers) {
 			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
-			fetchedUserCollection.set(user.id, user);
+			fetchedUsers.set(user.id, user);
 		}
-		return fetchedUserCollection;
+		return fetchedUsers;
 	}
 
 	/**
@@ -331,7 +331,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETUsersByUsernameUsernameResponse = await this.client._api.users.by.username(username).get(requestData);
-		return new User(this.client, res);
+		return this._add(res.data.id, res, options.cacheAfterFetching);
 	}
 
 	/**
@@ -344,7 +344,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		usernames: Array<string>,
 		options: FetchUsersByUsernamesOptions,
 	): Promise<Collection<string, User>> {
-		const fetchedUserCollection = new Collection<string, User>();
+		const fetchedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersByQuery = {
 			usernames,
@@ -358,8 +358,8 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		const rawUsersIncludes = res.includes;
 		for (const rawUser of rawUsers) {
 			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
-			fetchedUserCollection.set(user.id, user);
+			fetchedUsers.set(user.id, user);
 		}
-		return fetchedUserCollection;
+		return fetchedUsers;
 	}
 }
