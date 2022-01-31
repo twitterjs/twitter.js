@@ -57,7 +57,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTListsResponse = await this.client._api.lists.post(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -78,29 +78,29 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	/**
 	 * Deletes a list.
 	 * @param list The list to delete
-	 * @returns A boolean representing whether the specified list has been deleted
+	 * @returns An object containing the `deleted` field
 	 * @example
-	 * const isDeleted = await client.lists.delete('1487090844578377729');
-	 * console.log(isDeleted); // true
+	 * const data = await client.lists.delete('1487090844578377729');
+	 * console.log(data); // { deleted: true }
 	 */
-	async delete(list: ListResolvable): Promise<boolean> {
+	async delete(list: ListResolvable): Promise<DELETEListsIdResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'delete');
 		const requestData = new RequestData({ isUserContext: true });
 		const res: DELETEListsIdResponse = await this.client._api.lists(listId).delete(requestData);
-		return res.data.deleted;
+		return res.data;
 	}
 
 	/**
 	 * Updates a lists.
 	 * @param list The list to update
 	 * @param options The options for updating the list
-	 * @returns A boolean representing whether the specified list has been updated
+	 * @returns An object containing the `updated` field
 	 * @example
-	 * const isUpdated = await client.lists.update('1487049903255666689', { description: 'A nice place for everyone' });
-	 * console.log(isUpdated); // true
+	 * const data = await client.lists.update('1487049903255666689', { description: 'A nice place for everyone' });
+	 * console.log(data); // { updated: true }
 	 */
-	async update(list: ListResolvable, options: UpdateListOptions): Promise<boolean> {
+	async update(list: ListResolvable, options: UpdateListOptions): Promise<PUTListsIdResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'update');
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
@@ -111,20 +111,20 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: PUTListsIdResponse = await this.client._api.lists(listId).put(requestData);
-		return res.data.updated;
+		return res.data;
 	}
 
 	/**
 	 * Adds a member to a list.
 	 * @param list The list to add the member to
 	 * @param user The user to add as a member of the list
-	 * @returns A boolean representing whether the specified user has been added to the list
+	 * @returns An object containing the `is_member` field
 	 * @example
 	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
-	 * const isAdded = await client.lists.addMember('1487049903255666689', user);
-	 * console.log(isAdded); // true
+	 * const data = await client.lists.addMember('1487049903255666689', user);
+	 * console.log(data); // { is_member: true }
 	 */
-	async addMember(list: ListResolvable, user: UserResolvable): Promise<boolean> {
+	async addMember(list: ListResolvable, user: UserResolvable): Promise<POSTListsIdMembersResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'add member to');
 		const userId = this.client.users.resolveId(user);
@@ -134,20 +134,23 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTListsIdMembersResponse = await this.client._api.lists(listId).members.post(requestData);
-		return res.data.is_member;
+		return res.data;
 	}
 
 	/**
 	 * Removes a member from a list.
 	 * @param list The list to remove the member from
 	 * @param member The member to remove from the list
-	 * @returns A boolean representing whether the specified member has been removed from the list
+	 * @returns An object containing the `is_member` field
 	 * @example
 	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
-	 * const isRemoved = await client.lists.removeMember('1487049903255666689', user);
-	 * console.log(isRemoved); // true
+	 * const data = await client.lists.removeMember('1487049903255666689', user);
+	 * console.log(data); // { is_member: false }
 	 */
-	async removeMember(list: ListResolvable, member: UserResolvable): Promise<boolean> {
+	async removeMember(
+		list: ListResolvable,
+		member: UserResolvable,
+	): Promise<DELETEListsIdMembersUserIdResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'remove the member from');
 		const userId = this.client.users.resolveId(member);
@@ -157,18 +160,18 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			.lists(listId)
 			.members(userId)
 			.delete(requestData);
-		return !res.data.is_member;
+		return res.data;
 	}
 
 	/**
 	 * Follows a list.
 	 * @param list The list to follow
-	 * @returns A boolean representing whether the authorized user followed the list
+	 * @returns An object containing the `following` field
 	 * @example
-	 * const followed = await client.lists.follow('1487049903255666689');
-	 * console.log(followed); // true
+	 * const data = await client.lists.follow('1487049903255666689');
+	 * console.log(data); // { following: true }
 	 */
-	async follow(list: ListResolvable): Promise<boolean> {
+	async follow(list: ListResolvable): Promise<POSTUsersIdFollowedListsResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'follow');
 		const loggedInUser = this.client.me;
@@ -180,18 +183,18 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		const res: POSTUsersIdFollowedListsResponse = await this.client._api
 			.users(loggedInUser.id)
 			.followed_lists.post(requestData);
-		return res.data.following;
+		return res.data;
 	}
 
 	/**
 	 * Unfollows a list.
 	 * @param list The list to unfollow
-	 * @returns A boolean representing whether the authorized user unfollowed the list
+	 * @returns An object containing the `following` field
 	 * @example
-	 * const unfollowed = await client.lists.unfollow('1487049903255666689');
-	 * console.log(unfollowed); // true
+	 * const data = await client.lists.unfollow('1487049903255666689');
+	 * console.log(data); // { following: false }
 	 */
-	async unfollow(list: ListResolvable): Promise<boolean> {
+	async unfollow(list: ListResolvable): Promise<DELETEUsersIdFollowedListsListIdResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'unfollow');
 		const loggedInUser = this.client.me;
@@ -201,18 +204,18 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			.users(loggedInUser.id)
 			.followed_lists(listId)
 			.delete(requestData);
-		return !res.data.following;
+		return res.data;
 	}
 
 	/**
 	 * Pins a list.
 	 * @param list The list to pin
-	 * @returns A boolean representing whether the authorized user pinned the list
+	 * @returns An object containing the `pinned` field
 	 * @example
-	 * const pinned = await client.lists.pin('1487049903255666689');
-	 * console.log(pinned); // true
+	 * const data = await client.lists.pin('1487049903255666689');
+	 * console.log(data); // { pinned: true }
 	 */
-	async pin(list: ListResolvable): Promise<boolean> {
+	async pin(list: ListResolvable): Promise<POSTUsersIdPinnedListsResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'pin');
 		const loggedInUser = this.client.me;
@@ -224,18 +227,18 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 		const res: POSTUsersIdPinnedListsResponse = await this.client._api
 			.users(loggedInUser.id)
 			.pinned_lists.post(requestData);
-		return res.data.pinned;
+		return res.data;
 	}
 
 	/**
 	 * Unpins a list.
 	 * @param list The list to unpin
-	 * @returns A boolean representing whether the authorized user unpinned the list
+	 * @returns An object containing the `pinned` field
 	 * @example
-	 * const unPinned = await client.lists.unpin('1487049903255666689');
-	 * console.log(unPinned); // true
+	 * const data = await client.lists.unpin('1487049903255666689');
+	 * console.log(data); // { pinned: false }
 	 */
-	async unpin(list: ListResolvable): Promise<boolean> {
+	async unpin(list: ListResolvable): Promise<DELETEUsersIdPinnedListsListIdResponse['data']> {
 		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'pin');
 		const loggedInUser = this.client.me;
@@ -245,15 +248,14 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			.users(loggedInUser.id)
 			.pinned_lists(listId)
 			.delete(requestData);
-		return !res.data.pinned;
+		return res.data;
 	}
 
 	/**
 	 * Fetches a single list.
 	 * @param listId The id of the list to fetch
 	 * @param options The options for fetching the list
-	 * @returns A {@link List} as a `Promise`
-	 * @internal
+	 * @returns A {@link List}
 	 */
 	async #fetchSingleList(listId: Snowflake, options: FetchListOptions) {
 		if (!options.skipCacheCheck) {
@@ -267,7 +269,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query });
-		const data: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
-		return this._add(data.data.id, data, options.cacheAfterFetching);
+		const res: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
+		return this._add(res.data.id, res, options.cacheAfterFetching);
 	}
 }

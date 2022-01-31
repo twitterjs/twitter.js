@@ -90,7 +90,7 @@ export class Tweet extends SimplifiedTweet {
 	 * Deletes this tweet.
 	 * @returns A boolean representing whether the tweet got deleted
 	 */
-	async delete(): Promise<boolean> {
+	async delete() {
 		return this.client.tweets.delete(this.id);
 	}
 

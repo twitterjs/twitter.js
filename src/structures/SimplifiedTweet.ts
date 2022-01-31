@@ -153,14 +153,14 @@ export class SimplifiedTweet extends BaseStructure {
 	/**
 	 * Likes this tweet.
 	 */
-	async like(): Promise<boolean> {
+	async like() {
 		return this.client.tweets.like(this.id);
 	}
 
 	/**
 	 * Unlikes this tweet.
 	 */
-	async unlike(): Promise<boolean> {
+	async unlike() {
 		return this.client.tweets.unlike(this.id);
 	}
 
@@ -169,7 +169,7 @@ export class SimplifiedTweet extends BaseStructure {
 	 *
 	 * **Note:** This tweet should be a reply to a tweet of the authorized user
 	 */
-	async hide(): Promise<boolean> {
+	async hide() {
 		return this.client.tweets.hide(this.id);
 	}
 
@@ -178,21 +178,21 @@ export class SimplifiedTweet extends BaseStructure {
 	 *
 	 * **Note:** This tweet should be a reply to a tweet of the authorized user
 	 */
-	async unhide(): Promise<boolean> {
+	async unhide() {
 		return this.client.tweets.unhide(this.id);
 	}
 
 	/**
 	 * Retweets this tweet.
 	 */
-	async retweet(): Promise<boolean> {
+	async retweet() {
 		return this.client.tweets.retweet(this.id);
 	}
 
 	/**
 	 * Removes the retweet of this tweet.
 	 */
-	async unRetweet(): Promise<boolean> {
+	async unRetweet() {
 		return this.client.tweets.unRetweet(this.id);
 	}
 
