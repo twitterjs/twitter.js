@@ -75,7 +75,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	/**
 	 * Fetches users from Twitter.
 	 * @param options The options for fetching users
-	 * @returns A {@link User} or a {@link Collection} of them as a `Promise`
+	 * @returns A {@link User} or a {@link Collection} of them
 	 * @example
 	 * // Fetch a single user
 	 * const user = await client.users.fetch({ user: '1253316035878375424' });
@@ -107,7 +107,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	 *
 	 * **⚠ Usernames are subject to change, prefer using {@link UserManager.fetch}**
 	 * @param options The options for fetching users
-	 * @returns A {@link User} or a {@link Collection} of them as a `Promise`
+	 * @returns A {@link User} or a {@link Collection} of them
 	 * @example
 	 * // Fetch a single user
 	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
@@ -155,7 +155,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTUsersIdFollowingResponse = await this.client._api.users(loggedInUser.id).following.post(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -177,7 +177,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 			.users(loggedInUserId)
 			.following(userId)
 			.delete(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -198,7 +198,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTUsersIdBlockingResponse = await this.client._api.users(loggedInUserId).blocking.post(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -219,7 +219,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 			.users(loggedInUserId)
 			.blocking(userId)
 			.delete(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -240,7 +240,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTUsersIdMutingResponse = await this.client._api.users(loggedInUserId).muting.post(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -261,7 +261,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 			.users(loggedInUserId)
 			.muting(userId)
 			.delete(requestData);
-		return { ...res.data };
+		return res.data;
 	}
 
 	/**
@@ -283,7 +283,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETUsersIdResponse = await this.client._api.users(userId).get(requestData);
-		return new User(this.client, res);
+		return this._add(res.data.id, res, options.cacheAfterFetching);
 	}
 
 	/**
