@@ -12,7 +12,7 @@
 
 # Twitter.js
 
-An object-oriented Node.js and TypeScript library for interacting with Twitter API v2
+A Node.js and TypeScript library for interacting with Twitter API v2
 
 ## Installation
 
