@@ -29,12 +29,9 @@ import { Client } from 'twitter.js';
 import { bearerToken } from './secrets.js';
 
 const client = new Client();
-
 await client.loginWithBearerToken(bearerToken);
 
-const user = await client.users.fetchByUsername({
-	username: 'iShiibi',
-});
+const user = await client.users.fetchByUsername({ username: 'iShiibi' });
 
 console.log(user.description); // Contributing to open-source 🌐
 ```
@@ -46,12 +43,9 @@ import { Client } from 'twitter.js';
 import { credentials } from './secrets.js';
 
 const client = new Client();
-
 await client.login(credentials);
 
-const user = await client.users.fetchByUsername({
-	username: 'iShiibi',
-});
+const user = await client.users.fetchByUsername({ username: 'iShiibi' });
 
 await user.follow();
 ```
@@ -63,11 +57,12 @@ import { Client } from 'twitter.js';
 import { credentials } from './secrets.js';
 
 const client = new Client({ events: ['FILTERED_TWEET_CREATE'] });
-
 await client.login(credentials);
 
+await client.filteredStreamRules.create({ value: '@tjs_test' });
+
 client.on('filteredTweetCreate', async tweet => {
-	console.log(`${tweet.text}`); // hey @tjs_test, like this tweet if you're listening!
+	console.log(tweet.text); // hey @tjs_test, like this tweet if you're listening!
 	await tweet.like();
 });
 ```
