@@ -32,7 +32,6 @@ const client = new Client();
 await client.loginWithBearerToken(bearerToken);
 
 const user = await client.users.fetchByUsername({ username: 'iShiibi' });
-
 console.log(user.description); // Contributing to open-source 🌐
 ```
 
@@ -45,9 +44,8 @@ import { credentials } from './secrets.js';
 const client = new Client();
 await client.login(credentials);
 
-const user = await client.users.fetchByUsername({ username: 'iShiibi' });
-
-await user.follow();
+const tweet = await client.tweets.fetch({ tweet: '1336749579228745728' });
+await tweet.like();
 ```
 
 📈 Want real-time events listening? We got you covered:
