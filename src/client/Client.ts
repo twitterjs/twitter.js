@@ -46,6 +46,7 @@ export class Client extends BaseClient {
 
 	/**
 	 * The manager for twitter API requests made by the client
+	 * @internal
 	 */
 	rest: RESTManager;
 
@@ -99,10 +100,6 @@ export class Client extends BaseClient {
 	/**
 	 * A getter that returns the `routeBuilder` method of {@link RESTManager}
 	 * for making API requests
-	 *
-	 * **Note**: This is a shortcut made available for internal use only, users of the library need not to
-	 * use it and should treat it as a private field
-	 * @private
 	 * @internal
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,9 +111,7 @@ export class Client extends BaseClient {
 	 * Sets the client ready to make bearer token authorized API requests.
 	 * Emits a `ready` event on success.
 	 * @param token The bearer token for the client
-	 * @returns The provided bearer token as a `Promise`
-	 *
-	 * @throws {@link CustomTypeError} The exception is thrown if the `token` param is not a string
+	 * @returns The provided bearer token
 	 */
 	async loginWithBearerToken(token: string): Promise<string> {
 		if (typeof token !== 'string') {
@@ -139,9 +134,7 @@ export class Client extends BaseClient {
 	 * Sets the client ready to make both bearer token and user context authorized API requests.
 	 * Emits a `ready` event on success.
 	 * @param credentials The credentials for the client
-	 * @returns The provided credentials as a `Promise`
-	 *
-	 * @throws {@link CustomTypeError} The exception is thrown if the `credentials` param is not an object
+	 * @returns The provided credentials
 	 */
 	async login(credentials: ClientCredentialsInterface): Promise<ClientCredentials> {
 		if (typeof credentials !== 'object') {
