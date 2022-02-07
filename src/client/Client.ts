@@ -1,6 +1,6 @@
 import { BaseClient } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
-import { ClientEvents, Collection, StreamType } from '../util';
+import { ClientEvents, Collection } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { UserManager, TweetManager, SpaceManager, ListManager, FilteredStreamRuleManager } from '../managers';
 import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../structures';
@@ -15,6 +15,7 @@ import type {
 	GETUsersMeResponse,
 	Snowflake,
 } from 'twitter-types';
+import { Readable } from 'node:stream';
 
 /**
  * The core class that exposes all the functionalities available in twitter.js
@@ -181,34 +182,22 @@ export class Client extends BaseClient {
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query, isStreaming: true });
-		const { body }: Response = await this._api.tweets.search.stream.get(requestData);
-		if (!body) throw Error('No response body');
-		try {
-			for await (const chunk of body) {
-				const buffer = Buffer.from(chunk);
-				const data = buffer.toString();
-				if (data === '\r\n') {
-					if (this.options.events.includes('KEEP_ALIVE_SIGNAL')) {
-						this.emit(ClientEvents.KEEP_ALIVE_SIGNAL, StreamType.FILTERED);
-					}
-					continue;
-				}
-				try {
-					const rawData: GETTweetsSearchStreamResponse = JSON.parse(data);
-					const tweet = this.tweets._add(rawData.data.id, rawData, false);
-					const matchingRules = rawData.matching_rules.reduce((col, rule) => {
-						col.set(rule.id, new MatchingRule(rule));
-						return col;
-					}, new Collection<Snowflake, MatchingRule>());
-					this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet, matchingRules);
-				} catch (error) {
-					// twitter sends corrupted data sometimes that throws error while parsing it
-				}
+		const res: Response = await this._api.tweets.search.stream.get(requestData);
+		if (!res.body) throw Error('No response body');
+		const readableStream = Readable.from(res.body, { encoding: 'utf-8' });
+		readableStream.on('data', chunk => {
+			try {
+				const rawData: GETTweetsSearchStreamResponse = JSON.parse(chunk);
+				const tweet = this.tweets._add(rawData.data.id, rawData, false);
+				const matchingRules = rawData.matching_rules.reduce((col, rule) => {
+					col.set(rule.id, new MatchingRule(rule));
+					return col;
+				}, new Collection<Snowflake, MatchingRule>());
+				this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet, matchingRules);
+			} catch (error) {
+				// TODO
 			}
-		} catch (error) {
-			console.log(error);
-			// TODO: add a reconnection mechanism
-		}
+		});
 	}
 
 	async #connectToSampledStream(): Promise<void> {
@@ -222,29 +211,17 @@ export class Client extends BaseClient {
 			'user.fields': queryParameters?.userFields,
 		};
 		const requestData = new RequestData({ query, isStreaming: true });
-		const { body }: Response = await this._api.tweets.sample.stream.get(requestData);
-		if (!body) throw Error('No response body');
-		try {
-			for await (const chunk of body) {
-				const buffer = Buffer.from(chunk);
-				const data = buffer.toString();
-				if (data === '\r\n') {
-					if (this.options.events.includes('KEEP_ALIVE_SIGNAL')) {
-						this.emit(ClientEvents.KEEP_ALIVE_SIGNAL, StreamType.SAMPLED);
-					}
-					continue;
-				}
-				try {
-					const rawTweet: GETTweetsSampleStreamResponse = JSON.parse(data);
-					const tweet = this.tweets._add(rawTweet.data.id, rawTweet, false);
-					this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
-				} catch (error) {
-					// twitter sends corrupted data sometimes that throws error while parsing it
-				}
+		const res: Response = await this._api.tweets.sample.stream.get(requestData);
+		if (!res.body) throw Error('No response body');
+		const readableStream = Readable.from(res.body, { encoding: 'utf-8' });
+		readableStream.on('data', chunk => {
+			try {
+				const rawTweet: GETTweetsSampleStreamResponse = JSON.parse(chunk);
+				const tweet = this.tweets._add(rawTweet.data.id, rawTweet, false);
+				this.emit(ClientEvents.SAMPLED_TWEET_CREATE, tweet);
+			} catch (error) {
+				// TODO
 			}
-		} catch (error) {
-			console.log(error);
-			// TODO: add a reconnection mechanism
-		}
+		});
 	}
 }

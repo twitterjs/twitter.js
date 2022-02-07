@@ -61,7 +61,6 @@ export interface ClientCredentialsInterface {
 
 export interface ClientEventsMapping {
 	filteredTweetCreate: [tweet: Tweet, matchingRules: Collection<Snowflake, MatchingRule>];
-	keepAliveSignal: [stream: 'sampled' | 'filtered'];
 	partialError: [partialError: Record<string, unknown>];
 	ready: [client: Client];
 	sampledTweetCreate: [tweet: Tweet];
