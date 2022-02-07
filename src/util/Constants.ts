@@ -15,7 +15,6 @@ import {
 
 export const ClientEvents = {
 	FILTERED_TWEET_CREATE: 'filteredTweetCreate',
-	KEEP_ALIVE_SIGNAL: 'keepAliveSignal',
 	PARTIAL_ERROR: 'partialError',
 	READY: 'ready',
 	SAMPLED_TWEET_CREATE: 'sampledTweetCreate',
