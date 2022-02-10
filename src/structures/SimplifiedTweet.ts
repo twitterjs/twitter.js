@@ -19,6 +19,7 @@ import type {
 	APITweetReplySettings,
 	Snowflake,
 } from 'twitter-types';
+import type { TweetQuoteOptions, TweetReplyOptions } from '../typings';
 
 /**
  * A simplified version of {@link Tweet} class
@@ -194,6 +195,32 @@ export class SimplifiedTweet extends BaseStructure {
 	 */
 	async unRetweet() {
 		return this.client.tweets.unRetweet(this.id);
+	}
+
+	/**
+	 * Sends a reply to this tweet
+	 * @param options The options for the reply
+	 * @returns The created reply
+	 */
+	async reply(options: TweetReplyOptions): Promise<{ id: Snowflake; text: string }> {
+		return this.client.tweets.create({ ...options, inReplyToTweet: this.id });
+	}
+
+	/**
+	 * Quotes this tweet
+	 * @param options The options for quoting
+	 * @returns The created tweet
+	 */
+	async quote(options: TweetQuoteOptions): Promise<{ id: Snowflake; text: string }> {
+		return this.client.tweets.create({ ...options, quoteTweet: this.id });
+	}
+
+	/**
+	 * Deletes this tweet.
+	 * @returns An object containing the `deleted` field
+	 */
+	async delete() {
+		return this.client.tweets.delete(this.id);
 	}
 
 	/**
