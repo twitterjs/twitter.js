@@ -20,7 +20,7 @@
 	},
 	"dependencies": {
 		"@discordjs/collection": "^0.4.0",
-		"@sapphire/async-queue": "^1.1.9",
+		"@sapphire/async-queue": "^1.2.0",
 		"oauth-1.0a": "^2.2.6",
 		"twitter-types": "^0.22.0",
 		"undici": "^4.12.2"
