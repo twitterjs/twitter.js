@@ -19,6 +19,7 @@ import type {
 	GETTweetsCountsRecentQuery,
 	GETUsersIdTweetsQuery,
 	Snowflake,
+	GETTweetsSearchRecentQuery,
 } from 'twitter-types';
 
 /**
@@ -375,6 +376,11 @@ export interface RetweetedByUsersBookOptions extends BaseBookOptions {
 
 export interface SearchTweetsBookOptions extends BaseRangeBookOptions {
 	query: string;
+	/**
+	 * The order in which tweets should be returned
+	 * @default 'recency'
+	 */
+	sortOrder: GETTweetsSearchRecentQuery['sort_order'];
 }
 
 export interface SpaceTicketBuyersBookOptions extends BaseBookOptions {

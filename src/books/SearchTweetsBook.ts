@@ -17,12 +17,18 @@ export class SearchTweetsBook extends BaseRangeBook {
 	query: string;
 
 	/**
+	 * The order in which tweets would return
+	 */
+	sortOrder: GETTweetsSearchRecentQuery['sort_order'] | null;
+
+	/**
 	 * @param client The logged in {@link Client} instance
 	 * @param options The options to initialize the book with
 	 */
 	constructor(client: Client, options: SearchTweetsBookOptions) {
 		super(client, options);
 		this.query = options.query;
+		this.sortOrder = options.sortOrder ?? null;
 	}
 
 	/**
@@ -50,12 +56,13 @@ export class SearchTweetsBook extends BaseRangeBook {
 			'poll.fields': queryParameters?.pollFields,
 			query: this.query,
 			next_token: token,
+			sort_order: this.sortOrder ?? undefined,
+			since_id: this.afterTweetId ?? undefined,
+			until_id: this.beforeTweetId ?? undefined,
+			max_results: this.maxResultsPerPage ?? undefined,
+			start_time: this.startTimestamp ? new Date(this.startTimestamp).toISOString() : undefined,
+			end_time: this.endTimestamp ? new Date(this.endTimestamp).toISOString() : undefined,
 		};
-		if (this.afterTweetId) query.since_id = this.afterTweetId;
-		if (this.beforeTweetId) query.until_id = this.beforeTweetId;
-		if (this.maxResultsPerPage) query.max_results = this.maxResultsPerPage;
-		if (this.startTimestamp) query.start_time = new Date(this.startTimestamp).toISOString();
-		if (this.endTimestamp) query.end_time = new Date(this.endTimestamp).toISOString();
 		const requestData = new RequestData({ query });
 		const data: GETTweetsSearchRecentResponse = await this.client._api.tweets.search.recent.get(requestData);
 		this._nextToken = data.meta.next_token;
