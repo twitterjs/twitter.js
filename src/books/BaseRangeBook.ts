@@ -1,18 +1,17 @@
 import { BaseBook } from './BaseBook';
 import type { Client } from '../client';
-import type { Snowflake } from 'twitter-types';
 import type { BaseRangeBookOptions } from '../typings';
 
 export class BaseRangeBook extends BaseBook {
 	/**
 	 * The book will fetch tweets that were created after this tweet Id
 	 */
-	afterTweetId: Snowflake | null;
+	afterTweetId: string | null;
 
 	/**
 	 * The book will fetch tweets that were created before this tweet Id
 	 */
-	beforeTweetId: Snowflake | null;
+	beforeTweetId: string | null;
 
 	/**
 	 * The book will fetch tweets that were created at or after this timestamp

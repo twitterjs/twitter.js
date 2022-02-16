@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
 import type { UserFollowersBookOptions } from '../typings';
-import type { GETUsersIdFollowersQuery, GETUsersIdFollowersResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdFollowersQuery, GETUsersIdFollowersResponse } from 'twitter-types';
 
 /**
  * A class for fetching followers of a twitter user
@@ -13,7 +13,7 @@ export class UserFollowersBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class UserFollowersBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who follow the given user
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, User>> {
+	async fetchNextPage(): Promise<Collection<string, User>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class UserFollowersBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who follow the given user
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
+	async fetchPreviousPage(): Promise<Collection<string, User>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-		const followers = new Collection<Snowflake, User>();
+	async #fetchPages(token?: string): Promise<Collection<string, User>> {
+		const followers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdFollowersQuery = {
 			expansions: queryParameters?.userExpansions,

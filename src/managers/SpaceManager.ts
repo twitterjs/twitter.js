@@ -21,13 +21,12 @@ import type {
 	GETSpacesResponse,
 	GETSpacesSearchQuery,
 	GETSpacesSearchResponse,
-	Snowflake,
 } from 'twitter-types';
 
 /**
  * The manager class that holds API methods for {@link Space} objects and stores their cache
  */
-export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space> {
+export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 	/**
 	 * @param client The logged in {@link Client} instance
 	 */
@@ -77,10 +76,10 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	 * // Fetch spaces of multiple users
 	 * const spaces = await client.spaces.fetchByCreators({ users: ['1253316035878375424', '6253282'] });
 	 */
-	async fetchByCreators(options: FetchSpacesByCreatorIdsOptions): Promise<Collection<Snowflake, Space>> {
+	async fetchByCreators(options: FetchSpacesByCreatorIdsOptions): Promise<Collection<string, Space>> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
 		if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
-		const fetchedSpaces = new Collection<Snowflake, Space>();
+		const fetchedSpaces = new Collection<string, Space>();
 		const userIds = options.users.map(user => {
 			const userId = this.client.users.resolveId(user as UserResolvable);
 			if (!userId) throw new CustomTypeError('USER_RESOLVE_ID', 'fetch spaces of');
@@ -112,8 +111,8 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	 * @example
 	 * const spaces = await client.spaces.search({ query: 'Twitter', state: 'live' });
 	 */
-	async search(options: SearchSpacesOptions): Promise<Collection<Snowflake, Space>> {
-		const fetchedSpaces = new Collection<Snowflake, Space>();
+	async search(options: SearchSpacesOptions): Promise<Collection<string, Space>> {
+		const fetchedSpaces = new Collection<string, Space>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETSpacesSearchQuery = {
 			query: options.query,
@@ -141,7 +140,7 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	 * @param options The options for fetching the space
 	 * @returns A {@link Space} as a `Promise`
 	 */
-	async #fetchSingleSpace(spaceId: Snowflake, options: FetchSpaceOptions): Promise<Space> {
+	async #fetchSingleSpace(spaceId: string, options: FetchSpaceOptions): Promise<Space> {
 		if (!options.skipCacheCheck) {
 			const cachedSpace = this.cache.get(spaceId);
 			if (cachedSpace) return cachedSpace;
@@ -163,11 +162,8 @@ export class SpaceManager extends BaseManager<Snowflake, SpaceResolvable, Space>
 	 * @param options The options for fetching the spaces
 	 * @returns A {@link Collection} of {@link Space} as a `Promise`
 	 */
-	async #fetchMultipleSpaces(
-		spaceIds: Array<Snowflake>,
-		options: FetchSpacesOptions,
-	): Promise<Collection<Snowflake, Space>> {
-		const fetchedSpaces = new Collection<Snowflake, Space>();
+	async #fetchMultipleSpaces(spaceIds: Array<string>, options: FetchSpacesOptions): Promise<Collection<string, Space>> {
+		const fetchedSpaces = new Collection<string, Space>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETSpacesQuery = {
 			ids: spaceIds,

@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
 import type { BlockedUsersBookOptions } from '../typings';
-import type { GETUsersIdBlockingQuery, GETUsersIdBlockingResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdBlockingQuery, GETUsersIdBlockingResponse } from 'twitter-types';
 
 /**
  * A class for fetching users blocked by the authorized user
@@ -13,7 +13,7 @@ export class BlockedUsersBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class BlockedUsersBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} that have been blocked by the authorized user
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, User>> {
+	async fetchNextPage(): Promise<Collection<string, User>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class BlockedUsersBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} that have been blocked by the authorized user
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
+	async fetchPreviousPage(): Promise<Collection<string, User>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-		const blockedUsers = new Collection<Snowflake, User>();
+	async #fetchPages(token?: string): Promise<Collection<string, User>> {
+		const blockedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdBlockingQuery = {
 			expansions: queryParameters?.userExpansions,

@@ -17,7 +17,6 @@ import type {
 	APITweetContextAnnotation,
 	APITweetReferencedTweet,
 	APITweetReplySettings,
-	Snowflake,
 } from 'twitter-types';
 import type { TweetQuoteOptions, TweetReplyOptions } from '../typings';
 
@@ -38,7 +37,7 @@ export class SimplifiedTweet extends BaseStructure {
 	/**
 	 * The unique identifier of the User who posted the Tweet
 	 */
-	authorId: Snowflake | null;
+	authorId: string | null;
 
 	/**
 	 * Contains context annotations for the Tweet
@@ -48,7 +47,7 @@ export class SimplifiedTweet extends BaseStructure {
 	/**
 	 * The ID of the original Tweet of the conversation (which includes direct replies, replies of replies)
 	 */
-	conversationId: Snowflake | null;
+	conversationId: string | null;
 
 	/**
 	 * The `ISO 8601` creation time of the Tweet
@@ -69,7 +68,7 @@ export class SimplifiedTweet extends BaseStructure {
 	 * If the Tweet is a reply, this field will contain the original Tweet’s author ID.
 	 * This will not necessarily always be the user directly mentioned in the Tweet
 	 */
-	inReplyToUserId: Snowflake | null;
+	inReplyToUserId: string | null;
 
 	/**
 	 * The language of the Tweet, if detected by Twitter. Returned as a `BCP47` language tag
@@ -202,7 +201,7 @@ export class SimplifiedTweet extends BaseStructure {
 	 * @param options The options for the reply
 	 * @returns The created reply
 	 */
-	async reply(options: TweetReplyOptions): Promise<{ id: Snowflake; text: string }> {
+	async reply(options: TweetReplyOptions): Promise<{ id: string; text: string }> {
 		return this.client.tweets.create({ ...options, inReplyToTweet: this.id });
 	}
 
@@ -211,7 +210,7 @@ export class SimplifiedTweet extends BaseStructure {
 	 * @param options The options for quoting
 	 * @returns The created tweet
 	 */
-	async quote(options: TweetQuoteOptions): Promise<{ id: Snowflake; text: string }> {
+	async quote(options: TweetQuoteOptions): Promise<{ id: string; text: string }> {
 		return this.client.tweets.create({ ...options, quoteTweet: this.id });
 	}
 

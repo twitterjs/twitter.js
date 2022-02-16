@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
 import type { SpaceTicketBuyersBookOptions } from '../typings';
-import type { GETSpacesIdBuyersQuery, GETSpacesIdBuyersResponse, Snowflake } from 'twitter-types';
+import type { GETSpacesIdBuyersQuery, GETSpacesIdBuyersResponse } from 'twitter-types';
 
 /**
  * A class for fetching users who purchased a ticket for a space
@@ -13,7 +13,7 @@ export class SpaceTicketBuyersBook extends BaseBook {
 	/**
 	 * The Id of the space this book belongs to
 	 */
-	spaceId: Snowflake;
+	spaceId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class SpaceTicketBuyersBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who purchased a ticket for the Space
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, User>> {
+	async fetchNextPage(): Promise<Collection<string, User>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class SpaceTicketBuyersBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who purchased a ticket for the Space
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
+	async fetchPreviousPage(): Promise<Collection<string, User>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-		const buyers = new Collection<Snowflake, User>();
+	async #fetchPages(token?: string): Promise<Collection<string, User>> {
+		const buyers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETSpacesIdBuyersQuery = {
 			expansions: queryParameters?.userExpansions,
