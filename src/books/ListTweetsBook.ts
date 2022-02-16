@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
 import type { ListTweetsBookOptions } from '../typings';
-import type { GETListsIdTweetsQuery, GETListsIdtweetsResponse, Snowflake } from 'twitter-types';
+import type { GETListsIdTweetsQuery, GETListsIdtweetsResponse } from 'twitter-types';
 
 /**
  * A class for fetching tweets from a list
@@ -13,7 +13,7 @@ export class ListTweetsBook extends BaseBook {
 	/**
 	 * The Id of the list this book belongs to
 	 */
-	listId: Snowflake;
+	listId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class ListTweetsBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link Tweet} belonging to the given list
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
+	async fetchNextPage(): Promise<Collection<string, Tweet>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class ListTweetsBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link Tweet} belonging to the given list
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
+	async fetchPreviousPage(): Promise<Collection<string, Tweet>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-		const tweets = new Collection<Snowflake, Tweet>();
+	async #fetchPages(token?: string): Promise<Collection<string, Tweet>> {
+		const tweets = new Collection<string, Tweet>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETListsIdTweetsQuery = {
 			expansions: queryParameters?.tweetExpansions,

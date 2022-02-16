@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
 import type { ListFollowersBookOptions } from '../typings';
-import type { GETListsIdFollowersQuery, GETUsersIdFollowersResponse, Snowflake } from 'twitter-types';
+import type { GETListsIdFollowersQuery, GETUsersIdFollowersResponse } from 'twitter-types';
 
 /**
  * A class for fetching users who are followers of a list
@@ -13,7 +13,7 @@ export class ListFollowersBook extends BaseBook {
 	/**
 	 * The Id of the list this book belongs to
 	 */
-	listId: Snowflake;
+	listId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class ListFollowersBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who follow the given list
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, User>> {
+	async fetchNextPage(): Promise<Collection<string, User>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class ListFollowersBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link User} who follow the given list
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, User>> {
+	async fetchPreviousPage(): Promise<Collection<string, User>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, User>> {
-		const listFollowers = new Collection<Snowflake, User>();
+	async #fetchPages(token?: string): Promise<Collection<string, User>> {
+		const listFollowers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETListsIdFollowersQuery = {
 			expansions: queryParameters?.userExpansions,

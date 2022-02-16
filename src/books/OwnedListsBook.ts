@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
 import type { OwnedListsBookOptions } from '../typings';
-import type { GETUsersIdOwnedListsQuery, GETUsersIdOwnedListsResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdOwnedListsQuery, GETUsersIdOwnedListsResponse } from 'twitter-types';
 
 /**
  * A class for fetching lists owned by a user
@@ -13,7 +13,7 @@ export class OwnedListsBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class OwnedListsBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} owned by the given user
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, List>> {
+	async fetchNextPage(): Promise<Collection<string, List>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class OwnedListsBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} owned by the given user
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, List>> {
+	async fetchPreviousPage(): Promise<Collection<string, List>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
-		const ownedLists = new Collection<Snowflake, List>();
+	async #fetchPages(token?: string): Promise<Collection<string, List>> {
+		const ownedLists = new Collection<string, List>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdOwnedListsQuery = {
 			expansions: queryParameters?.listExpansions,

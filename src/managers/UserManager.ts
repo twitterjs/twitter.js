@@ -30,13 +30,12 @@ import type {
 	POSTUsersIdFollowingResponse,
 	POSTUsersIdMutingJSONBody,
 	POSTUsersIdMutingResponse,
-	Snowflake,
 } from 'twitter-types';
 
 /**
  * The manager class that holds API methods for {@link User} objects and stores their cache
  */
-export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
+export class UserManager extends BaseManager<string, UserResolvable, User> {
 	/**
 	 * @param client The logged in {@link Client} instance
 	 */
@@ -64,7 +63,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	 * @param userResolvable An ID or instance that can be resolved to a user object
 	 * @returns The id of the resolved user object
 	 */
-	override resolveId(userResolvable: UserResolvable): Snowflake | null {
+	override resolveId(userResolvable: UserResolvable): string | null {
 		const userId = super.resolveId(userResolvable);
 		if (typeof userId === 'string') return userId;
 		if (userResolvable instanceof SimplifiedUser) return userResolvable.id;
@@ -270,7 +269,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	 * @param options The options for fetching the user
 	 * @returns A {@link User}
 	 */
-	async #fetchSingleUser(userId: Snowflake, options: FetchUserOptions): Promise<User> {
+	async #fetchSingleUser(userId: string, options: FetchUserOptions): Promise<User> {
 		if (!options.skipCacheCheck) {
 			const cachedUser = this.cache.get(userId);
 			if (cachedUser) return cachedUser;
@@ -292,7 +291,7 @@ export class UserManager extends BaseManager<Snowflake, UserResolvable, User> {
 	 * @param options The options for fetching the users
 	 * @returns A {@link Collection} of {@link User}
 	 */
-	async #fetchMultipleUsers(userIds: Array<Snowflake>, options: FetchUsersOptions): Promise<Collection<string, User>> {
+	async #fetchMultipleUsers(userIds: Array<string>, options: FetchUsersOptions): Promise<Collection<string, User>> {
 		const fetchedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersQuery = {

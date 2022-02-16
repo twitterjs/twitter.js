@@ -1,6 +1,6 @@
 import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
-import type { APISpace, Snowflake } from 'twitter-types';
+import type { APISpace } from 'twitter-types';
 
 export class SimplifiedSpace extends BaseStructure {
 	/**
@@ -16,7 +16,7 @@ export class SimplifiedSpace extends BaseStructure {
 	/**
 	 * The unique identifier of the Users who are hosting this Space
 	 */
-	hostIds: Array<Snowflake>;
+	hostIds: Array<string>;
 
 	/**
 	 * Language of the Space, if detected by Twitter. Returned as a `BCP47` language tag
@@ -32,7 +32,7 @@ export class SimplifiedSpace extends BaseStructure {
 	 * The list of user IDs that were invited to join as speakers.
 	 * Usually, users in this list are invited to speak via the Invite user option
 	 */
-	invitedUserIds: Array<Snowflake>;
+	invitedUserIds: Array<string>;
 
 	/**
 	 * The current number of users in the Space, including Hosts and Speakers
@@ -51,7 +51,7 @@ export class SimplifiedSpace extends BaseStructure {
 	 * This list contains all the users in `invited_user_ids` in addition to
 	 * any user who requested to speak and was allowed via the Add speaker option
 	 */
-	speakerIds: Array<Snowflake>;
+	speakerIds: Array<string>;
 
 	/**
 	 * Indicates the actual start time of a Space
@@ -71,7 +71,7 @@ export class SimplifiedSpace extends BaseStructure {
 	/**
 	 * The id of the user who created this space
 	 */
-	creatorId: Snowflake | null;
+	creatorId: string | null;
 
 	constructor(client: Client, data: APISpace) {
 		super(client, data);

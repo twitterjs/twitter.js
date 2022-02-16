@@ -13,7 +13,6 @@ import type {
 	GETTweetsSearchStreamResponse,
 	GETUsersMeQuery,
 	GETUsersMeResponse,
-	Snowflake,
 } from 'twitter-types';
 import { Readable } from 'node:stream';
 
@@ -192,7 +191,7 @@ export class Client extends BaseClient {
 				const matchingRules = rawData.matching_rules.reduce((col, rule) => {
 					col.set(rule.id, new MatchingRule(rule));
 					return col;
-				}, new Collection<Snowflake, MatchingRule>());
+				}, new Collection<string, MatchingRule>());
 				this.emit(ClientEvents.FILTERED_TWEET_CREATE, tweet, matchingRules);
 			} catch (error) {
 				// TODO

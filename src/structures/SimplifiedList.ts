@@ -1,6 +1,6 @@
 import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
-import type { APIList, Snowflake } from 'twitter-types';
+import type { APIList } from 'twitter-types';
 import type { UpdateListOptions, UserResolvable } from '../typings';
 
 export class SimplifiedList extends BaseStructure {
@@ -23,7 +23,7 @@ export class SimplifiedList extends BaseStructure {
 
 	memberCount: number | null;
 
-	ownerId: Snowflake | null;
+	ownerId: string | null;
 
 	createdAt: string | null;
 

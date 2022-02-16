@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
 import type { MemberOfListsBookOptions } from '../typings';
-import type { GETUsersIdListMembershipsQuery, GETUsersIdListMembershipsResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdListMembershipsQuery, GETUsersIdListMembershipsResponse } from 'twitter-types';
 
 /**
  * A class for fetching lists in which a user is a member
@@ -13,7 +13,7 @@ export class MemberOfListsBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class MemberOfListsBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} in which the given user is a member
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, List>> {
+	async fetchNextPage(): Promise<Collection<string, List>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class MemberOfListsBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} in which the given user is a member
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, List>> {
+	async fetchPreviousPage(): Promise<Collection<string, List>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
-		const lists = new Collection<Snowflake, List>();
+	async #fetchPages(token?: string): Promise<Collection<string, List>> {
+		const lists = new Collection<string, List>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdListMembershipsQuery = {
 			expansions: queryParameters?.listExpansions,

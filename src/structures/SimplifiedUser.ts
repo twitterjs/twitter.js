@@ -9,7 +9,6 @@ import type {
 	POSTUsersIdBlockingResponse,
 	POSTUsersIdFollowingResponse,
 	POSTUsersIdMutingResponse,
-	Snowflake,
 } from 'twitter-types';
 
 /**
@@ -54,7 +53,7 @@ export class SimplifiedUser extends BaseStructure {
 	/**
 	 * The unique identifier of this user's pinned Tweet
 	 */
-	pinnedTweetId: Snowflake | null;
+	pinnedTweetId: string | null;
 
 	/**
 	 * The URL to the profile image for this user, as shown on the user's profile

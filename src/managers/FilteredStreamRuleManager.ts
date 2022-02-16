@@ -15,14 +15,9 @@ import type {
 	GETTweetsSearchStreamRulesResponse,
 	POSTTweetsSearchStreamRulesJSONBody,
 	POSTTweetsSearchStreamRulesResponse,
-	Snowflake,
 } from 'twitter-types';
 
-export class FilteredStreamRuleManager extends BaseManager<
-	Snowflake,
-	FilteredStreamRuleResolvable,
-	FilteredStreamRule
-> {
+export class FilteredStreamRuleManager extends BaseManager<string, FilteredStreamRuleResolvable, FilteredStreamRule> {
 	/**
 	 * @param client The logged in {@link Client} instance
 	 */
@@ -86,7 +81,7 @@ export class FilteredStreamRuleManager extends BaseManager<
 	 */
 	async create(
 		data: FilteredStreamRuleData | Array<FilteredStreamRuleData>,
-	): Promise<Collection<Snowflake, FilteredStreamRule>> {
+	): Promise<Collection<string, FilteredStreamRule>> {
 		const rules = Array.isArray(data) ? data : [data];
 		const body: POSTTweetsSearchStreamRulesJSONBody = {
 			add: rules,
@@ -99,7 +94,7 @@ export class FilteredStreamRuleManager extends BaseManager<
 			res.data?.reduce((createdRules, rawRule) => {
 				const rule = this._add(rawRule.id, rawRule);
 				return createdRules.set(rule.id, rule);
-			}, new Collection<Snowflake, FilteredStreamRule>()) ?? new Collection<Snowflake, FilteredStreamRule>()
+			}, new Collection<string, FilteredStreamRule>()) ?? new Collection<string, FilteredStreamRule>()
 		);
 	}
 
@@ -113,7 +108,7 @@ export class FilteredStreamRuleManager extends BaseManager<
 	 * // Delete multiple rules
 	 * const data = await client.filteredStreamRules.deleteById(['1488048453506957314', '1488053806785245186']);
 	 */
-	async deleteById(ruleId: Snowflake | Array<Snowflake>): Promise<POSTTweetsSearchStreamRulesResponse> {
+	async deleteById(ruleId: string | Array<string>): Promise<POSTTweetsSearchStreamRulesResponse> {
 		const ids = Array.isArray(ruleId) ? ruleId : [ruleId];
 		const body: POSTTweetsSearchStreamRulesJSONBody = {
 			delete: {
@@ -162,7 +157,7 @@ export class FilteredStreamRuleManager extends BaseManager<
 	 * @param options The options for fetching the rule
 	 * @returns A {@link FilteredStreamRule}
 	 */
-	async #fetchSingleRule(ruleId: Snowflake, options: FetchFilteredStreamRuleOptions): Promise<FilteredStreamRule> {
+	async #fetchSingleRule(ruleId: string, options: FetchFilteredStreamRuleOptions): Promise<FilteredStreamRule> {
 		if (!options.skipCacheCheck) {
 			const cachedRule = this.cache.get(ruleId);
 			if (cachedRule) return cachedRule;
@@ -184,10 +179,10 @@ export class FilteredStreamRuleManager extends BaseManager<
 	 * @returns A {@link Collection} of {@link FilteredStreamRule}
 	 */
 	async #fetchMultipleRules(
-		ruleIds?: Array<Snowflake>,
+		ruleIds?: Array<string>,
 		options?: FetchFilteredStreamRulesOptions,
-	): Promise<Collection<Snowflake, FilteredStreamRule>> {
-		const fetchedRules = new Collection<Snowflake, FilteredStreamRule>();
+	): Promise<Collection<string, FilteredStreamRule>> {
+		const fetchedRules = new Collection<string, FilteredStreamRule>();
 		const query: GETTweetsSearchStreamRulesQuery = {
 			ids: ruleIds,
 		};

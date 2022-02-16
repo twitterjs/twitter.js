@@ -2,9 +2,8 @@ import { Client } from '../../client';
 import { test, expect } from 'vitest';
 import { BaseManager } from '../BaseManager';
 import { BaseStructure } from '../../structures';
-import type { Snowflake } from 'twitter-types';
 
-const id: Snowflake = '1234567890';
+const id = '1234567890';
 const rawData = { id };
 const client = new Client();
 const baseManager = new BaseManager(client, BaseStructure);

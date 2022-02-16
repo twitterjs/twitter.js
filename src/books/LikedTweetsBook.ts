@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
 import type { LikedTweetsBookOptions } from '../typings';
-import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse } from 'twitter-types';
 
 /**
  * A class for fetching tweets liked by a twitter user
@@ -13,7 +13,7 @@ export class LikedTweetsBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class LikedTweetsBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link Tweet} liked by the given user
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, Tweet>> {
+	async fetchNextPage(): Promise<Collection<string, Tweet>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class LikedTweetsBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link Tweet} liked by the given user
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, Tweet>> {
+	async fetchPreviousPage(): Promise<Collection<string, Tweet>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, Tweet>> {
-		const likedTweets = new Collection<Snowflake, Tweet>();
+	async #fetchPages(token?: string): Promise<Collection<string, Tweet>> {
+		const likedTweets = new Collection<string, Tweet>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdLikedTweetsQuery = {
 			expansions: queryParameters?.tweetExpansions,

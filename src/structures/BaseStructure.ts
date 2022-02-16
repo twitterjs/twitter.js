@@ -1,5 +1,4 @@
 import type { Client } from '../client';
-import type { Snowflake } from 'twitter-types';
 import type { BaseStructureData } from '../typings';
 
 /**
@@ -14,7 +13,7 @@ export class BaseStructure {
 	/**
 	 * The unique identifier of the strucutre
 	 */
-	id: Snowflake;
+	id: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance

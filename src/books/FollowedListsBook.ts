@@ -4,7 +4,7 @@ import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
 import type { FollowedListsBookOptions } from '../typings';
-import type { GETUsersIdFollowedListsQuery, GETUsersIdFollowedListsResponse, Snowflake } from 'twitter-types';
+import type { GETUsersIdFollowedListsQuery, GETUsersIdFollowedListsResponse } from 'twitter-types';
 
 /**
  * A class for fetching lists followed by a user
@@ -13,7 +13,7 @@ export class FollowedListsBook extends BaseBook {
 	/**
 	 * The Id of the user this book belongs to
 	 */
-	userId: Snowflake;
+	userId: string;
 
 	/**
 	 * @param client The logged in {@link Client} instance
@@ -30,7 +30,7 @@ export class FollowedListsBook extends BaseBook {
 	 * Fetches the next page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} that the given user follows
 	 */
-	async fetchNextPage(): Promise<Collection<Snowflake, List>> {
+	async fetchNextPage(): Promise<Collection<string, List>> {
 		if (!this._hasMadeInitialRequest) {
 			this._hasMadeInitialRequest = true;
 			return this.#fetchPages();
@@ -43,13 +43,13 @@ export class FollowedListsBook extends BaseBook {
 	 * Fetches the previous page of the book if there is one.
 	 * @returns A {@link Collection} of {@link List} that the given user follows
 	 */
-	async fetchPreviousPage(): Promise<Collection<Snowflake, List>> {
+	async fetchPreviousPage(): Promise<Collection<string, List>> {
 		if (!this._previousToken) throw new CustomError('PAGINATED_RESPONSE_HEAD_REACHED');
 		return this.#fetchPages(this._previousToken);
 	}
 
-	async #fetchPages(token?: string): Promise<Collection<Snowflake, List>> {
-		const followedLists = new Collection<Snowflake, List>();
+	async #fetchPages(token?: string): Promise<Collection<string, List>> {
+		const followedLists = new Collection<string, List>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersIdFollowedListsQuery = {
 			expansions: queryParameters?.listExpansions,

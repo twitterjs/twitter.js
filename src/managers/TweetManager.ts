@@ -25,13 +25,12 @@ import type {
 	POSTUsersIdRetweetsResponse,
 	PUTTweetsIdHiddenJSONBody,
 	PUTTweetsIdHiddenResponse,
-	Snowflake,
 } from 'twitter-types';
 
 /**
  * The manager class that holds API methods for {@link Tweet} objects and stores their cache
  */
-export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet> {
+export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 	/**
 	 * @param client The logged in {@link Client} instance
 	 */
@@ -56,7 +55,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 	 * @param tweetResolvable An Id or instance that can be resolved to a tweet object
 	 * @returns The id of the resolved tweet object
 	 */
-	override resolveId(tweetResolvable: TweetResolvable): Snowflake | null {
+	override resolveId(tweetResolvable: TweetResolvable): string | null {
 		const tweetId = super.resolveId(tweetResolvable);
 		if (typeof tweetId === 'string') return tweetId;
 		if (tweetResolvable instanceof SimplifiedTweet) return tweetResolvable.id;
@@ -238,7 +237,7 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 	 * @param options The options for fetching the tweet
 	 * @returns A {@link Tweet}
 	 */
-	async #fetchSingleTweet(tweetId: Snowflake, options: FetchTweetOptions): Promise<Tweet> {
+	async #fetchSingleTweet(tweetId: string, options: FetchTweetOptions): Promise<Tweet> {
 		if (!options.skipCacheCheck) {
 			const cachedTweet = this.cache.get(tweetId);
 			if (cachedTweet) return cachedTweet;
@@ -263,11 +262,8 @@ export class TweetManager extends BaseManager<Snowflake, TweetResolvable, Tweet>
 	 * @param options The options for fetching the tweets
 	 * @returns A {@link Collection} of {@link Tweet}
 	 */
-	async #fetchMultipleTweets(
-		tweetIds: Array<Snowflake>,
-		options: FetchTweetsOptions,
-	): Promise<Collection<Snowflake, Tweet>> {
-		const fetchedTweets = new Collection<Snowflake, Tweet>();
+	async #fetchMultipleTweets(tweetIds: Array<string>, options: FetchTweetsOptions): Promise<Collection<string, Tweet>> {
+		const fetchedTweets = new Collection<string, Tweet>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETTweetsQuery = {
 			ids: tweetIds,

@@ -26,13 +26,12 @@ import type {
 	POSTUsersIdPinnedListsResponse,
 	PUTListsIdJSONBody,
 	PUTListsIdResponse,
-	Snowflake,
 } from 'twitter-types';
 
 /**
  * The manager class that holds API methods for {@link List} objects and stores their cache
  */
-export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
+export class ListManager extends BaseManager<string, ListResolvable, List> {
 	/**
 	 * @param client The logged in {@link Client} instance
 	 */
@@ -257,7 +256,7 @@ export class ListManager extends BaseManager<Snowflake, ListResolvable, List> {
 	 * @param options The options for fetching the list
 	 * @returns A {@link List}
 	 */
-	async #fetchSingleList(listId: Snowflake, options: FetchListOptions) {
+	async #fetchSingleList(listId: string, options: FetchListOptions) {
 		if (!options.skipCacheCheck) {
 			const cachedList = this.cache.get(listId);
 			if (cachedList) return cachedList;

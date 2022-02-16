@@ -18,7 +18,6 @@ import type {
 	APIUserFieldsParameterType,
 	GETTweetsCountsRecentQuery,
 	GETUsersIdTweetsQuery,
-	Snowflake,
 	GETTweetsSearchRecentQuery,
 } from 'twitter-types';
 
@@ -61,7 +60,7 @@ export interface ClientCredentialsInterface {
 }
 
 export interface ClientEventsMapping {
-	filteredTweetCreate: [tweet: Tweet, matchingRules: Collection<Snowflake, MatchingRule>];
+	filteredTweetCreate: [tweet: Tweet, matchingRules: Collection<string, MatchingRule>];
 	partialError: [partialError: Record<string, unknown>];
 	ready: [client: Client];
 	sampledTweetCreate: [tweet: Tweet];
@@ -403,7 +402,7 @@ export interface TweetsCountBookOptions extends BaseRangeBookOptions {
  * The data to instantiate {@link BaseStructure} with
  */
 export interface BaseStructureData {
-	id: Snowflake;
+	id: string;
 }
 
 /**
@@ -472,7 +471,7 @@ export interface TweetCreateGeoOptions {
 }
 
 export interface TweetCreateMediaOptions {
-	mediaIds?: Array<Snowflake>;
+	mediaIds?: Array<string>;
 	taggedUsers?: Array<UserResolvable>;
 }
 
