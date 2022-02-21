@@ -41,7 +41,8 @@ export const defaultClientOptions: ClientOptions = {
 		tweetFields: APITweetFieldsParameters.filter(
 			f => !['promoted_metrics', 'organic_metrics', 'non_public_metrics'].includes(f),
 		),
-		spaceFields: APISpaceFieldsParameters,
+		// TODO: remove this once twitter fixes a bug where requesting this field without `OAuth 2.0 Authorization Code with PKCE` results in an error instead of a partial error
+		spaceFields: APISpaceFieldsParameters.filter(f => f !== 'subscriber_count'),
 		mediaFields: APIMediaFieldsParameters,
 		placeFields: APIPlaceFieldsParameters,
 		pollFields: APIPollFieldsParameters,

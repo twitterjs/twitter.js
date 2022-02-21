@@ -73,6 +73,14 @@ export class SimplifiedSpace extends BaseStructure {
 	 */
 	creatorId: string | null;
 
+	// TODO: this field is only available when the request is made using `OAuth 2.0 Authorization Code with PKCE`.
+	// API returns an error instead of a partial error if the request is made using some other authentication method.
+	// Open an issue at https://twittercommunity.com
+	/**
+	 * The number of people who have either purchased a ticket or set a reminder for this space
+	 */
+	subscriberCount: number | null;
+
 	constructor(client: Client, data: APISpace) {
 		super(client, data);
 		this.state = data.state;
@@ -88,5 +96,6 @@ export class SimplifiedSpace extends BaseStructure {
 		this.startedAt = data.started_at ? new Date(data.started_at) : null;
 		this.title = data.title ?? null;
 		this.updatedAt = data.updated_at ? new Date(data.updated_at) : null;
+		this.subscriberCount = data.subscriber_count ?? null;
 	}
 }
