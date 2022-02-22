@@ -139,10 +139,10 @@ export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 
 	/**
 	 * Fetches tweets shared in a space.
-	 *
-	 * // TODO: This needs `OAuth 2.0 Authorization Code with PKCE` auth method support
 	 * @param options Option for fetching tweets shared in a space
 	 * @returns A {@link Collection} of {@link Tweet}
+	 * @example
+	 * const tweets = await client.spaces.fetchSharedTweets({ space: 'a1b2c3d4e5f6' });
 	 */
 	async fetchSharedTweets(options: FetchSpaceSharedTweetsOptions): Promise<Collection<string, Tweet>> {
 		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
