@@ -1,11 +1,12 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
 import { CustomTypeError } from '../errors';
-import { RequestData, Space } from '../structures';
+import { RequestData, Space, type Tweet } from '../structures';
 import type { Client } from '../client';
 import type {
 	FetchSpaceOptions,
 	FetchSpacesByCreatorIdsOptions,
+	FetchSpaceSharedTweetsOptions,
 	FetchSpacesOptions,
 	SearchSpacesOptions,
 	SpaceManagerFetchResult,
@@ -17,6 +18,8 @@ import type {
 	GETSpacesByCreatorIdsResponse,
 	GETSpacesIdQuery,
 	GETSpacesIdResponse,
+	GETSpacesIdTweetsQuery,
+	GETSpacesIdTweetsResponse,
 	GETSpacesQuery,
 	GETSpacesResponse,
 	GETSpacesSearchQuery,
@@ -132,6 +135,44 @@ export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 			fetchedSpaces.set(space.id, space);
 		}
 		return fetchedSpaces;
+	}
+
+	/**
+	 * Fetches tweets shared in a space.
+	 *
+	 * // TODO: This needs `OAuth 2.0 Authorization Code with PKCE` auth method support
+	 * @param options Option for fetching tweets shared in a space
+	 * @returns A {@link Collection} of {@link Tweet}
+	 */
+	async fetchSharedTweets(options: FetchSpaceSharedTweetsOptions): Promise<Collection<string, Tweet>> {
+		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
+		const spaceId = this.resolveId(options.space);
+		if (!spaceId) throw new CustomTypeError('SPACE_RESOLVE_ID');
+		const fetchedTweets = new Collection<string, Tweet>();
+		const queryParameters = this.client.options.queryParameters;
+		const query: GETSpacesIdTweetsQuery = {
+			expansions: queryParameters?.tweetExpansions,
+			max_results: options.maxResults,
+			'media.fields': queryParameters?.mediaFields,
+			'place.fields': queryParameters?.placeFields,
+			'poll.fields': queryParameters?.pollFields,
+			'tweet.fields': queryParameters?.tweetFields,
+			'user.fields': queryParameters?.userFields,
+		};
+		const requestData = new RequestData({ query });
+		const res: GETSpacesIdTweetsResponse = await this.client._api.spaces(spaceId).tweets.get(requestData);
+		if (res.meta.result_count === 0) return fetchedTweets;
+		const rawTweets = res.data;
+		const rawTweetsIncludes = res.includes;
+		for (const rawTweet of rawTweets) {
+			const tweet = this.client.tweets._add(
+				rawTweet.id,
+				{ data: rawTweet, includes: rawTweetsIncludes },
+				options.cacheAfterFetching,
+			);
+			fetchedTweets.set(tweet.id, tweet);
+		}
+		return fetchedTweets;
 	}
 
 	/**
