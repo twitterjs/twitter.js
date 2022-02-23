@@ -3,15 +3,7 @@ import { BaseManager } from './BaseManager';
 import { CustomError, CustomTypeError } from '../errors';
 import { RequestData, User, Tweet, SimplifiedUser, SimplifiedTweet } from '../structures';
 import type { Client } from '../client';
-import type {
-	UserManagerFetchByUsernameResult,
-	UserManagerFetchResult,
-	UserResolvable,
-	FetchUserByUsernameOptions,
-	FetchUserOptions,
-	FetchUsersByUsernamesOptions,
-	FetchUsersOptions,
-} from '../typings';
+import type { UserResolvable, BaseFetchOptions } from '../typings';
 import type {
 	DELETEUsersSourceUserIdBlockingTargetUserIdResponse,
 	DELETEUsersSourceUserIdFollowingTargetUserIdResponse,
@@ -72,71 +64,70 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Fetches users from Twitter.
-	 * @param options The options for fetching users
+	 * Fetches one or more users.
+	 * @param userOrUsers The user or users to fetch
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link User} or a {@link Collection} of them
 	 * @example
 	 * // Fetch a single user
-	 * const user = await client.users.fetch({ user: '1253316035878375424' });
+	 * const user = await client.users.fetch('1253316035878375424');
 	 *
 	 * // Fetch multiple users
-	 * const users = await client.users.fetch({ users: ['1253316035878375424', '6253282'] });
+	 * const users = await client.users.fetch(['1253316035878375424', '6253282']);
 	 */
-	async fetch<T extends FetchUserOptions | FetchUsersOptions>(options: T): Promise<UserManagerFetchResult<T>> {
-		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-		if ('user' in options) {
-			const userId = this.resolveId(options.user);
-			if (!userId) throw new CustomError('USER_RESOLVE_ID', 'fetch');
-			return this.#fetchSingleUser(userId, options) as Promise<UserManagerFetchResult<T>>;
-		}
-		if ('users' in options) {
-			if (!Array.isArray(options.users)) throw new CustomTypeError('INVALID_TYPE', 'users', 'array', true);
-			const userIds = options.users.map(user => {
+	async fetch<U extends UserResolvable | Array<UserResolvable>>(
+		userOrUsers: U,
+		options?: FetchUserOrUsersOptions<U>,
+	): Promise<UserManagerFetchResult<U>> {
+		if (Array.isArray(userOrUsers)) {
+			const userIds = userOrUsers.map(user => {
 				const userId = this.resolveId(user);
 				if (!userId) throw new CustomError('USER_RESOLVE_ID', 'fetch');
 				return userId;
 			});
-			return this.#fetchMultipleUsers(userIds, options) as Promise<UserManagerFetchResult<T>>;
+			// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+			return this.#fetchMultipleUsersByIds(userIds, options);
 		}
-		throw new CustomError('INVALID_FETCH_OPTIONS');
+		const userId = this.resolveId(userOrUsers);
+		if (!userId) throw new CustomError('USER_RESOLVE_ID', 'fetch');
+		// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+		return this.#fetchSingleUserById(userId, options);
 	}
 
 	/**
-	 * Fetches users from Twitter using their usernames.
+	 * Fetches one or more users using their usernames.
 	 *
 	 * **⚠ Usernames are subject to change, prefer using {@link UserManager.fetch}**
-	 * @param options The options for fetching users
+	 * @param usernameOrUsernames The username(s) of user or users to fetch
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link User} or a {@link Collection} of them
 	 * @example
 	 * // Fetch a single user
-	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const user = await client.users.fetchByUsername('iShiibi');
 	 *
 	 * // Fetch multiple users
-	 * const users = await client.users.fetchByUsername({ usernames: ['iShiibi', 'TwitterAPI'] });
+	 * const users = await client.users.fetchByUsername(['iShiibi', 'TwitterAPI']);
 	 */
-	async fetchByUsername<T extends FetchUserByUsernameOptions | FetchUsersByUsernamesOptions>(
-		options: T,
-	): Promise<UserManagerFetchByUsernameResult<T>> {
-		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-		if ('username' in options) {
-			const username = options.username;
-			if (typeof username !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
-			return this.#fetchSingleUserByUsername(username, options) as Promise<UserManagerFetchByUsernameResult<T>>;
-		}
-		if ('usernames' in options) {
-			if (!Array.isArray(options.usernames)) throw new CustomTypeError('INVALID_TYPE', 'usernames', 'array', true);
-			const usernames = options.usernames.map(username => {
+	async fetchByUsername<U extends string | Array<string>>(
+		usernameOrUsernames: U,
+		options?: FetchUserOrUsersByUsernameOptions<U>,
+	): Promise<UserManagerFetchByUsernameResult<U>> {
+		if (Array.isArray(usernameOrUsernames)) {
+			const usernames = usernameOrUsernames.map(username => {
 				if (typeof username !== 'string')
 					throw new CustomTypeError('INVALID_TYPE', 'username in the usernames array', 'string', false);
 				return username;
 			});
-			return this.#fetchMultipleUsersByUsernames(usernames, options) as Promise<UserManagerFetchByUsernameResult<T>>;
+			// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+			return this.#fetchMultipleUsersByUsernames(usernames, options);
 		}
-		throw new CustomError('INVALID_FETCH_OPTIONS');
+		if (typeof usernameOrUsernames !== 'string') throw new CustomTypeError('INVALID_TYPE', 'username', 'string', false);
+		// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+		return this.#fetchSingleUserByUsername(usernameOrUsernames, options);
 	}
 
 	/**
-	 * Follows a user on twitter.
+	 * Follows a user.
 	 * @param user The user to follow
 	 * @returns An object containing `following` and `pending_follow` fields
 	 * @see https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/post-users-source_user_id-following
@@ -158,7 +149,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Unfollows a user on twitter.
+	 * Unfollows a user.
 	 * @param user The user to unfollow
 	 * @returns An object containing a `following` field
 	 * @see https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/delete-users-source_id-following
@@ -180,7 +171,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Blocks a user on twitter.
+	 * Blocks a user.
 	 * @param user The user to block
 	 * @returns An object containing a `blocking` field
 	 * @example
@@ -201,7 +192,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Unblocks a user on twitter.
+	 * Unblocks a user.
 	 * @param user The user to unblock
 	 * @returns An object containing a `blocking` field
 	 * @example
@@ -222,7 +213,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Mutes a user on twitter.
+	 * Mutes a user.
 	 * @param user The user to mute
 	 * @returns An object containing a `muting` field
 	 * @example
@@ -243,7 +234,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	}
 
 	/**
-	 * Unmutes a user on twitter.
+	 * Unmutes a user.
 	 * @param user The user to unmute
 	 * @returns An object containing a `muting` field
 	 * @example
@@ -266,11 +257,11 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	/**
 	 * Fetches a single user by using its id.
 	 * @param userId The id of the user to fetch
-	 * @param options The options for fetching the user
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link User}
 	 */
-	async #fetchSingleUser(userId: string, options: FetchUserOptions): Promise<User> {
-		if (!options.skipCacheCheck) {
+	async #fetchSingleUserById(userId: string, options?: FetchUserOptions): Promise<User> {
+		if (!options?.skipCacheCheck) {
 			const cachedUser = this.cache.get(userId);
 			if (cachedUser) return cachedUser;
 		}
@@ -282,16 +273,19 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETUsersIdResponse = await this.client._api.users(userId).get(requestData);
-		return this._add(res.data.id, res, options.cacheAfterFetching);
+		return this._add(res.data.id, res, options?.cacheAfterFetching);
 	}
 
 	/**
 	 * Fetches multiple users by using their ids.
 	 * @param userIds The ids of the users to fetch
-	 * @param options The options for fetching the users
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Collection} of {@link User}
 	 */
-	async #fetchMultipleUsers(userIds: Array<string>, options: FetchUsersOptions): Promise<Collection<string, User>> {
+	async #fetchMultipleUsersByIds(
+		userIds: Array<string>,
+		options?: FetchUsersOptions,
+	): Promise<Collection<string, User>> {
 		const fetchedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETUsersQuery = {
@@ -305,7 +299,7 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 		const rawUsers = res.data;
 		const rawUsersIncludes = res.includes;
 		for (const rawUser of rawUsers) {
-			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
+			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options?.cacheAfterFetching);
 			fetchedUsers.set(user.id, user);
 		}
 		return fetchedUsers;
@@ -314,11 +308,11 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 	/**
 	 * Fetches a single user by using its username.
 	 * @param username The username of the user to fetch
-	 * @param options The options for fethcing the user
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link User}
 	 */
-	async #fetchSingleUserByUsername(username: string, options: FetchUserByUsernameOptions): Promise<User> {
-		if (!options.skipCacheCheck) {
+	async #fetchSingleUserByUsername(username: string, options?: FetchUserByUsernameOptions): Promise<User> {
+		if (!options?.skipCacheCheck) {
 			const cachedUser = this.cache.find(user => user.username === username);
 			if (cachedUser) return cachedUser;
 		}
@@ -330,18 +324,18 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETUsersByUsernameUsernameResponse = await this.client._api.users.by.username(username).get(requestData);
-		return this._add(res.data.id, res, options.cacheAfterFetching);
+		return this._add(res.data.id, res, options?.cacheAfterFetching);
 	}
 
 	/**
 	 * Fetches multiple users by using their usernames.
 	 * @param usernames The usernames of the users to fetch
-	 * @param options The options for fetching the users
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Collection} of {@link User}
 	 */
 	async #fetchMultipleUsersByUsernames(
 		usernames: Array<string>,
-		options: FetchUsersByUsernamesOptions,
+		options?: FetchUsersByUsernamesOptions,
 	): Promise<Collection<string, User>> {
 		const fetchedUsers = new Collection<string, User>();
 		const queryParameters = this.client.options.queryParameters;
@@ -356,9 +350,51 @@ export class UserManager extends BaseManager<string, UserResolvable, User> {
 		const rawUsers = res.data;
 		const rawUsersIncludes = res.includes;
 		for (const rawUser of rawUsers) {
-			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options.cacheAfterFetching);
+			const user = this._add(rawUser.id, { data: rawUser, includes: rawUsersIncludes }, options?.cacheAfterFetching);
 			fetchedUsers.set(user.id, user);
 		}
 		return fetchedUsers;
 	}
 }
+
+/**
+ * Options used to fetch a single user
+ */
+export type FetchUserOptions = BaseFetchOptions;
+
+/**
+ * Options used to fetch multiple users
+ */
+export type FetchUsersOptions = Omit<BaseFetchOptions, 'skipCacheCheck'>;
+
+/**
+ * Options used to fetch a single user by its username
+ */
+export type FetchUserByUsernameOptions = BaseFetchOptions;
+
+/**
+ * Options used to fetch multiple users by their usernames
+ */
+export type FetchUsersByUsernamesOptions = Omit<BaseFetchOptions, 'skipCacheCheck'>;
+
+/**
+ * Options used to fetch one or more users
+ */
+export type FetchUserOrUsersOptions<U extends UserResolvable | Array<UserResolvable>> = U extends UserResolvable
+	? FetchUserOptions
+	: FetchUsersOptions;
+
+export type UserManagerFetchResult<U extends UserResolvable | Array<UserResolvable>> = U extends UserResolvable
+	? User
+	: Collection<string, User>;
+
+/**
+ * Options used to fetch one or more users by using their usernames
+ */
+export type FetchUserOrUsersByUsernameOptions<U extends string | Array<string>> = U extends string
+	? FetchUserByUsernameOptions
+	: FetchUsersByUsernamesOptions;
+
+export type UserManagerFetchByUsernameResult<U extends string | Array<string>> = U extends string
+	? User
+	: Collection<string, User>;
