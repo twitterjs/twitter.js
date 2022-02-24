@@ -1,4 +1,4 @@
-import type { ClientOptions } from '../typings';
+import type { ClientOptions } from '../client';
 import {
 	APIListExpansionsParameters,
 	APIListFieldsParameters,

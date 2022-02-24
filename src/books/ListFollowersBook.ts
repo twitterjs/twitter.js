@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { ListFollowersBookOptions } from '../typings';
 import type { GETListsIdFollowersQuery, GETUsersIdFollowersResponse } from 'twitter-types';
+import type { ListResolvable } from '../managers';
 
 /**
  * A class for fetching users who are followers of a list
@@ -72,4 +72,8 @@ export class ListFollowersBook extends BaseBook {
 		}
 		return listFollowers;
 	}
+}
+
+export interface ListFollowersBookOptions extends BaseBookOptions {
+	list: ListResolvable;
 }

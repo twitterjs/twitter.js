@@ -1,7 +1,7 @@
 import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
 import type { APIList } from 'twitter-types';
-import type { UpdateListOptions, UserResolvable } from '../typings';
+import type { UpdateListOptions, UserResolvable } from '../managers';
 
 export class SimplifiedList extends BaseStructure {
 	/**

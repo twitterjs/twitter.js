@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseManager } from './BaseManager';
+import { BaseManager, type BaseFetchOptions } from './BaseManager';
 import { RequestData, SimplifiedTweet, Tweet, TweetPayload } from '../structures';
 import { CustomError } from '../errors';
 import type { Client } from '../client';
-import type { TweetResolvable, TweetCreateOptions, BaseFetchOptions } from '../typings';
 import type {
+	APITweetReplySettings,
 	DELETETweetsIdResponse,
 	DELETEUsersIdLikesTweetIdResponse,
 	DELETEUsersIdRetweetsSourceTweetIdResponse,
@@ -20,6 +20,7 @@ import type {
 	PUTTweetsIdHiddenJSONBody,
 	PUTTweetsIdHiddenResponse,
 } from 'twitter-types';
+import type { UserResolvable } from './UserManager';
 
 /**
  * The manager class that holds API methods for {@link Tweet} objects and stores their cache
@@ -328,3 +329,35 @@ export type FetchTweetOrTweetsOptions<T extends TweetResolvable | Array<TweetRes
 export type TweetManagerFetchResult<T extends TweetResolvable | Array<TweetResolvable>> = T extends TweetResolvable
 	? Tweet
 	: Collection<string, Tweet>;
+
+/**
+ * Options used to craete a tweet
+ */
+export interface TweetCreateOptions {
+	directMessageDeepLink?: string;
+	forSuperFollowersOnly?: boolean;
+	geo?: TweetCreateGeoOptions;
+	media?: TweetCreateMediaOptions;
+	poll?: TweetCreatePollOptions;
+	quoteTweet?: TweetResolvable;
+	excludeReplyUsers?: Array<UserResolvable>;
+	inReplyToTweet?: TweetResolvable;
+	replySettings?: APITweetReplySettings;
+	text?: string;
+}
+
+export interface TweetCreateGeoOptions {
+	placeId: string;
+}
+
+export interface TweetCreateMediaOptions {
+	mediaIds?: Array<string>;
+	taggedUsers?: Array<UserResolvable>;
+}
+
+export interface TweetCreatePollOptions {
+	durationMinutes: number;
+	options: Array<string>;
+}
+
+export type TweetResolvable = Tweet | SimplifiedTweet | string;

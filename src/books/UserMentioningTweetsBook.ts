@@ -1,10 +1,10 @@
 import { Collection } from '../util';
 import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
-import { BaseRangeBook } from './BaseRangeBook';
+import { BaseRangeBook, type BaseRangeBookOptions } from './BaseRangeBook';
 import type { Client } from '../client';
-import type { UserMentioningTweetsBookOptions } from '../typings';
 import type { GETUsersIdMentionsQuery, GETUsersIdMentionsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching tweets that mention a twitter user
@@ -79,4 +79,8 @@ export class UserMentioningTweetsBook extends BaseRangeBook {
 		}
 		return tweets;
 	}
+}
+
+export interface UserMentioningTweetsBookOptions extends BaseRangeBookOptions {
+	user: UserResolvable;
 }

@@ -2,11 +2,11 @@ import { CustomError } from '../errors';
 import type { Client } from '../client';
 import type { POSTTweetsJSONBody } from 'twitter-types';
 import type {
+	TweetCreateOptions,
 	TweetCreateGeoOptions,
 	TweetCreateMediaOptions,
-	TweetCreateOptions,
 	TweetCreatePollOptions,
-} from '../typings';
+} from '../managers';
 
 export class TweetPayload {
 	options: TweetCreateOptions;

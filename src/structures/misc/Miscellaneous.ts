@@ -1,5 +1,4 @@
 import { CustomError } from '../../errors';
-import type { ClientCredentialsInterface, RequestDataOptions } from '../../typings';
 import type {
 	APIPlaceGeo,
 	APIPlaceGeoBoundingBox,
@@ -15,6 +14,28 @@ import type {
 	GETTweetsCountsRecentQuery,
 	GETTweetsCountsRecentResponse,
 } from 'twitter-types';
+
+export interface RequestDataOptions<Q, B> {
+	/**
+	 * The query for the request
+	 */
+	query?: Q;
+
+	/**
+	 * The body for the request
+	 */
+	body?: B;
+
+	/**
+	 * Whether the request results in a persisent http connection
+	 */
+	isStreaming?: boolean;
+
+	/**
+	 * Whether the request should be authorized with user context authorization
+	 */
+	isUserContext?: boolean;
+}
 
 /**
  * The class for storing data required for generating an API request
@@ -133,6 +154,14 @@ export class PlaceGeo {
 		this.bbox = data.bbox;
 		this.properties = data.properties;
 	}
+}
+
+export interface ClientCredentialsInterface {
+	consumerKey: string;
+	consumerSecret: string;
+	accessToken: string;
+	accessTokenSecret: string;
+	bearerToken: string;
 }
 
 export class ClientCredentials {

@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
-import type { FollowedListsBookOptions } from '../typings';
 import type { GETUsersIdFollowedListsQuery, GETUsersIdFollowedListsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching lists followed by a user
@@ -74,4 +74,8 @@ export class FollowedListsBook extends BaseBook {
 		}
 		return followedLists;
 	}
+}
+
+export interface FollowedListsBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

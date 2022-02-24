@@ -1,7 +1,7 @@
 import { Collection } from '../util';
-import { BaseManager } from './BaseManager';
+import { BaseManager, type BaseFetchOptions } from './BaseManager';
 import { CustomError, CustomTypeError } from '../errors';
-import { RequestData, Space, type Tweet } from '../structures';
+import { RequestData, type SimplifiedSpace, Space } from '../structures';
 import type { Client } from '../client';
 import type {
 	GETSpacesByCreatorIdsQuery,
@@ -15,6 +15,7 @@ import type {
 	GETSpacesSearchQuery,
 	GETSpacesSearchResponse,
 } from 'twitter-types';
+import type { UserResolvable } from './UserManager';
 
 /**
  * The manager class that holds API methods for {@link Space} objects and stores their cache
@@ -293,3 +294,5 @@ export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCh
 	 */
 	maxResults?: number;
 }
+
+export type SpaceResolvable = Space | SimplifiedSpace | string;

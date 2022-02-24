@@ -1,5 +1,4 @@
 import type { Client } from '../client';
-import type { BaseStructureData } from '../typings';
 
 /**
  * The base class for all structures
@@ -24,4 +23,11 @@ export class BaseStructure {
 		this.client = client;
 		this.id = data.id;
 	}
+}
+
+/**
+ * The data to instantiate {@link BaseStructure} with
+ */
+export interface BaseStructureData {
+	id: string;
 }

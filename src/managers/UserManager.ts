@@ -1,9 +1,8 @@
 import { Collection } from '../util';
-import { BaseManager } from './BaseManager';
+import { BaseManager, type BaseFetchOptions } from './BaseManager';
 import { CustomError, CustomTypeError } from '../errors';
 import { RequestData, User, Tweet, SimplifiedUser, SimplifiedTweet } from '../structures';
 import type { Client } from '../client';
-import type { UserResolvable, BaseFetchOptions } from '../typings';
 import type {
 	DELETEUsersSourceUserIdBlockingTargetUserIdResponse,
 	DELETEUsersSourceUserIdFollowingTargetUserIdResponse,
@@ -398,3 +397,5 @@ export type FetchUserOrUsersByUsernameOptions<U extends string | Array<string>> 
 export type UserManagerFetchByUsernameResult<U extends string | Array<string>> = U extends string
 	? User
 	: Collection<string, User>;
+
+export type UserResolvable = User | SimplifiedUser | Tweet | SimplifiedTweet | string;

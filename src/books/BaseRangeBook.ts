@@ -1,6 +1,6 @@
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import type { Client } from '../client';
-import type { BaseRangeBookOptions } from '../typings';
+import type { TweetResolvable } from '../managers';
 
 export class BaseRangeBook extends BaseBook {
 	/**
@@ -34,4 +34,26 @@ export class BaseRangeBook extends BaseBook {
 		this.startTimestamp = (options.startTime && new Date(options.startTime).getTime()) ?? null;
 		this.endTimestamp = (options.endTime && new Date(options.endTime).getTime()) ?? null;
 	}
+}
+
+export interface BaseRangeBookOptions extends BaseBookOptions {
+	/**
+	 * Only return tweets that were created at or after this time
+	 */
+	startTime?: number | Date;
+
+	/**
+	 * Only return tweets that were created at or before this time
+	 */
+	endTime?: number | Date;
+
+	/**
+	 * Only return tweets that were created after this tweet
+	 */
+	afterTweet?: TweetResolvable;
+
+	/**
+	 * Only return tweets that were created before this tweet
+	 */
+	beforeTweet?: TweetResolvable;
 }

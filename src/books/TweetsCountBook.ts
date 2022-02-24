@@ -1,8 +1,7 @@
 import { CustomError } from '../errors';
-import { BaseRangeBook } from './BaseRangeBook';
+import { BaseRangeBook, type BaseRangeBookOptions } from './BaseRangeBook';
 import { RequestData, TweetCountBucket } from '../structures';
 import type { Client } from '../client';
-import type { TweetsCountBookOptions } from '../typings';
 import type { GETTweetsCountsRecentQuery, GETTweetsCountsRecentResponse } from 'twitter-types';
 
 /**
@@ -65,4 +64,16 @@ export class TweetsCountBook extends BaseRangeBook {
 		}
 		return tweetCountBuckets;
 	}
+}
+
+export interface TweetsCountBookOptions extends BaseRangeBookOptions {
+	/**
+	 * The query for matching tweets
+	 */
+	query: string;
+
+	/**
+	 * The granularity of the {@link TweetCountBucket}
+	 */
+	granularity?: GETTweetsCountsRecentQuery['granularity'];
 }

@@ -1,5 +1,5 @@
 import type { Response } from 'undici';
-import type { ClientOptions } from '../typings';
+import type { ClientOptions } from '../client';
 
 /**
  * Checks whether a given key is present in a given object.

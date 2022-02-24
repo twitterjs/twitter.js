@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
-import type { OwnedListsBookOptions } from '../typings';
 import type { GETUsersIdOwnedListsQuery, GETUsersIdOwnedListsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching lists owned by a user
@@ -72,4 +72,8 @@ export class OwnedListsBook extends BaseBook {
 		}
 		return ownedLists;
 	}
+}
+
+export interface OwnedListsBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

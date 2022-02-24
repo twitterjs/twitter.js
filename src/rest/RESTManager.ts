@@ -7,7 +7,7 @@ import { APIRequest } from './APIRequest';
 import { RequestHandler } from './RequestHandler';
 import type { Client } from '../client';
 import type { Response } from 'undici';
-import type { ExtendedRequestData } from '../typings';
+import type { RequestData } from '../structures';
 
 /**
  * Manager class for the rest API
@@ -90,4 +90,8 @@ export class RESTManager {
 		}
 		return handler.push(apiRequest);
 	}
+}
+
+export interface ExtendedRequestData<Q, B> extends RequestData<Q, B> {
+	route: string;
 }

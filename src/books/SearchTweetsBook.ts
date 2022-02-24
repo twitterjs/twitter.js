@@ -1,10 +1,9 @@
 import { Collection } from '../util';
 import { CustomError } from '../errors';
 import { RequestData } from '../structures';
-import { BaseRangeBook } from './BaseRangeBook';
+import { BaseRangeBook, type BaseRangeBookOptions } from './BaseRangeBook';
 import type { Client } from '../client';
 import type { Tweet } from '../structures';
-import type { SearchTweetsBookOptions } from '../typings';
 import type { GETTweetsSearchRecentQuery, GETTweetsSearchRecentResponse } from 'twitter-types';
 
 /**
@@ -76,4 +75,13 @@ export class SearchTweetsBook extends BaseRangeBook {
 		}
 		return tweets;
 	}
+}
+
+export interface SearchTweetsBookOptions extends BaseRangeBookOptions {
+	query: string;
+	/**
+	 * The order in which tweets should be returned
+	 * @default 'recency'
+	 */
+	sortOrder: GETTweetsSearchRecentQuery['sort_order'];
 }
