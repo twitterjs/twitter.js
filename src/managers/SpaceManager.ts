@@ -1,7 +1,7 @@
 import { Collection } from '../util';
 import { BaseManager, type BaseFetchOptions } from './BaseManager';
 import { CustomError, CustomTypeError } from '../errors';
-import { RequestData, type SimplifiedSpace, Space } from '../structures';
+import { RequestData, type SimplifiedSpace, Space, type Tweet } from '../structures';
 import type { Client } from '../client';
 import type {
 	GETSpacesByCreatorIdsQuery,
