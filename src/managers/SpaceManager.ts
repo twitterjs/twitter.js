@@ -1,9 +1,10 @@
 import { Collection } from '../util';
 import { BaseManager } from './BaseManager';
-import { CustomTypeError } from '../errors';
-import { RequestData, Space } from '../structures';
+import { CustomError, CustomTypeError } from '../errors';
+import { RequestData, Space, type Tweet } from '../structures';
 import type { Client } from '../client';
 import type {
+	BaseFetchOptions,
 	FetchSpaceOptions,
 	FetchSpacesByCreatorIdsOptions,
 	FetchSpacesOptions,
@@ -17,6 +18,8 @@ import type {
 	GETSpacesByCreatorIdsResponse,
 	GETSpacesIdQuery,
 	GETSpacesIdResponse,
+	GETSpacesIdTweetsQuery,
+	GETSpacesIdTweetsResponse,
 	GETSpacesQuery,
 	GETSpacesResponse,
 	GETSpacesSearchQuery,
@@ -135,6 +138,47 @@ export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 	}
 
 	/**
+	 * Fetches tweets shared in a space.
+	 * @param space The space whose shared tweets are to be fetched
+	 * @param options An object containing optional parameters to apply
+	 * @returns A {@link Collection} of {@link Tweet}
+	 * @example
+	 * const tweets = await client.spaces.fetchSharedTweets('1DXxyRYNejbKM');
+	 */
+	async fetchSharedTweets(
+		space: SpaceResolvable,
+		options?: FetchSpaceSharedTweetsOptions,
+	): Promise<Collection<string, Tweet>> {
+		const spaceId = this.resolveId(space);
+		if (!spaceId) throw new CustomError('SPACE_RESOLVE_ID');
+		const fetchedTweets = new Collection<string, Tweet>();
+		const queryParameters = this.client.options.queryParameters;
+		const query: GETSpacesIdTweetsQuery = {
+			expansions: queryParameters?.tweetExpansions,
+			max_results: options?.maxResults,
+			'media.fields': queryParameters?.mediaFields,
+			'place.fields': queryParameters?.placeFields,
+			'poll.fields': queryParameters?.pollFields,
+			'tweet.fields': queryParameters?.tweetFields,
+			'user.fields': queryParameters?.userFields,
+		};
+		const requestData = new RequestData({ query });
+		const res: GETSpacesIdTweetsResponse = await this.client._api.spaces(spaceId).tweets.get(requestData);
+		if (res.meta.result_count === 0) return fetchedTweets;
+		const rawTweets = res.data;
+		const rawTweetsIncludes = res.includes;
+		for (const rawTweet of rawTweets) {
+			const tweet = this.client.tweets._add(
+				rawTweet.id,
+				{ data: rawTweet, includes: rawTweetsIncludes },
+				options?.cacheAfterFetching,
+			);
+			fetchedTweets.set(tweet.id, tweet);
+		}
+		return fetchedTweets;
+	}
+
+	/**
 	 * Fetches a single space by id.
 	 * @param spaceId The id of the space to fetch
 	 * @param options The options for fetching the space
@@ -181,4 +225,14 @@ export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 		}
 		return fetchedSpaces;
 	}
+}
+
+/**
+ * Options used to fetch tweets shared in a space
+ */
+export interface FetchSpaceSharedTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
+	/**
+	 * The maximum number of tweets to fetch
+	 */
+	maxResults?: number;
 }
