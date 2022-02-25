@@ -143,7 +143,7 @@ export class SpaceManager extends BaseManager<string, SpaceResolvable, Space> {
 	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Collection} of {@link Tweet}
 	 * @example
-	 * const tweets = await client.spaces.fetchSharedTweets('a1b2c3d4e5f6');
+	 * const tweets = await client.spaces.fetchSharedTweets('1DXxyRYNejbKM');
 	 */
 	async fetchSharedTweets(
 		space: SpaceResolvable,
