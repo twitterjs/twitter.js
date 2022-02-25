@@ -204,21 +204,6 @@ export interface SearchSpacesOptions extends Omit<BaseFetchOptions, 'skipCacheCh
 }
 
 /**
- * The options used to fetch tweets shared in a space
- */
-export interface FetchSpaceSharedTweetsOptions extends Omit<BaseFetchOptions, 'skipCacheCheck'> {
-	/**
-	 * The space whose shared tweets are to be fetched
-	 */
-	space: SpaceResolvable;
-
-	/**
-	 * The maximum number of tweets to fetch
-	 */
-	maxResults?: number;
-}
-
-/**
  * Options used to fetch a single list
  */
 export interface FetchListOptions extends BaseFetchOptions {

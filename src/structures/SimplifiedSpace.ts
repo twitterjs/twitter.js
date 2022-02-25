@@ -1,7 +1,7 @@
 import { BaseStructure } from './BaseStructure';
 import type { Client } from '../client';
 import type { APISpace } from 'twitter-types';
-import type { FetchSpaceSharedTweetsOptions } from '../typings';
+import type { FetchSpaceSharedTweetsOptions } from '../managers';
 
 export class SimplifiedSpace extends BaseStructure {
 	/**
@@ -102,10 +102,10 @@ export class SimplifiedSpace extends BaseStructure {
 
 	/**
 	 * Fetches tweets shared in this space.
-	 * @param options Option for fetching tweets shared in a space
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Collection} of {@link Tweet}
 	 */
-	async fetchSharedTweets(options: FetchSpaceSharedTweetsOptions) {
-		return this.client.spaces.fetchSharedTweets({ ...options, space: this.id });
+	async fetchSharedTweets(options?: FetchSpaceSharedTweetsOptions) {
+		return this.client.spaces.fetchSharedTweets(this.id, options);
 	}
 }
