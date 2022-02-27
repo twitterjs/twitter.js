@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { SpaceTicketBuyersBookOptions } from '../typings';
 import type { GETSpacesIdBuyersQuery, GETSpacesIdBuyersResponse } from 'twitter-types';
+import type { SpaceResolvable } from '../managers';
 
 /**
  * A class for fetching users who purchased a ticket for a space
@@ -71,4 +71,8 @@ export class SpaceTicketBuyersBook extends BaseBook {
 		}
 		return buyers;
 	}
+}
+
+export interface SpaceTicketBuyersBookOptions extends BaseBookOptions {
+	space: SpaceResolvable;
 }

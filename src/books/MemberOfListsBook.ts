@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
-import type { MemberOfListsBookOptions } from '../typings';
 import type { GETUsersIdListMembershipsQuery, GETUsersIdListMembershipsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching lists in which a user is a member
@@ -74,4 +74,8 @@ export class MemberOfListsBook extends BaseBook {
 		}
 		return lists;
 	}
+}
+
+export interface MemberOfListsBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

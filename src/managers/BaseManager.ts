@@ -1,6 +1,5 @@
 import { Collection } from '../util';
 import type { Client } from '../client';
-import type { StructureConstructable } from '../typings';
 
 /**
  * The base class for all managers
@@ -65,4 +64,24 @@ export class BaseManager<K extends string, R, T extends { id: K }> {
 		if (cacheAfterFetching) this.cache.set(id, entry);
 		return entry;
 	}
+}
+
+/**
+ * The common optional options to provide while fetching a content
+ */
+export interface BaseFetchOptions {
+	/**
+	 * Whether to skip cache check for the requested content and fetch from the API directly
+	 */
+	skipCacheCheck?: boolean;
+
+	/**
+	 * Whether to store the fetched content in cache for later use
+	 */
+	cacheAfterFetching?: boolean;
+}
+
+export interface StructureConstructable<T> {
+	// eslint-disable-next-line
+	new (...args: any[]): T;
 }

@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { RetweetedByUsersBookOptions } from '../typings';
 import type { GETTweetsIdRetweetedByQuery, GETTweetsIdRetweetedByResponse } from 'twitter-types';
+import type { TweetResolvable } from '../managers';
 
 /**
  * A class for fetching users who retweeted a tweet
@@ -74,4 +74,8 @@ export class RetweetedByUsersBook extends BaseBook {
 		}
 		return retweetingUsers;
 	}
+}
+
+export interface RetweetedByUsersBookOptions extends BaseBookOptions {
+	tweet: TweetResolvable;
 }

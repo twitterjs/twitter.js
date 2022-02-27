@@ -1,5 +1,3 @@
-import type { ErrorMessageBuilder, TwitterjsErrorConstructor } from '../typings';
-
 const errorMessagesMap = new Map<string, string | ErrorMessageBuilder>();
 
 export function makeTwitterjsError(Base: ErrorConstructor): TwitterjsErrorConstructor {
@@ -40,3 +38,11 @@ export const CustomErrors = {
 	CustomTypeError: makeTwitterjsError(TypeError),
 	CustomRangeError: makeTwitterjsError(RangeError),
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ErrorMessageBuilder = (...args: Array<any>) => string;
+
+export interface TwitterjsErrorConstructor {
+	// eslint-disable-next-line
+	new (key: string, ...args: Array<unknown>): Error;
+}

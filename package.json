@@ -4,9 +4,9 @@
 	"author": "Shubham Parihar <shubhamparihar391@gmail.com>",
 	"description": "An object-oriented Node.js and TypeScript library for interacting with Twitter API v2",
 	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"types": "./dist/types/index.d.ts",
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.json && tsc -p tsconfig.declaration.json",
 		"build:dev": "tsc -w",
 		"doc": "typedoc",
 		"test": "vitest",

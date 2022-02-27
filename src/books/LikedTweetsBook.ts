@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
-import type { LikedTweetsBookOptions } from '../typings';
 import type { GETUsersIdLikedTweetsQuery, GETUsersIdLikedTweetsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching tweets liked by a twitter user
@@ -75,4 +75,8 @@ export class LikedTweetsBook extends BaseBook {
 		}
 		return likedTweets;
 	}
+}
+
+export interface LikedTweetsBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

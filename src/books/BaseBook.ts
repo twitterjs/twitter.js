@@ -1,5 +1,4 @@
 import type { Client } from '../client';
-import type { BaseBookOptions } from '../typings';
 
 /**
  * The base class for all books
@@ -53,4 +52,11 @@ export class BaseBook {
 		this.hasMore = true;
 		this.maxResultsPerPage = options?.maxResultsPerPage ?? null;
 	}
+}
+
+export interface BaseBookOptions {
+	/**
+	 * The maximum number of results to fetch per page
+	 */
+	maxResultsPerPage?: number;
 }

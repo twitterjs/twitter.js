@@ -1,16 +1,10 @@
 import { Collection } from '../util';
-import { BaseManager } from './BaseManager';
+import { BaseManager, type BaseFetchOptions } from './BaseManager';
 import { RequestData, SimplifiedTweet, Tweet, TweetPayload } from '../structures';
-import { CustomError, CustomTypeError } from '../errors';
+import { CustomError } from '../errors';
 import type { Client } from '../client';
 import type {
-	TweetManagerFetchResult,
-	TweetResolvable,
-	FetchTweetOptions,
-	FetchTweetsOptions,
-	TweetCreateOptions,
-} from '../typings';
-import type {
+	APITweetReplySettings,
 	DELETETweetsIdResponse,
 	DELETEUsersIdLikesTweetIdResponse,
 	DELETEUsersIdRetweetsSourceTweetIdResponse,
@@ -26,6 +20,7 @@ import type {
 	PUTTweetsIdHiddenJSONBody,
 	PUTTweetsIdHiddenResponse,
 } from 'twitter-types';
+import type { UserResolvable } from './UserManager';
 
 /**
  * The manager class that holds API methods for {@link Tweet} objects and stores their cache
@@ -63,33 +58,34 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 	}
 
 	/**
-	 * Fetches tweets from twitter.
-	 * @param options The options for fetching tweets
-	 * @returns A {@link Tweet} or a {@link Collection} of them as a `Promise`
+	 * Fetches one or more tweets.
+	 * @param tweetOrTweets The tweet or tweets to fetch
+	 * @param options An object containing optional parameters to apply
+	 * @returns A {@link Tweet} or a {@link Collection} of them
 	 * @example
 	 * // Fetch a single tweet
-	 * const tweet = await client.tweets.fetch({ tweet: '1336749579228745728' });
+	 * const tweet = await client.tweets.fetch('1336749579228745728');
 	 *
 	 * // Fetch multiple tweets
-	 * const tweets = await client.tweets.fetch({ tweets: ['1336749579228745728', '1413113670448553986'] });
+	 * const tweets = await client.tweets.fetch(['1336749579228745728', '1413113670448553986']);
 	 */
-	async fetch<T extends FetchTweetOptions | FetchTweetsOptions>(options: T): Promise<TweetManagerFetchResult<T>> {
-		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-		if ('tweet' in options) {
-			const tweetId = this.resolveId(options.tweet);
-			if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
-			return this.#fetchSingleTweet(tweetId, options) as Promise<TweetManagerFetchResult<T>>;
-		}
-		if ('tweets' in options) {
-			if (!Array.isArray(options.tweets)) throw new CustomTypeError('INVALID_TYPE', 'tweets', 'array', true);
-			const tweetIds = options.tweets.map(tweet => {
+	async fetch<T extends TweetResolvable | Array<TweetResolvable>>(
+		tweetOrTweets: T,
+		options?: FetchTweetOrTweetsOptions<T>,
+	): Promise<TweetManagerFetchResult<T>> {
+		if (Array.isArray(tweetOrTweets)) {
+			const tweetIds = tweetOrTweets.map(tweet => {
 				const tweetId = this.resolveId(tweet);
 				if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
 				return tweetId;
 			});
-			return this.#fetchMultipleTweets(tweetIds, options) as Promise<TweetManagerFetchResult<T>>;
+			// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+			return this.#fetchMultipleTweetsByIds(tweetIds, options);
 		}
-		throw new CustomError('INVALID_FETCH_OPTIONS');
+		const tweetId = this.resolveId(tweetOrTweets);
+		if (!tweetId) throw new CustomError('TWEET_RESOLVE_ID', 'fetch');
+		// @ts-expect-error UserManagerFetchResult<U> is a conditional type, TS seems to not work when conditional types and promises are combined together
+		return this.#fetchSingleTweetById(tweetId, options);
 	}
 
 	/**
@@ -209,8 +205,8 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 	 * console.log(data); // { id: '1487382074546089985', text: 'This is a tweet' }
 	 */
 	async create(options: TweetCreateOptions): Promise<POSTTweetsResponse['data']> {
-		const data = new TweetPayload(this.client, options).resolveData();
-		const requestData = new RequestData({ body: data, isUserContext: true });
+		const body = new TweetPayload(this.client, options).resolveData();
+		const requestData = new RequestData({ body, isUserContext: true });
 		const res: POSTTweetsResponse = await this.client._api.tweets.post(requestData);
 		return res.data;
 	}
@@ -234,11 +230,11 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 	/**
 	 * Fetches a single tweet using its id.
 	 * @param tweetId The id of the tweet to fetch
-	 * @param options The options for fetching the tweet
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Tweet}
 	 */
-	async #fetchSingleTweet(tweetId: string, options: FetchTweetOptions): Promise<Tweet> {
-		if (!options.skipCacheCheck) {
+	async #fetchSingleTweetById(tweetId: string, options?: FetchTweetOptions): Promise<Tweet> {
+		if (!options?.skipCacheCheck) {
 			const cachedTweet = this.cache.get(tweetId);
 			if (cachedTweet) return cachedTweet;
 		}
@@ -253,16 +249,19 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETTweetsIdResponse = await this.client._api.tweets(tweetId).get(requestData);
-		return this._add(res.data.id, res, options.cacheAfterFetching);
+		return this._add(res.data.id, res, options?.cacheAfterFetching);
 	}
 
 	/**
-	 * Fetches multiple tweets using their ids
+	 * Fetches multiple tweets using their ids.
 	 * @param tweetIds The ids of the tweets to fetch
-	 * @param options The options for fetching the tweets
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link Collection} of {@link Tweet}
 	 */
-	async #fetchMultipleTweets(tweetIds: Array<string>, options: FetchTweetsOptions): Promise<Collection<string, Tweet>> {
+	async #fetchMultipleTweetsByIds(
+		tweetIds: Array<string>,
+		options?: FetchTweetsOptions,
+	): Promise<Collection<string, Tweet>> {
 		const fetchedTweets = new Collection<string, Tweet>();
 		const queryParameters = this.client.options.queryParameters;
 		const query: GETTweetsQuery = {
@@ -279,7 +278,11 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 		const rawTweets = res.data;
 		const rawTweetsIncludes = res.includes;
 		for (const rawTweet of rawTweets) {
-			const tweet = this._add(rawTweet.id, { data: rawTweet, includes: rawTweetsIncludes }, options.cacheAfterFetching);
+			const tweet = this._add(
+				rawTweet.id,
+				{ data: rawTweet, includes: rawTweetsIncludes },
+				options?.cacheAfterFetching,
+			);
 			fetchedTweets.set(tweet.id, tweet);
 		}
 		return fetchedTweets;
@@ -305,3 +308,56 @@ export class TweetManager extends BaseManager<string, TweetResolvable, Tweet> {
 		return res.data;
 	}
 }
+
+/**
+ * Options used to feth a single tweet
+ */
+export type FetchTweetOptions = BaseFetchOptions;
+
+/**
+ * Options used to feth multiple tweets
+ */
+export type FetchTweetsOptions = Omit<BaseFetchOptions, 'skipCacheCheck'>;
+
+/**
+ * Options used to fetch one or more tweets
+ */
+export type FetchTweetOrTweetsOptions<T extends TweetResolvable | Array<TweetResolvable>> = T extends TweetResolvable
+	? FetchTweetOptions
+	: FetchTweetsOptions;
+
+export type TweetManagerFetchResult<T extends TweetResolvable | Array<TweetResolvable>> = T extends TweetResolvable
+	? Tweet
+	: Collection<string, Tweet>;
+
+/**
+ * Options used to craete a tweet
+ */
+export interface TweetCreateOptions {
+	directMessageDeepLink?: string;
+	forSuperFollowersOnly?: boolean;
+	geo?: TweetCreateGeoOptions;
+	media?: TweetCreateMediaOptions;
+	poll?: TweetCreatePollOptions;
+	quoteTweet?: TweetResolvable;
+	excludeReplyUsers?: Array<UserResolvable>;
+	inReplyToTweet?: TweetResolvable;
+	replySettings?: APITweetReplySettings;
+	text?: string;
+}
+
+export interface TweetCreateGeoOptions {
+	placeId: string;
+}
+
+export interface TweetCreateMediaOptions {
+	mediaIds?: Array<string>;
+	taggedUsers?: Array<UserResolvable>;
+}
+
+export interface TweetCreatePollOptions {
+	durationMinutes: number;
+	options: Array<string>;
+}
+
+export type TweetResolvable = Tweet | SimplifiedTweet | string;

@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
 import type { Client } from '../client';
-import type { ListTweetsBookOptions } from '../typings';
 import type { GETListsIdTweetsQuery, GETListsIdtweetsResponse } from 'twitter-types';
+import type { ListResolvable } from '../managers';
 
 /**
  * A class for fetching tweets from a list
@@ -75,4 +75,8 @@ export class ListTweetsBook extends BaseBook {
 		}
 		return tweets;
 	}
+}
+
+export interface ListTweetsBookOptions extends BaseBookOptions {
+	list: ListResolvable;
 }

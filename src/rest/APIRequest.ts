@@ -1,9 +1,8 @@
 import { fetch } from 'undici';
 import type { Client } from '../client';
-import type { RESTManager } from './RESTManager';
+import type { ExtendedRequestData, RESTManager } from './RESTManager';
 import type { RequestData } from '../structures';
 import type { Response, HeadersInit, BodyInit } from 'undici';
-import type { ExtendedRequestData } from '../typings';
 
 export class APIRequest {
 	rest: RESTManager;

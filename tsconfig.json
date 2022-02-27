@@ -10,13 +10,12 @@
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		/* Emit */
-		"declaration": true,
-		"declarationMap": true,
+		"declaration": false,
 		"importsNotUsedAsValues": "error",
 		"outDir": "dist",
 		"stripInternal": true,
 		"preserveConstEnums": true,
-		"removeComments": false,
+		"removeComments": true,
 		"sourceMap": true,
 		/* Interop Constraints */
 		"allowSyntheticDefaultImports": true,

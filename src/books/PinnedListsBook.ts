@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { type List, RequestData } from '../structures';
 import type { Client } from '../client';
-import type { PinnedListsBookOptions } from '../typings';
 import type { GETUsersIdPinnedListsQuery, GETUsersIdPinnedListsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching lists pinned by the authorized user
@@ -74,4 +74,8 @@ export class PinnedListsBook extends BaseBook {
 		}
 		return pinnedLists;
 	}
+}
+
+export interface PinnedListsBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

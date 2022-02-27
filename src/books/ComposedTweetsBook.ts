@@ -1,10 +1,10 @@
 import { Collection } from '../util';
 import { CustomError } from '../errors';
 import { RequestData, type Tweet } from '../structures';
-import { BaseRangeBook } from './BaseRangeBook';
+import { BaseRangeBook, type BaseRangeBookOptions } from './BaseRangeBook';
 import type { Client } from '../client';
-import type { ComposedTweetsBookOptions } from '../typings';
 import type { GETUsersIdTweetsQuery, GETUsersIdTweetsResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching tweets composed by a twitter user
@@ -86,4 +86,13 @@ export class ComposedTweetsBook extends BaseRangeBook {
 		}
 		return composedTweets;
 	}
+}
+
+export interface ComposedTweetsBookOptions extends BaseRangeBookOptions {
+	user: UserResolvable;
+
+	/**
+	 * The types of tweets to exclude
+	 */
+	exclude?: GETUsersIdTweetsQuery['exclude'];
 }

@@ -1,11 +1,16 @@
-import { BaseClient } from './BaseClient';
+import { BaseClient, type ClientOptions } from './BaseClient';
 import { RESTManager } from '../rest/RESTManager';
 import { ClientEvents, Collection } from '../util';
 import { CustomError, CustomTypeError } from '../errors';
 import { UserManager, TweetManager, SpaceManager, ListManager, FilteredStreamRuleManager } from '../managers';
-import { ClientCredentials, RequestData, ClientUser, MatchingRule } from '../structures';
+import {
+	ClientCredentials,
+	RequestData,
+	ClientUser,
+	MatchingRule,
+	type ClientCredentialsInterface,
+} from '../structures';
 import type { Response } from 'undici';
-import type { ClientCredentialsInterface, ClientOptions } from '../typings';
 import type {
 	GETTweetsSampleStreamQuery,
 	GETTweetsSampleStreamResponse,

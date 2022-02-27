@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { MutedUsersBookOptions } from '../typings';
 import type { GETUsersIdMutingQuery, GETUsersIdMutingResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching users muted by the authorized user
@@ -72,4 +72,8 @@ export class MutedUsersBook extends BaseBook {
 		}
 		return mutedUsers;
 	}
+}
+
+export interface MutedUsersBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

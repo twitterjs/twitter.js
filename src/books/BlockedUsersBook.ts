@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { BlockedUsersBookOptions } from '../typings';
 import type { GETUsersIdBlockingQuery, GETUsersIdBlockingResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching users blocked by the authorized user
@@ -72,4 +72,8 @@ export class BlockedUsersBook extends BaseBook {
 		}
 		return blockedUsers;
 	}
+}
+
+export interface BlockedUsersBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

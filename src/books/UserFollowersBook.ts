@@ -1,10 +1,10 @@
 import { Collection } from '../util';
-import { BaseBook } from './BaseBook';
+import { BaseBook, type BaseBookOptions } from './BaseBook';
 import { CustomError } from '../errors';
 import { RequestData, type User } from '../structures';
 import type { Client } from '../client';
-import type { UserFollowersBookOptions } from '../typings';
 import type { GETUsersIdFollowersQuery, GETUsersIdFollowersResponse } from 'twitter-types';
+import type { UserResolvable } from '../managers';
 
 /**
  * A class for fetching followers of a twitter user
@@ -72,4 +72,8 @@ export class UserFollowersBook extends BaseBook {
 		}
 		return followers;
 	}
+}
+
+export interface UserFollowersBookOptions extends BaseBookOptions {
+	user: UserResolvable;
 }

@@ -1,14 +1,7 @@
-import { BaseManager } from './BaseManager';
-import { List, RequestData } from '../structures';
+import { BaseManager, type BaseFetchOptions } from './BaseManager';
+import { List, RequestData, type SimplifiedList } from '../structures';
 import { CustomError, CustomTypeError } from '../errors';
 import type { Client } from '../client';
-import type {
-	CreateListOptions,
-	ListResolvable,
-	UpdateListOptions,
-	UserResolvable,
-	FetchListOptions,
-} from '../typings';
 import type {
 	DELETEListsIdMembersUserIdResponse,
 	DELETEListsIdResponse,
@@ -27,6 +20,7 @@ import type {
 	PUTListsIdJSONBody,
 	PUTListsIdResponse,
 } from 'twitter-types';
+import type { UserResolvable } from './UserManager';
 
 /**
  * The manager class that holds API methods for {@link List} objects and stores their cache
@@ -60,18 +54,18 @@ export class ListManager extends BaseManager<string, ListResolvable, List> {
 	}
 
 	/**
-	 * Fetches a list from Twitter.
-	 * @param options The options for fetching list
-	 * @returns A {@link List} as a `Promise`
+	 * Fetches a list.
+	 * @param list The list to fetch
+	 * @param options An object containing optional parameters to apply
+	 * @returns A {@link List}
 	 * @example
-	 * const list = await client.lists.fetch({ list: '1487049903255666689' });
+	 * const list = await client.lists.fetch('1487049903255666689');
 	 * console.log(`Fetched a list named: ${list.name}`); // Fetched a list named: Twitter.js Community
 	 */
-	async fetch(options: FetchListOptions): Promise<List> {
-		if (typeof options !== 'object') throw new CustomTypeError('INVALID_TYPE', 'options', 'object', true);
-		const listId = this.resolveId(options.list);
+	async fetch(list: ListResolvable, options?: FetchListOptions): Promise<List> {
+		const listId = this.resolveId(list);
 		if (!listId) throw new CustomError('LIST_RESOLVE_ID', 'fetch');
-		return this.#fetchSingleList(listId, options);
+		return this.#fetchSingleListById(listId, options);
 	}
 
 	/**
@@ -119,7 +113,7 @@ export class ListManager extends BaseManager<string, ListResolvable, List> {
 	 * @param user The user to add as a member of the list
 	 * @returns An object containing the `is_member` field
 	 * @example
-	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const user = await client.users.fetchByUsername('iShiibi');
 	 * const data = await client.lists.addMember('1487049903255666689', user);
 	 * console.log(data); // { is_member: true }
 	 */
@@ -142,7 +136,7 @@ export class ListManager extends BaseManager<string, ListResolvable, List> {
 	 * @param member The member to remove from the list
 	 * @returns An object containing the `is_member` field
 	 * @example
-	 * const user = await client.users.fetchByUsername({ username: 'iShiibi' });
+	 * const user = await client.users.fetchByUsername('iShiibi');
 	 * const data = await client.lists.removeMember('1487049903255666689', user);
 	 * console.log(data); // { is_member: false }
 	 */
@@ -251,13 +245,13 @@ export class ListManager extends BaseManager<string, ListResolvable, List> {
 	}
 
 	/**
-	 * Fetches a single list.
+	 * Fetches a single list using its id.
 	 * @param listId The id of the list to fetch
-	 * @param options The options for fetching the list
+	 * @param options An object containing optional parameters to apply
 	 * @returns A {@link List}
 	 */
-	async #fetchSingleList(listId: string, options: FetchListOptions) {
-		if (!options.skipCacheCheck) {
+	async #fetchSingleListById(listId: string, options?: FetchListOptions) {
+		if (!options?.skipCacheCheck) {
 			const cachedList = this.cache.get(listId);
 			if (cachedList) return cachedList;
 		}
@@ -269,6 +263,38 @@ export class ListManager extends BaseManager<string, ListResolvable, List> {
 		};
 		const requestData = new RequestData({ query });
 		const res: GETListsIdResponse = await this.client._api.lists(listId).get(requestData);
-		return this._add(res.data.id, res, options.cacheAfterFetching);
+		return this._add(res.data.id, res, options?.cacheAfterFetching);
 	}
 }
+
+/**
+ * Options used to fetch a single list
+ */
+export type FetchListOptions = BaseFetchOptions;
+
+/**
+ * Options used for creating a new list
+ */
+export interface CreateListOptions {
+	/**
+	 * The name of the list
+	 */
+	name: string;
+
+	/**
+	 * The description of the list
+	 */
+	description?: string;
+
+	/**
+	 * Whether the list should be private
+	 */
+	private?: boolean;
+}
+
+/**
+ * Options used to update a list
+ */
+export type UpdateListOptions = Partial<CreateListOptions>;
+
+export type ListResolvable = List | SimplifiedList | string;

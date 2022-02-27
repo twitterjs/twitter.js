@@ -18,7 +18,7 @@ import type {
 	APITweetReferencedTweet,
 	APITweetReplySettings,
 } from 'twitter-types';
-import type { TweetQuoteOptions, TweetReplyOptions } from '../typings';
+import type { TweetCreateOptions } from '../managers';
 
 /**
  * A simplified version of {@link Tweet} class
@@ -249,3 +249,13 @@ export class SimplifiedTweet extends BaseStructure {
 		return tweetContextAnnotationsArray;
 	}
 }
+
+/**
+ * Options used to reply to a tweet
+ */
+export type TweetReplyOptions = Omit<TweetCreateOptions, 'inReplyToTweet'>;
+
+/**
+ * Options used to quote a tweet
+ */
+export type TweetQuoteOptions = Omit<TweetCreateOptions, 'quoteTweet'>;
