@@ -20,6 +20,46 @@ import type {
 	GETUsersMeResponse,
 } from 'twitter-types';
 import { Readable } from 'node:stream';
+import {
+	BlockedUsersBook,
+	type BlockedUsersBookOptions,
+	ComposedTweetsBook,
+	type ComposedTweetsBookOptions,
+	FollowedListsBook,
+	type FollowedListsBookOptions,
+	LikedByUsersBook,
+	type LikedByUsersBookOptions,
+	UserMentioningTweetsBook,
+	type UserMentioningTweetsBookOptions,
+	LikedTweetsBook,
+	type LikedTweetsBookOptions,
+	ListFollowersBook,
+	type ListFollowersBookOptions,
+	ListMembersBook,
+	type ListMembersBookOptions,
+	ListTweetsBook,
+	type ListTweetsBookOptions,
+	MemberOfListsBook,
+	type MemberOfListsBookOptions,
+	MutedUsersBook,
+	type MutedUsersBookOptions,
+	OwnedListsBook,
+	type OwnedListsBookOptions,
+	PinnedListsBook,
+	type PinnedListsBookOptions,
+	RetweetedByUsersBook,
+	type RetweetedByUsersBookOptions,
+	TweetsCountBook,
+	type TweetsCountBookOptions,
+	UserFollowersBook,
+	type UserFollowersBookOptions,
+	UserFollowingsBook,
+	type UserFollowingsBookOptions,
+	SearchTweetsBook,
+	type SearchTweetsBookOptions,
+	SpaceTicketBuyersBook,
+	type SpaceTicketBuyersBookOptions,
+} from '../books';
 
 /**
  * The core class that exposes all the functionalities available in twitter.js
@@ -163,6 +203,21 @@ export class Client extends BaseClient {
 		return this.credentials;
 	}
 
+	/**
+	 * Creates book for making paginated requests.
+	 * @param bookName The name of the book to create
+	 * @param options An object containing parameters to initialize the book with
+	 * @returns An instance of the requested book class
+	 * @example
+	 * const user = await client.users.fetchByUsername('iShiibi');
+	 * const composedTweetsBook = client.createBook('ComposedTweetsBook', { user, maxResultsPerPage: 5 });
+	 * const userTweets = await composedTweetsBook.fetchNextPage();
+	 */
+	createBook<K extends CreateBookNameType>(bookName: K, options: CreateBookOptionType<K>): CreateBookReturnType<K> {
+		// @ts-expect-error lol
+		return new Books[bookName](this, options);
+	}
+
 	async #fetchClientUser(): Promise<ClientUser> {
 		const queryParameters = this.options.queryParameters;
 		const query: GETUsersMeQuery = {
@@ -229,3 +284,53 @@ export class Client extends BaseClient {
 		});
 	}
 }
+
+export interface CreateBookMapping {
+	BlockedUsersBook: [book: BlockedUsersBook, options: BlockedUsersBookOptions];
+	ComposedTweetsBook: [book: ComposedTweetsBook, options: ComposedTweetsBookOptions];
+	FollowedListsBook: [book: FollowedListsBook, options: FollowedListsBookOptions];
+	LikedByUsersBook: [book: LikedByUsersBook, options: LikedByUsersBookOptions];
+	LikedTweetsBook: [book: LikedTweetsBook, options: LikedTweetsBookOptions];
+	ListFollowersBook: [book: ListFollowersBook, options: ListFollowersBookOptions];
+	ListMembersBook: [book: ListMembersBook, options: ListMembersBookOptions];
+	ListTweetsBook: [book: ListTweetsBook, options: ListTweetsBookOptions];
+	MemberOfListsBook: [book: MemberOfListsBook, options: MemberOfListsBookOptions];
+	MutedUsersBook: [book: MutedUsersBook, options: MutedUsersBookOptions];
+	OwnedListsBook: [book: OwnedListsBook, options: OwnedListsBookOptions];
+	PinnedListsBook: [book: PinnedListsBook, options: PinnedListsBookOptions];
+	RetweetedByUsersBook: [book: RetweetedByUsersBook, options: RetweetedByUsersBookOptions];
+	SearchTweetsBook: [book: SearchTweetsBook, options: SearchTweetsBookOptions];
+	SpaceTicketBuyersBook: [book: SpaceTicketBuyersBook, options: SpaceTicketBuyersBookOptions];
+	TweetsCountBook: [book: TweetsCountBook, options: TweetsCountBookOptions];
+	UserFollowersBook: [book: UserFollowersBook, options: UserFollowersBookOptions];
+	UserFollowingsBook: [book: UserFollowingsBook, options: UserFollowingsBookOptions];
+	UserMentioningTweetsBook: [book: UserMentioningTweetsBook, options: UserMentioningTweetsBookOptions];
+}
+
+export type CreateBookOptionType<K> = K extends keyof CreateBookMapping ? CreateBookMapping[K][1] : unknown[];
+
+export type CreateBookReturnType<K> = K extends keyof CreateBookMapping ? CreateBookMapping[K][0] : unknown[];
+
+const Books = {
+	BlockedUsersBook,
+	ComposedTweetsBook,
+	FollowedListsBook,
+	LikedByUsersBook,
+	LikedTweetsBook,
+	ListFollowersBook,
+	ListMembersBook,
+	ListTweetsBook,
+	MemberOfListsBook,
+	MutedUsersBook,
+	OwnedListsBook,
+	PinnedListsBook,
+	RetweetedByUsersBook,
+	SearchTweetsBook,
+	SpaceTicketBuyersBook,
+	TweetsCountBook,
+	UserFollowersBook,
+	UserFollowingsBook,
+	UserMentioningTweetsBook,
+};
+
+export type CreateBookNameType = keyof typeof Books;
