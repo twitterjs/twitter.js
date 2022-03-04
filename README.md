@@ -31,7 +31,9 @@ import { bearerToken } from './secrets.js';
 const client = new Client();
 await client.loginWithBearerToken(bearerToken);
 
-const user = await client.users.fetchByUsername('iShiibi');
+const user = await client.users.fetchByUsername({
+	username: 'iShiibi'
+});
 console.log(user.description); // Contributing to open-source 🌐
 ```
 
@@ -44,7 +46,9 @@ import { credentials } from './secrets.js';
 const client = new Client();
 await client.login(credentials);
 
-const tweet = await client.tweets.fetch('1336749579228745728');
+const tweet = await client.tweets.fetch({
+	tweet: '1336749579228745728'
+});
 await tweet.like();
 ```
 
