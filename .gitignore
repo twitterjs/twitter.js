@@ -4,4 +4,4 @@ node_modules
 test
 coverage
 .husky/_
-changelog.md
+CHANGELOG.md
