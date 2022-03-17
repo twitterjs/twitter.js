@@ -8,7 +8,7 @@
 	"scripts": {
 		"build": "tsc -p tsconfig.json && tsc -p tsconfig.declaration.json",
 		"build:dev": "tsc -w",
-		"doc": "typedoc",
+		"doc": "typedoc --json docs/typedoc-out.json src/index.ts && node scripts/docs.mjs",
 		"test": "vitest",
 		"prepare": "husky install",
 		"lint:check": "eslint . --ext .js,.ts",
@@ -33,6 +33,7 @@
 		"@typescript-eslint/parser": "^5.13.0",
 		"eslint": "^8.10.0",
 		"eslint-config-prettier": "^8.5.0",
+		"@discordjs/ts-docgen": "^0.3.4",
 		"husky": "^7.0.4",
 		"lint-staged": "^12.3.5",
 		"prettier": "^2.5.1",
