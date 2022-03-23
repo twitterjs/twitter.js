@@ -22,7 +22,7 @@
 		"@discordjs/collection": "^0.5.0",
 		"@sapphire/async-queue": "^1.2.0",
 		"oauth-1.0a": "^2.2.6",
-		"twitter-types": "^0.24.1",
+		"twitter-types": "^0.25.0",
 		"undici": "^4.15.0"
 	},
 	"devDependencies": {
