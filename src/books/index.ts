@@ -12,6 +12,7 @@ export * from './MemberOfListsBook';
 export * from './MutedUsersBook';
 export * from './OwnedListsBook';
 export * from './PinnedListsBook';
+export * from './QuoteTweetsBook';
 export * from './RetweetedByUsersBook';
 export * from './SearchTweetsBook';
 export * from './SpaceTicketBuyersBook';
