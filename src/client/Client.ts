@@ -59,6 +59,8 @@ import {
 	type SearchTweetsBookOptions,
 	SpaceTicketBuyersBook,
 	type SpaceTicketBuyersBookOptions,
+	QuoteTweetsBook,
+	type QuoteTweetsBookOptions,
 } from '../books';
 
 /**
@@ -298,6 +300,7 @@ export interface CreateBookMapping {
 	MutedUsersBook: [book: MutedUsersBook, options: MutedUsersBookOptions];
 	OwnedListsBook: [book: OwnedListsBook, options: OwnedListsBookOptions];
 	PinnedListsBook: [book: PinnedListsBook, options: PinnedListsBookOptions];
+	QuoteTweetsBook: [book: QuoteTweetsBook, options: QuoteTweetsBookOptions];
 	RetweetedByUsersBook: [book: RetweetedByUsersBook, options: RetweetedByUsersBookOptions];
 	SearchTweetsBook: [book: SearchTweetsBook, options: SearchTweetsBookOptions];
 	SpaceTicketBuyersBook: [book: SpaceTicketBuyersBook, options: SpaceTicketBuyersBookOptions];
@@ -324,6 +327,7 @@ const Books = {
 	MutedUsersBook,
 	OwnedListsBook,
 	PinnedListsBook,
+	QuoteTweetsBook,
 	RetweetedByUsersBook,
 	SearchTweetsBook,
 	SpaceTicketBuyersBook,
