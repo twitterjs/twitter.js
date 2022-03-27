@@ -1,7 +1,0 @@
-{
-	"name": "twitter.js",
-	"out": "docs",
-	"theme": "default",
-	"exclude": ["node_modules/**", "dist/**"],
-	"entryPoints": ["src/index.ts"]
-}
