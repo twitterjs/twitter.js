@@ -61,6 +61,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: 'twitterjs/docs'
+          token: ${{ secrets.TJS_DOCS }}
           path: 'out'
 
       - name: Move docs to correct directory
