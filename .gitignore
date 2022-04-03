@@ -1,7 +1,7 @@
 dist
-docs
+docs/docs.json
+docs/typedoc-out.json
 node_modules
-test
 coverage
 .husky/_
 CHANGELOG.md
