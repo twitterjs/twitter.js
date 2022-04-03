@@ -49,7 +49,7 @@ npm install twitter.js
 **5. Create a new `index.js` file and write the following basic code in it:**
 
 ```js
-import { Client } from 'twitter.js';
+const { Client } = require('twitter.js');
 
 const client = new Client();
 
