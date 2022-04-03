@@ -1,0 +1,8 @@
+- name: getting-started
+  files:
+    - name: Introduction
+      id: Introduction
+      path: ../../README.md
+    - name: Installation
+      id: Installation
+      path: ../Installation.md
