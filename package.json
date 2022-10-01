@@ -27,7 +27,7 @@
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^16.2.3",
-		"@commitlint/config-angular": "^16.2.3",
+		"@commitlint/config-angular": "^17.1.0",
 		"@discordjs/ts-docgen": "^0.3.4",
 		"@types/node": "^17.0.23",
 		"@typescript-eslint/eslint-plugin": "^5.17.0",
